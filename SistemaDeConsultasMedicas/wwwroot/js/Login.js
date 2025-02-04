@@ -17,7 +17,6 @@ const app = createApp({
              estos ejemplos se pueden eliminar para cambiarlos 
              por los que sean necesarios, solo son ejemplos
             */
-            
             Message: 'Hola desde modelo de Vue',
             Array: [],
             Object: {},
@@ -27,7 +26,6 @@ const app = createApp({
     },
     methods: {
         //Aquí se crearán los métodos js
-
         createUser() {
 
             axios.post(createUser, {
