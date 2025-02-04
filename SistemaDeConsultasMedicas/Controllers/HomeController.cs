@@ -17,7 +17,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Login()
         {
             return View();
         }
@@ -27,9 +27,10 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
+        //Método para crear un usuario
         [HttpPost]
         public ActionResult CreateUser(User user)
-        {           
+        {
 
             Response response = new Response();
 
@@ -37,7 +38,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             response.Success = false;
 
             //Manejo en caso de nulos
-            if (user != null) 
+            if (user != null)
             {
                 var row = db.Users
                     .Where(e => e.Email == user.Email)
@@ -47,8 +48,8 @@ namespace SistemaDeConsultasMedicas.Controllers
                  En caso de que no se encuentre un usuario
                  se crea el objeto en la base de datos.
                  */
-                if (row == null) 
-                { 
+                if (row == null)
+                {
 
                     //Se crea el objeto con las clases de la base de datos
                     Users NewUser = new Users
@@ -59,9 +60,10 @@ namespace SistemaDeConsultasMedicas.Controllers
                         Phone = user.Phone,
                         fk_Sex = user.fk_Sex,
                         fk_Consultory = user.fk_Consultory,
-                        fk_Role = user.fk_Role == 1 ? 1:2,
+                        fk_Role = 1,
                         fk_Schedule = user.fk_Schedule,
                         fk_Type = user.fk_Type,
+                        Login = false,
                     };
 
                     //Se manda esta propiedad en caso de querer utilizarla para activar una alerta Success exitosa
@@ -77,12 +79,6 @@ namespace SistemaDeConsultasMedicas.Controllers
                 }
             }
             return Json(response);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
