@@ -27,6 +27,42 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
+        public ActionResult Login(User user)
+        {
+            Response response = new Response();
+
+            response.Success = false;
+
+            if (user != null)
+            {
+                var row = db.Users
+                    .Where(u => u.Email == user.Email)
+                    .FirstOrDefault();
+
+                if (row != null) 
+                { 
+                    bool success = user.Password == row.Password;
+
+                    if (success) 
+                    {
+                        response.Success = true;
+
+                        row.Login = true;
+
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        response.Message = "La contraseña es incorrecta";
+                    }
+
+                   
+                }
+            }
+
+            return Json(response);
+        }
+
         //Método para crear un usuario
         [HttpPost]
         public ActionResult CreateUser(User user)
