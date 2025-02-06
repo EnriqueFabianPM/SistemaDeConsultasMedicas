@@ -27,32 +27,41 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
+        //Método que valida las credenciales que manda el cliente
+        [HttpPost]
         public ActionResult Login(User user)
         {
             Response response = new Response();
-
             response.Success = false;
 
+            //valida que el usuario sea diferente a null
             if (user != null)
             {
+                //Busca al usuario en la base de datos
                 var row = db.Users
                     .Where(u => u.Email == user.Email)
                     .FirstOrDefault();
 
+                //valida que el usuario sea diferente a null
                 if (row != null) 
                 { 
+                    //valida que la contraseña del usuario enviado sean las mismas que del usuario encontrado
                     bool success = user.Password == row.Password;
 
                     if (success) 
                     {
+                        //Respuesta para el cliente y manejo de alertas
                         response.Success = true;
 
+                        //propiedad para validar que el usuario tenga sesión iniciada
                         row.Login = true;
 
+                        //guardamos los cambios en la base de datos
                         db.SaveChanges();
                     }
                     else
                     {
+                        //si "success" es false entonces mandamos este mensaje al template
                         response.Message = "La contraseña es incorrecta";
                     }
 
@@ -60,6 +69,7 @@ namespace SistemaDeConsultasMedicas.Controllers
                 }
             }
 
+            //regresamos la respuesta en formato JSON
             return Json(response);
         }
 
