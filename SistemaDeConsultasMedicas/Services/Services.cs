@@ -17,7 +17,7 @@ namespace SistemaDeConsultasMedicas.Services
 
     }
 
-    //ViewModels
+    //ViewModels, hola rafa como estas
 
     public class User
     {
