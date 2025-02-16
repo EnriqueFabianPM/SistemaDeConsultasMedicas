@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace Services.Data;
 
 public partial class Users
 {

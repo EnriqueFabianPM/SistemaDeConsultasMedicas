@@ -4,15 +4,15 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace Services.Data;
 
-public partial class Consultories_System_Context : DbContext
+public partial class Consultories_System_DevContext : DbContext
 {
-    public Consultories_System_Context()
+    public Consultories_System_DevContext()
     {
     }
 
-    public Consultories_System_Context(DbContextOptions<Consultories_System_Context> options)
+    public Consultories_System_DevContext(DbContextOptions<Consultories_System_DevContext> options)
         : base(options)
     {
     }
@@ -26,6 +26,8 @@ public partial class Consultories_System_Context : DbContext
     public virtual DbSet<Schedules> Schedules { get; set; }
 
     public virtual DbSet<Sexes> Sexes { get; set; }
+
+    public virtual DbSet<Status> Status { get; set; }
 
     public virtual DbSet<Types> Types { get; set; }
 
@@ -51,6 +53,8 @@ public partial class Consultories_System_Context : DbContext
         {
             entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF902700E950F");
 
+            entity.Property(e => e.Date).HasColumnType("date");
+
             entity.HasOne(d => d.fk_DoctorNavigation).WithMany(p => p.Medical_Appointmentsfk_DoctorNavigation)
                 .HasForeignKey(d => d.fk_Doctor)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -65,6 +69,11 @@ public partial class Consultories_System_Context : DbContext
                 .HasForeignKey(d => d.fk_Schedule)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MEDICAL_APPOINTMENTS_SCHEDULES");
+
+            entity.HasOne(d => d.fk_StatusNavigation).WithMany(p => p.Medical_Appointments)
+                .HasForeignKey(d => d.fk_Status)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Medical_Appointments_Status");
         });
 
         modelBuilder.Entity<Roles>(entity =>
@@ -90,6 +99,15 @@ public partial class Consultories_System_Context : DbContext
         modelBuilder.Entity<Sexes>(entity =>
         {
             entity.HasKey(e => e.Id_Sex).HasName("PK__Sexes__552797C2748D6071");
+
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Status>(entity =>
+        {
+            entity.HasKey(e => e.Id_Status).HasName("PK_STATUS");
 
             entity.Property(e => e.Name)
                 .IsRequired()
