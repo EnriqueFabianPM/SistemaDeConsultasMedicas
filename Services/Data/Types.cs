@@ -3,11 +3,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace Services.Data;
 
-public partial class Consultories
+public partial class Types
 {
-    public int Id_Consultory { get; set; }
+    public int Id_Type { get; set; }
 
     public string Name { get; set; }
 

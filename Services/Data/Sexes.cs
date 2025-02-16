@@ -3,15 +3,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace Services.Data;
 
-public partial class Types
+public partial class Sexes
 {
-    public int Id_Type { get; set; }
+    public int Id_Sex { get; set; }
 
     public string Name { get; set; }
-
-    public bool Active { get; set; }
 
     public virtual ICollection<Users> Users { get; set; } = new List<Users>();
 }

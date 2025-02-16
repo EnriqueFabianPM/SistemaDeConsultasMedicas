@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace Services.Data;
 
 public partial class Schedules
 {
@@ -11,9 +11,9 @@ public partial class Schedules
 
     public string Schedule_Name { get; set; }
 
-    public TimeOnly From { get; set; }
+    public TimeSpan From { get; set; }
 
-    public TimeOnly To { get; set; }
+    public TimeSpan To { get; set; }
 
     public bool Active { get; set; }
 
