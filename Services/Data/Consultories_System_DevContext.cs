@@ -21,6 +21,8 @@ public partial class Consultories_System_DevContext : DbContext
 
     public virtual DbSet<Medical_Appointments> Medical_Appointments { get; set; }
 
+    public virtual DbSet<Municipalities> Municipalities { get; set; }
+
     public virtual DbSet<Roles> Roles { get; set; }
 
     public virtual DbSet<Schedules> Schedules { get; set; }
@@ -39,19 +41,32 @@ public partial class Consultories_System_DevContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("db_datareader");
+
         modelBuilder.Entity<Consultories>(entity =>
         {
-            entity.HasKey(e => e.Id_Consultory).HasName("PK__Consulto__F3FE3AA11764B14F");
+            entity.HasKey(e => e.Id_Consultory).HasName("PK__Consulto__F3FE3AA1564383A6");
+
+            entity.ToTable("Consultories", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
-            entity.Property(e => e.Name)
+            entity.Property(e => e.Latitude)
                 .IsRequired()
                 .IsUnicode(false);
+            entity.Property(e => e.Length)
+                .IsRequired()
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.fk_MunicipalityNavigation).WithMany(p => p.Consultories)
+                .HasForeignKey(d => d.fk_Municipality)
+                .HasConstraintName("FK_Consultories_Municipalities");
         });
 
         modelBuilder.Entity<Medical_Appointments>(entity =>
         {
-            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF902700E950F");
+            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF9027B3B02A5");
+
+            entity.ToTable("Medical_Appointments", "dbo");
 
             entity.Property(e => e.Date).HasColumnType("date");
 
@@ -76,9 +91,22 @@ public partial class Consultories_System_DevContext : DbContext
                 .HasConstraintName("FK_Medical_Appointments_Status");
         });
 
+        modelBuilder.Entity<Municipalities>(entity =>
+        {
+            entity.HasKey(e => e.Id_Municipality);
+
+            entity.ToTable("Municipalities", "dbo");
+
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Roles>(entity =>
         {
-            entity.HasKey(e => e.Id_Role).HasName("PK__Roles__34ADFA60FC262DD5");
+            entity.HasKey(e => e.Id_Role).HasName("PK__Roles__34ADFA605FD948DE");
+
+            entity.ToTable("Roles", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Name)
@@ -88,7 +116,9 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Schedules>(entity =>
         {
-            entity.HasKey(e => e.Id_Schedule).HasName("PK__Schedule__1E84FB4B78F8EE21");
+            entity.HasKey(e => e.Id_Schedule).HasName("PK__Schedule__1E84FB4B767D22FB");
+
+            entity.ToTable("Schedules", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Schedule_Name)
@@ -98,7 +128,9 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Sexes>(entity =>
         {
-            entity.HasKey(e => e.Id_Sex).HasName("PK__Sexes__552797C2748D6071");
+            entity.HasKey(e => e.Id_Sex).HasName("PK__Sexes__552797C267E4D264");
+
+            entity.ToTable("Sexes", "dbo");
 
             entity.Property(e => e.Name)
                 .IsRequired()
@@ -109,6 +141,8 @@ public partial class Consultories_System_DevContext : DbContext
         {
             entity.HasKey(e => e.Id_Status).HasName("PK_STATUS");
 
+            entity.ToTable("Status", "dbo");
+
             entity.Property(e => e.Name)
                 .IsRequired()
                 .IsUnicode(false);
@@ -116,7 +150,9 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Types>(entity =>
         {
-            entity.HasKey(e => e.Id_Type).HasName("PK__Types__1A20A3D5D77AADA6");
+            entity.HasKey(e => e.Id_Type).HasName("PK__Types__1A20A3D566528E86");
+
+            entity.ToTable("Types", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Name)
@@ -126,7 +162,9 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Users>(entity =>
         {
-            entity.HasKey(e => e.Id_User).HasName("PK__Users__D03DEDCBC90AC850");
+            entity.HasKey(e => e.Id_User).HasName("PK__Users__D03DEDCB7794E24E");
+
+            entity.ToTable("Users", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Email)

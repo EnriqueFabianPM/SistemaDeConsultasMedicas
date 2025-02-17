@@ -15,11 +15,11 @@ public partial class Medical_Appointments
 
     public int fk_Schedule { get; set; }
 
+    public int fk_Status { get; set; }
+
     public DateTime Date { get; set; }
 
     public string Notes { get; set; }
-
-    public int fk_Status { get; set; }
 
     public virtual Users fk_DoctorNavigation { get; set; }
 
