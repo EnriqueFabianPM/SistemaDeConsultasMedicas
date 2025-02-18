@@ -9,9 +9,15 @@ public partial class Consultories
 {
     public int Id_Consultory { get; set; }
 
-    public string Name { get; set; }
+    public string Latitude { get; set; }
+
+    public string Length { get; set; }
+
+    public int? fk_Municipality { get; set; }
 
     public bool Active { get; set; }
 
     public virtual ICollection<Users> Users { get; set; } = new List<Users>();
+
+    public virtual Municipalities fk_MunicipalityNavigation { get; set; }
 }
