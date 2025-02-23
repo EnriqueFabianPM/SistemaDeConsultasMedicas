@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Login";
+}
+
+<head>
+    @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
+</head>
+
+<div id="app">
+    <h1 class="display-4">Iniciar Sesión</h1>
+    @* <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+
+    <!--Cuando quieras usar una variable de vue en el Template usa "{{ NombreDelModelo }}"-->
+    <div v-for="i in Message">
+        <p>Letra: <strong>{{i !== ' ' ? i : '~'}}</strong></p>
+    </div>
+
+</div>
+
+@section scripts{
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    @*Añade tus scripts en la carpeta "js" en wwwroot*@
+    <script src="~/js/Users.js"></script>
+
+    @*Aquí vas a consumir las APIs que vayas a utilizar*@
+    <script>
+
+        /*este es un ejemplo:
+        ("Method", "Controller")
+        en el primer espacio apuntas al método que quieres consumir 
+        y en el segundo al controlador donde está el método*/
+
+        const createUser = '@Url.Action("CreateUser", "Home")'; 
+        // ...
+    </script>
+}
