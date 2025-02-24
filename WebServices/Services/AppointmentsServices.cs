@@ -65,12 +65,12 @@ namespace WebServices.Services
         }
 
         //Devuelve una lista de usuarios que estén relacionados a un consultorio
-        public List<UsersList> Doctors(int IdConsultory)
+        public List<DoctorList> Doctors(int IdConsultory)
         {
-            List<UsersList> list = db.Users
+            List<DoctorList> list = db.Users
                 .Include(s => s.fk_SexNavigation)
                 .Where(d => d.Active && d.fk_Consultory == IdConsultory)
-                .Select(d => new UsersList
+                .Select(d => new DoctorList
                 {
                     Id = d.Id_User,
                     Name = d.Name,
@@ -144,7 +144,7 @@ namespace WebServices.Services
         public string Length { get; set; }
     }
 
-    public class UsersList
+    public class DoctorList
     {
         public int Id { get; set; }
         public string Name { get; set; }
