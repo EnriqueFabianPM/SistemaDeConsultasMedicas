@@ -58,6 +58,7 @@ namespace WebServices.Services
                     Id = c.Id_Consultory,
                     Latitude = c.Latitude,
                     Length = c.Length,
+                    Email = c.Email ?? "-",
                 })
                 .ToList();
 
@@ -142,6 +143,8 @@ namespace WebServices.Services
         public int Id { get; set; }
         public string Latitude { get; set; }
         public string Length { get; set; }
+        public string Email { get; set; }
+
     }
 
     public class DoctorList

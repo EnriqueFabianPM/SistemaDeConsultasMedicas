@@ -17,7 +17,7 @@ namespace WebServices.Services
 
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
-        public List<UsersList> UsersList()
+        public List<UsersList> Users()
         {
             List<UsersList> list = db.Users
                 .Include(s =>s.fk_SexNavigation)
@@ -26,7 +26,7 @@ namespace WebServices.Services
                     Id_User = u.Id_User,
                     Name = u.Name, 
                     Email = u.Email,
-                    Phone = u.Phone.ToString(),
+                    Phone = u.Phone.ToString() ?? "-",
                     Sex = u.fk_SexNavigation.Name,
                     Role = u.fk_RoleNavigation.Name,
                     Active = u.Active ? "Activo" : "Inactivo"
@@ -36,7 +36,7 @@ namespace WebServices.Services
             return list;
         }
 
-        public Response UpdateUser(Users user)
+        public Response Update(Users user)
         {
             var response = new Response();
             response.Success = false;
@@ -66,23 +66,41 @@ namespace WebServices.Services
             return response;
         }
 
-        public Response DeleteUser(Users user)
+        //Método que elimina a un usuario y objetos derivados del mismo
+        public Response Delete(Users user)
         {
-            var response = new Response();
+            Response response = new Response();
             response.Success = false;
             response.Message = "";
 
             if (user != null)
             {
+                //Busca al usuario en la base de datos
                 var row = db.Users
                     .Where(u => u.Id_User == user.Id_User)
                     .FirstOrDefault();
 
+                //Valida que el usuario no sea nulo
                 if (row != null)
                 {
+                    //Obtiene la lista de citas médicas del usuario a eliminar
+                    List<Medical_Appointments> Appointments = db.Medical_Appointments
+                        .Where(a => a.fk_Patient == row.Id_User)
+                        .ToList();
+
+                    if (Appointments.Any())
+                    {
+                        //elimina la lista de citas médicas relacionadas con el usario
+                        db.Medical_Appointments.RemoveRange(Appointments);
+                    }
+
+                    //Elimina al usuario de la base de datos
                     db.Users.Remove(row);
+
+                    //Guarda los cambios
                     db.SaveChanges();
 
+                    //Se actualiza la respuesta del servidor
                     response.Success = true;
                     response.Message = "Se ha eliminado el usuario";
                 }
