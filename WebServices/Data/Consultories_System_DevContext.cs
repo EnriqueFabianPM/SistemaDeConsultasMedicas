@@ -36,7 +36,7 @@ public partial class Consultories_System_DevContext : DbContext
     public virtual DbSet<Users> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=192.168.192.193,1433;Initial Catalog=Consultories_System_Dev;Persist Security Info=True;User ID=UTSC_USER;Password=S1stem@5.UTSC2025;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,6 +50,7 @@ public partial class Consultories_System_DevContext : DbContext
             entity.ToTable("Consultories", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
+            entity.Property(e => e.Email).IsUnicode(false);
             entity.Property(e => e.Latitude)
                 .IsRequired()
                 .IsUnicode(false);

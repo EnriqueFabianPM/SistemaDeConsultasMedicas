@@ -16,6 +16,9 @@ namespace WebServices.Controllers
     public class ServicesController : Controller
     {
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext(); 
+        private readonly AppointmentsServices _AppointmentServices = new AppointmentsServices(); 
+        private readonly UserServices _UserServices = new UserServices(); 
+
         private readonly ILogger<ServicesController> _logger;
 
         public ServicesController(ILogger<ServicesController> logger)
@@ -261,6 +264,10 @@ namespace WebServices.Controllers
             }
         }
 
+        /*
+         Método de solo lectura que crea los consultorios que encuentra desde la API
+         recibe un listado de consultorios encontrados en la API de DATAMÉXICO
+        */
         public async void CreateConsultories(List<Municipalities> consultories)
         {
             //Traer todos los municipos desde la base de datos
@@ -319,5 +326,79 @@ namespace WebServices.Controllers
             }
         }
 
+        //Servicios de AppointmensServices--------------------------------------------------------------------------------------
+
+        //Devuelve la lista de citas filtrada por usuario(Doctor)
+        [HttpGet]
+        public JsonResult GetMunicipalities()
+        {
+            //Llama al método del servicio AppointmentServices que consulta la lista total de municipios disponibles
+            List<MunicipalitiesList> list = _AppointmentServices.Municipalities();
+            return Json(list);
+        }
+
+        //Devuelve la lista de consultorios filtrada por Municipio
+        [HttpGet]
+        public JsonResult GetConsultories(int IdMunicipality)
+        {
+            //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
+            List<ConsultoriesList> list = _AppointmentServices.Consultories(IdMunicipality);
+            return Json(list);
+        }
+
+        //Devuelve la lista de Doctores filtrados por Consultorio
+        [HttpGet]
+        public JsonResult GetDoctors(int IdConsultory)
+        {
+            //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
+            List<DoctorList> list = _AppointmentServices.Doctors(IdConsultory);
+            return Json(list);
+        }
+
+        //Devuelve la lista de citas filtrada por usuario(Doctor)
+        [HttpGet]
+        public JsonResult GetAppointments(int IdDoctor)
+        {
+            //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
+            List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
+            return Json(list);
+        }
+
+        //Devuelve una respuesta con el status de su petición HttpPost
+        [HttpPost]
+        public JsonResult CreateAppointment(Medical_Appointments newAppointment)
+        {
+            //Llama al método del servicio AppointmentServices que crea una nueva cita
+            Response response = _AppointmentServices.CreateAppointment(newAppointment);
+            return Json(response);
+        }
+
+        //Servicios de UserServices -----------------------------------------------------------------------------------------
+        //Devuelve la lista de usuarios registrados en la base de datos
+        [HttpGet]
+        public JsonResult GetUsers() 
+        {
+            //Llama al método del servicio UserServices que devuelve la lista total de usuarios
+            List<UsersList> Users = _UserServices.Users();
+            return Json(Users); //<------ retorna la lista de usuarios en formato Json
+        }
+
+        //Devuelve una respuesta con el status de su petición HttpPost
+        [HttpPost]
+        public JsonResult UpdateUser(Users user)
+        {
+            //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
+            Response response = _UserServices.Update(user);
+            return Json(response);
+        }
+
+        //Devuelve una respuesta con el status de su petición HttpPost
+        [HttpPost]
+        public JsonResult DeleteUser(Users user)
+        {
+            //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
+            Response response = _UserServices.Delete(user);
+            return Json(response);
+        }
     }
 }

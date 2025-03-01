@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 
 namespace SistemaDeConsultasMedicas.Controllers
 {
@@ -12,6 +13,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             _logger = logger;
         }
 
+        //Controladores de las vistas----------------------------------------------------------------------------------------
         public IActionResult Login()
         {
             return View();
@@ -35,6 +37,26 @@ namespace SistemaDeConsultasMedicas.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        //Método genérico para consumir una api de tipo get
+        [HttpGet]
+        public async Task<ActionResult> GetMunicipalities()
+        {
+            //Variable para compilar en otros equipos
+            string url = "https://localhost:7098/Services/GetMunicipalities";
+            //string url = "https://localhost:7098/Services/GetMunicipalities";
+            //string url = "https://localhost:7098/Services/GetMunicipalities";
+            //string url = "https://localhost:7098/Services/GetMunicipalities";
+            //string url = "https://localhost:7098/Services/GetMunicipalities";
+            //string url = "https://localhost:7098/Services/GetMunicipalities";
+
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            return Json(await response.Content.ReadAsStringAsync());
         }
     }
 }
