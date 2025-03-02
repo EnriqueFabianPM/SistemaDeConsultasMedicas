@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using MunicipalitiesDb = WebServices.Data.Municipalities;
 using Municipalities = WebServices.Services.Municipalities;
+using System.Net.Mail;
+using System.Net;
 #pragma warning disable CS8600, CS8603, CS8602
 
 
@@ -399,6 +401,52 @@ namespace WebServices.Controllers
             //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
             Response response = _UserServices.Delete(user);
             return Json(response);
+        }
+
+        //Manejo de servicios de correos----------------------------------------------------------------------------------------------
+
+        public void SendEmails(Email data)
+        {
+            // Validación básica de entrada
+            if (string.IsNullOrEmpty(data.user.Email) || string.IsNullOrEmpty(data.subjectEmail) || string.IsNullOrEmpty(data.messageEmail))
+            {
+                Console.WriteLine("Error: los parámetros no pueden estar vacíos.");
+                return;
+            }
+
+            try
+            {
+                // Configuración del servidor SMTP
+                using (SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com"))
+                {
+                    clienteSmtp.Port = 587;
+                    clienteSmtp.Credentials = new NetworkCredential("utconsultorio16@gmail.com", "UTSC2025"); // Usar contraseña de aplicación si tienes 2FA activado
+                    clienteSmtp.EnableSsl = true;
+
+                    // Crear el mensaje
+                    using (MailMessage email = new MailMessage())
+                    {
+                        email.From = new MailAddress("utconsultorio16@gmail.com");
+                        email.Subject = data.subjectEmail;
+                        email.Body = data.messageEmail;
+                        email.IsBodyHtml = true; // Si el mensaje tiene formato HTML
+                        email.To.Add(data.user.Email);  // Agregar destinatario
+
+                        // Enviar correo
+                        clienteSmtp.Send(email);
+
+                        Console.WriteLine("Correo enviado exitosamente.");
+                    }
+                }
+            }
+            catch (SmtpException smtpEx)
+            {
+                Console.WriteLine($"Error al enviar correo (SMTP): {smtpEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar correo: {ex.Message}");
+            }
         }
     }
 }
