@@ -3,92 +3,103 @@
 const app = createApp({
     data() {
         return {
-
-            /*
-             Aquí vas a declarar los modelos de vue
-             también hice ejemplos de cómo debes
-             inicializar los modelos dependiendo el 
-             tipo de cosa que quieras consumir de 
-             una API.
-
-             También para hacer modelos reactivos que
-             requieras para mostrar alertas o pasos
-
-             estos ejemplos se pueden eliminar para cambiarlos 
-             por los que sean necesarios, solo son ejemplos
-            */
+            municipalities: [
+                { id: 1, name: 'Municipio 1' },
+                { id: 2, name: 'Municipio 2' },
+                { id: 3, name: 'Municipio 3' }
+            ],
+            consultories: [
+                { id: 1, name: 'Consultorio 1', municipalityId: 1 },
+                { id: 2, name: 'Consultorio 2', municipalityId: 1 },
+                { id: 3, name: 'Consultorio 3', municipalityId: 2 },
+                { id: 4, name: 'Consultorio 4', municipalityId: 3 }
+            ],
+            doctors: [
+                { id: 1, name: 'Doctor 1', consultoryId: 1 },
+                { id: 2, name: 'Doctor 2', consultoryId: 1 },
+                { id: 3, name: 'Doctor 3', consultoryId: 2 },
+                { id: 4, name: 'Doctor 4', consultoryId: 3 },
+                { id: 5, name: 'Doctor 5', consultoryId: 4 }
+            ],
+            selectedMunicipality: null,
+            selectedConsultory: null,
+            selectedDoctor: null,
             notes: '',
-            municipality: {
-                Id_Municipality: 0,
-                Name: '',
-                Zip_Code: 0,
-            },
-            consultory: {
-                Id_Municipality: 0,
-                Name: '',
-                Zip_Code: 0,
-            },
-            municipalities: [],
-            consultories: [],
-            Object: {},
-            Int: 0,
-            boolean: false,
+            isLoading: false,
+            showSuccessMessage: false,
+            showErrorMessage: false,
+            errorMessage: ''
         };
     },
+    computed: {
+        filteredConsultories() {
+            return this.consultories.filter(consultory => consultory.municipalityId === this.selectedMunicipality);
+        },
+        filteredDoctors() {
+            return this.doctors.filter(doctor => doctor.consultoryId === this.selectedConsultory);
+        }
+    },
     methods: {
-        //Aquí se crearán los métodos js
-        createUser() {
-            axios.post(createUser, {
-
-            })
-                .then(response => {
-
-                    console.log(response.data, 'respuesta del método');
-                })
-                .catch(error => {
-                    console.log(error, 'Mensaje de error')
-                });
+        onMunicipalityChange() {
+            this.selectedConsultory = null;
+            this.selectedDoctor = null;
         },
-
-        getMunicipalities() {
-            axios.get(createUser)
-                .then(response => {
-
-                    this.municipalities = response.data;
-
-                    console.log(response.data, 'respuesta del método');
-                })
-                .catch(error => {
-                    console.log(error, 'Mensaje de error')
-                });
+        onConsultoryChange() {
+            this.selectedDoctor = null;
         },
+        async submitAppointment() {
+            if (!this.selectedMunicipality || !this.selectedConsultory || !this.selectedDoctor) {
+                this.showErrorMessage = true;
+                this.errorMessage = "Por favor, complete todos los campos obligatorios.";
+                setTimeout(() => {
+                    this.showErrorMessage = false;
+                }, 3000);
+                return;
+            }
 
-        //Método que se ejecuta cuando seleccionamos otro municipio
-        onMunicipalityChange(municipality) {
+            this.isLoading = true;
 
-            //Igualar el modelo de vue a los valores del objeto seleccionado
-            this.municipality = {
-                Id_Municipality: municipality.Id_Municipality,
-                Name: municipality.Name,
-                Zip_Code: municipality.Zip_Code,
+            const appointment = {
+                municipalityId: this.selectedMunicipality,
+                consultoryId: this.selectedConsultory,
+                doctorId: this.selectedDoctor,
+                notes: this.notes
             };
 
-            this.getConsultories(municipality.Id_Municipality);
-        },
-
-        getConsultories(Id_Municipality) {
-            axios.get(getConsultories)
-                .then(response => {
-
-                    this.consultories = response.data;
-
-                    console.log(response.data, 'respuesta del método');
-                })
-                .catch(error => {
-                    console.log(error, 'Mensaje de error')
+            try {
+                // Simulación de una llamada a la API
+                const response = await fetch('https://api.example.com/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appointment)
                 });
 
-        },
+                if (!response.ok) throw new Error('Error al crear la cita');
+
+                console.log('Cita creada con éxito:', appointment);
+
+                // Resetear el formulario
+                this.selectedMunicipality = null;
+                this.selectedConsultory = null;
+                this.selectedDoctor = null;
+                this.notes = '';
+
+                // Mostrar mensaje de éxito
+                this.showSuccessMessage = true;
+                setTimeout(() => {
+                    this.showSuccessMessage = false;
+                }, 3000);
+            } catch (error) {
+                console.error('Error:', error);
+                this.showErrorMessage = true;
+                this.errorMessage = 'Hubo un error al crear la cita. Por favor, inténtelo de nuevo.';
+                setTimeout(() => {
+                    this.showErrorMessage = false;
+                }, 3000);
+            } finally {
+                this.isLoading = false;
+            }
+        }
     },
     mounted() {
 
