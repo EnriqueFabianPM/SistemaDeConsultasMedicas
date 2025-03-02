@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
+using SistemaDeConsultasMedicas.Models;
+using SistemaDeConsultasMedicas.ViewModels;
+using System.Text;
+using System.Text.Json;
 
 namespace SistemaDeConsultasMedicas.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly Consultories_System_Context db = new Consultories_System_Context();
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -39,24 +44,44 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
-        //Método genérico para consumir una api de tipo get
-        [HttpGet]
-        public async Task<ActionResult> GetMunicipalities()
-        {
-            //Variable para compilar en otros equipos
-            string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
 
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            var response = await client.SendAsync(request);
+        //Método para conseguir las urls de las Apis que se vayan a consumir
+        [HttpGet]
+        public ActionResult GetAPI(int IdApi)
+        {
+            var api = db.APIs
+                .Where(a => a.Id_API == IdApi)
+                .Select(a => new
+                {
+                    Id = a.Id_API,
+                    Name = a.Name,
+                    URL = a.URL,
+                    IsGet = a.IsGet,
+                    IsPost = a.IsPost,
+                })
+                .FirstOrDefault();
+
+            return Json(api);
+        }
+
+        //Método genérico para consumir APIs Get y Post
+        [HttpPost]
+        public async Task<ActionResult> ConsumeAPI(Api api)
+        {
+            using var client = new HttpClient();
+            using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, api.URL);
+
+            if (api.IsPost && api.BodyParams != null)
+            {
+                var json = JsonSerializer.Serialize(api.BodyParams);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            return Json(await response.Content.ReadAsStringAsync());
+            var resp = await response.Content.ReadAsStringAsync();
+            return Json(resp);
         }
     }
 }

@@ -15,31 +15,7 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Consultories]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Medical_Appointments]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Roles]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Schedules]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Sexes]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Types]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Users]",
+         "Name": "[db_datareader].[APIs]",
          "ObjectType": 0
       }
    ],
@@ -48,7 +24,6 @@
    "UseAsyncStoredProcedureCalls": true,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": true,
-   "UseDatabaseNamesForRoutines": true,
    "UseDateOnlyTimeOnly": true,
    "UseDbContextSplitting": false,
    "UseDecimalDataAnnotationForSprocResult": true,
@@ -67,6 +42,5 @@
    "UseSchemaFolders": false,
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
-   "UseT4": false,
-   "UseT4Split": false
+   "UseT4": false
 }

@@ -84,7 +84,7 @@ namespace WebServices.Services
         }
 
         //Método para crear una una cita médica
-        public Response CreateAppointment(Medical_Appointments Appointment)
+        public Response CreateAppointment(Appointment Appointment)
         {
             Response response = new Response
             {
@@ -94,24 +94,21 @@ namespace WebServices.Services
 
             if (Appointment != null) 
             {
-                if (Appointment.Id_Appointment == 0)
+                Medical_Appointments newAppintment = new Medical_Appointments
                 {
-                    Medical_Appointments newAppintment = new Medical_Appointments
-                    {
-                        fk_Doctor = Appointment.Id_Appointment,
-                        fk_Patient = Appointment.fk_Patient,
-                        fk_Schedule = Appointment.fk_Schedule,
-                        Notes = Appointment.Notes,
-                        Date = DateTime.Now,
-                        fk_Status = 1,
-                    };
+                    fk_Doctor = Appointment.fk_Doctor,
+                    fk_Patient = Appointment.fk_Patient,
+                    fk_Schedule = Appointment.fk_Schedule,
+                    Notes = Appointment.Notes,
+                    Date = DateTime.Now,
+                    fk_Status = 1,
+                };
 
-                    db.Medical_Appointments.Add(newAppintment);
-                    db.SaveChanges();
+                db.Medical_Appointments.Add(newAppintment);
+                db.SaveChanges();
 
-                    response.Success = true;
-                    response.Message = "¡Se ha agendado la cita!";
-                }
+                response.Success = true;
+                response.Message = "¡Se ha agendado la cita!";
             }
 
             return response;
