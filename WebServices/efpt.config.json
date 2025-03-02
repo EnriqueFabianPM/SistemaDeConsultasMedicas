@@ -15,6 +15,10 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[db_datareader].[APIs]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Consultories]",
          "ObjectType": 0
       },

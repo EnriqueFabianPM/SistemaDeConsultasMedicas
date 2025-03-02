@@ -368,7 +368,7 @@ namespace WebServices.Controllers
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public JsonResult CreateAppointment(Medical_Appointments newAppointment)
+        public JsonResult CreateAppointment([FromBody] Appointment newAppointment)
         {
             //Llama al método del servicio AppointmentServices que crea una nueva cita
             Response response = _AppointmentServices.CreateAppointment(newAppointment);
