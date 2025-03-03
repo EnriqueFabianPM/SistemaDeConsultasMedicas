@@ -52,7 +52,7 @@ namespace WebServices.Services
         public List<ConsultoriesList> Consultories(int IdMunicipalty)
         {
             List<ConsultoriesList> list = db.Consultories
-                .Where(c => c.Active)
+                .Where(c => c.Active && c.fk_Municipality == IdMunicipalty)
                 .Select(c => new ConsultoriesList
                 {
                     Id = c.Id_Consultory,

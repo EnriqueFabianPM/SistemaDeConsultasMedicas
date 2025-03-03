@@ -1,4 +1,6 @@
 ﻿@{
+#pragma warning disable HTML0209
+
     Layout = "_Layout";
     ViewData["Title"] = "Login";
 }
@@ -20,7 +22,7 @@
                     <label for="municipality">Seleccione un municipio:</label>
                     <select id="municipality" v-model="selectedMunicipality" @@change="onMunicipalityChange">
                         <option value="" disabled selected>Seleccione un municipio</option>
-                        <option v-for="municipality in municipalities" :value="municipality.id">{{ municipality.name }}</option>
+                        <option v-for="municipality in municipalities" :value="municipality.id">{{ municipality.name}}</option>
                     </select>
                 </div>
 
@@ -29,7 +31,7 @@
                     <label for="consultory">Seleccione un consultorio:</label>
                     <select id="consultory" v-model="selectedConsultory" @@change="onConsultoryChange">
                         <option value="" disabled selected>Seleccione un consultorio</option>
-                        <option v-for="consultory in filteredConsultories" :value="consultory.id">{{ consultory.name }}</option>
+                        <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.email }}</option>
                     </select>
                 </div>
 
@@ -61,11 +63,13 @@
         </div>
     </div>
 </div>
+
 @section scripts{
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     @*Añade tus scripts en la carpeta "js" en wwwroot*@
-    <script src="~/js/Appointments.js"></script>
+    <script src="~/js/Appointments.js" defer></script>
 
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
@@ -75,7 +79,7 @@
         en el primer espacio apuntas al método que quieres consumir 
         y en el segundo al controlador donde está el método*/
 
-        const createUser = '@Url.Action("CreateUser", "Home")'; 
+        window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
         // ...
     </script>
 }

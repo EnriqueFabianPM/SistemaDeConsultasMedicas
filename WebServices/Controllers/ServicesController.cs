@@ -56,7 +56,7 @@ namespace WebServices.Controllers
             {
                 //Busca al usuario en la base de datos
                 var row = db.Users
-                    .Where(u => u.Email == user.Email)
+                    .Where(u => u.Email == user.Email) 
                     .FirstOrDefault();
 
                 //valida que el usuario sea diferente a null
@@ -404,7 +404,6 @@ namespace WebServices.Controllers
         }
 
         //Manejo de servicios de correos----------------------------------------------------------------------------------------------
-
         public void SendEmails(Email data)
         {
             // Validación básica de entrada
