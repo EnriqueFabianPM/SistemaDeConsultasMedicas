@@ -31,6 +31,8 @@ public partial class Consultories_System_Context : DbContext
         {
             entity.HasKey(e => e.Id_API);
 
+            entity.ToTable("APIs", "dbo");
+
             entity.Property(e => e.Name)
                 .IsRequired()
                 .IsUnicode(false);
