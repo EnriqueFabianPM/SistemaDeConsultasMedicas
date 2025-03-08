@@ -11,7 +11,7 @@ namespace WebServices.Services
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
         //Devuelve una lista de citas médicas filtradas por doctor
-        public List<AppointmentList> Appointments(int IdDoctor)
+        public List<AppointmentList> Appointments(int? IdDoctor)
         {
             List<AppointmentList> list = db.Medical_Appointments
                 .Include(p => p.fk_PatientNavigation)
@@ -49,7 +49,7 @@ namespace WebServices.Services
         }
 
         //Devuelve una lista de consultorios filtrados por municipio
-        public List<ConsultoriesList> Consultories(int IdMunicipalty)
+        public List<ConsultoriesList> Consultories(int? IdMunicipalty)
         {
             List<ConsultoriesList> list = db.Consultories
                 .Where(c => c.Active && c.fk_Municipality == IdMunicipalty)
@@ -66,7 +66,7 @@ namespace WebServices.Services
         }
 
         //Devuelve una lista de usuarios que estén relacionados a un consultorio
-        public List<DoctorList> Doctors(int IdConsultory)
+        public List<DoctorList> Doctors(int? IdConsultory)
         {
             List<DoctorList> list = db.Users
                 .Include(s => s.fk_SexNavigation)
@@ -109,6 +109,39 @@ namespace WebServices.Services
 
                 response.Success = true;
                 response.Message = "¡Se ha agendado la cita!";
+            }
+
+            return response;
+        }
+
+        //Método para Actualizar una cita médica
+        public Response UpdateAppointment(Appointment Appointment)
+        {
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (Appointment != null) 
+            {
+                var existingAppintment = db.Medical_Appointments
+                    .Where(a => Appointment.Id_Appointment == a.Id_Appointment)
+                    .FirstOrDefault();
+
+                if (existingAppintment != null) 
+                { 
+                    existingAppintment.fk_Patient = Appointment.fk_Patient;
+                    existingAppintment.fk_Doctor = Appointment.fk_Doctor;
+                    existingAppintment.fk_Status = Appointment.fk_Status;
+                    existingAppintment.Notes = Appointment.Notes;
+                
+                    db.SaveChanges();
+
+                    response.Success = true;
+                    response.Message = "¡Se ha actualizado la cita!";
+                }
+
             }
 
             return response;

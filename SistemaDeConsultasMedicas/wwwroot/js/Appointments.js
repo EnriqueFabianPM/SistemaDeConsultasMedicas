@@ -19,18 +19,10 @@ const app = createApp({
             config: {
                 IdApi: null, //Id de la API (Base de datos)
                 BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
-                Param: null, //Objeto exclusivo para ÁPIs tipo "Get" se debe colocar como string (texto)
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
             }
         };
     },
-    //computed: {
-    //    filteredConsultories() {
-    //        return this.consultories.filter(consultory => consultory.municipalityId === this.selectedMunicipality);
-    //    },
-    //    filteredDoctors() {
-    //        return this.doctors.filter(doctor => doctor.consultoryId === this.selectedConsultory);
-    //    }
-    //},
     methods: {
         onMunicipalityChange() {
             this.selectedConsultory = null;
@@ -100,7 +92,7 @@ const app = createApp({
         //Obtener los municipios
         getMunicipalities() {
             //Id para obtener los municipios
-            this.config.IdApi = 1
+            this.config.IdApi = 1;
 
             axios.post(window.callApiAsync, this.config)  
                 .then(response => {
@@ -138,17 +130,17 @@ const app = createApp({
         },
 
 
-        postApi() {
-            console.log('configuración',this.config);
+    //    postApi() {
+    //        console.log('configuración',this.config);
 
-            axios.post(window.callApiAsync, this.config)  // Enviar directamente el objeto "api"
-                .then(response => {
-                    console.log('Respuesta del método genérico',response.data);
-                })
-                .catch(error => {
-                    console.error("Error en la petición:", error);
-                });
-        }
+    //        axios.post(window.callApiAsync, this.config)  // Enviar directamente el objeto "api"
+    //            .then(response => {
+    //                console.log('Respuesta del método genérico',response.data);
+    //            })
+    //            .catch(error => {
+    //                console.error("Error en la petición:", error);
+    //            });
+    //    }
     },
     mounted() {
 
