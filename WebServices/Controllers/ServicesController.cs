@@ -10,6 +10,10 @@ using MunicipalitiesDb = WebServices.Data.Municipalities;
 using Municipalities = WebServices.Services.Municipalities;
 using System.Net.Mail;
 using System.Net;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Threading.Tasks;
 #pragma warning disable CS8600, CS8603, CS8602
 
 
@@ -19,7 +23,8 @@ namespace WebServices.Controllers
     {
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext(); 
         private readonly AppointmentsServices _AppointmentServices = new AppointmentsServices(); 
-        private readonly UserServices _UserServices = new UserServices(); 
+        private readonly UserServices _UserServices = new UserServices();
+        //private readonly EmailServices _EmailServices = new EmailServices();
 
         private readonly ILogger<ServicesController> _logger;
 
@@ -365,16 +370,6 @@ namespace WebServices.Controllers
             List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
             return Json(list);
         }
-
-        //Devuelve una respuesta con el status de su petición HttpPost
-        [HttpPost]
-        public JsonResult CreateAppointment([FromBody] Appointment newAppointment)
-        {
-            //Llama al método del servicio AppointmentServices que crea una nueva cita
-            Response response = _AppointmentServices.CreateAppointment(newAppointment);
-            return Json(response);
-        }
-
         //Servicios de UserServices -----------------------------------------------------------------------------------------
         //Devuelve la lista de usuarios registrados en la base de datos
         [HttpGet]
@@ -404,10 +399,10 @@ namespace WebServices.Controllers
         }
 
         //Manejo de servicios de correos----------------------------------------------------------------------------------------------
-        public void SendEmails(Email data)
+        public async Task SendEmails(Email data)
         {
-            // Validación básica de entrada
-            if (string.IsNullOrEmpty(data.user.Email) || string.IsNullOrEmpty(data.subjectEmail) || string.IsNullOrEmpty(data.messageEmail))
+            // Validación de entrada
+            if (string.IsNullOrEmpty(data.consultory.Email) || string.IsNullOrEmpty(data.user.Email))
             {
                 Console.WriteLine("Error: los parámetros no pueden estar vacíos.");
                 return;
@@ -415,25 +410,43 @@ namespace WebServices.Controllers
 
             try
             {
-                // Configuración del servidor SMTP
-                using (SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com"))
+                string senderEmail = data.consultory.Email; // Correo del consultorio
+                string senderPassword = "UTSC2025"; // Usa una contraseña de aplicación si tienes 2FA
+
+                // Determinar el servidor SMTP según el correo del remitente
+                string smtpServer;
+                int port = 587;
+
+                if (senderEmail.EndsWith("@gmail.com"))
                 {
-                    clienteSmtp.Port = 587;
-                    clienteSmtp.Credentials = new NetworkCredential("utconsultorio16@gmail.com", "UTSC2025"); // Usar contraseña de aplicación si tienes 2FA activado
+                    smtpServer = "smtp.gmail.com";
+                }
+                else if (senderEmail.EndsWith("@outlook.com") || senderEmail.EndsWith("@hotmail.com") || senderEmail.EndsWith("@live.com") || senderEmail.EndsWith("@virtual.utsc.edu.mx"))
+                {
+                    smtpServer = "smtp.office365.com";
+                }
+                else
+                {
+                    throw new Exception("Proveedor de correo no soportado.");
+                }
+
+                // Configurar el cliente SMTP
+                using (SmtpClient clienteSmtp = new SmtpClient(smtpServer))
+                {
+                    clienteSmtp.Port = port;
+                    clienteSmtp.Credentials = new NetworkCredential(senderEmail, senderPassword);
                     clienteSmtp.EnableSsl = true;
 
-                    // Crear el mensaje
+                    // Crear y enviar el correo
                     using (MailMessage email = new MailMessage())
                     {
-                        email.From = new MailAddress("utconsultorio16@gmail.com");
-                        email.Subject = data.subjectEmail;
-                        email.Body = data.messageEmail;
-                        email.IsBodyHtml = true; // Si el mensaje tiene formato HTML
-                        email.To.Add(data.user.Email);  // Agregar destinatario
+                        email.From = new MailAddress(senderEmail);
+                        email.Subject = data.subject;
+                        email.Body = data.body;
+                        email.IsBodyHtml = true;
+                        email.To.Add(data.user.Email);
 
-                        // Enviar correo
                         clienteSmtp.Send(email);
-
                         Console.WriteLine("Correo enviado exitosamente.");
                     }
                 }

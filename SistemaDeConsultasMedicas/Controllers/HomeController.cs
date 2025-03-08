@@ -84,7 +84,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             if(api != null)
             {
                 using var client = new HttpClient();
-                using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, api.Param != null ? (api.URL + api.Param) : api.URL);
+                using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, api.Param != "" ? (api.URL + api.Param) : api.URL);
 
                 if (api.IsPost && api.BodyParams != null)
                 {
