@@ -341,28 +341,40 @@ namespace WebServices.Controllers
 
         //Devuelve la lista de consultorios filtrada por Municipio
         [HttpGet]
-        public JsonResult GetConsultories(int IdMunicipality)
+        public JsonResult GetConsultories(int? IdMunicipality)
         {
-            //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
-            List<ConsultoriesList> list = _AppointmentServices.Consultories(IdMunicipality);
+            List<ConsultoriesList> list = new List<ConsultoriesList>();
+            if (IdMunicipality != null && IdMunicipality > 0)
+            {
+                //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
+                list = _AppointmentServices.Consultories(IdMunicipality);
+            }
             return Json(list);
         }
 
         //Devuelve la lista de Doctores filtrados por Consultorio
         [HttpGet]
-        public JsonResult GetDoctors(int IdConsultory)
+        public JsonResult GetDoctors(int? IdConsultory)
         {
-            //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
-            List<DoctorList> list = _AppointmentServices.Doctors(IdConsultory);
+            List<DoctorList> list = new List<DoctorList>();
+            if (IdConsultory != null && IdConsultory > 0) 
+            {
+                //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
+                list = _AppointmentServices.Doctors(IdConsultory);
+            }
             return Json(list);
         }
 
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
-        public JsonResult GetAppointments(int IdDoctor)
+        public JsonResult GetAppointments(int? IdDoctor)
         {
-            //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
-            List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
+            List<AppointmentList> list = new List<AppointmentList>();
+            if (IdDoctor != null && IdDoctor > 0)
+            {
+                //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
+                list = _AppointmentServices.Appointments(IdDoctor);            
+            }
             return Json(list);
         }
 
@@ -370,8 +382,17 @@ namespace WebServices.Controllers
         [HttpPost]
         public JsonResult CreateAppointment([FromBody] Appointment newAppointment)
         {
-            //Llama al método del servicio AppointmentServices que crea una nueva cita
-            Response response = _AppointmentServices.CreateAppointment(newAppointment);
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (newAppointment != null)
+            {
+                //Llama al método del servicio AppointmentServices que crea una nueva cita
+                response = _AppointmentServices.CreateAppointment(newAppointment);
+            }
             return Json(response);
         }
 
@@ -389,8 +410,17 @@ namespace WebServices.Controllers
         [HttpPost]
         public JsonResult UpdateUser(Users user)
         {
-            //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _UserServices.Update(user);
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (user != null)
+            {
+                //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
+                response = _UserServices.Update(user);            
+            }
             return Json(response);
         }
 
@@ -398,8 +428,17 @@ namespace WebServices.Controllers
         [HttpPost]
         public JsonResult DeleteUser(Users user)
         {
-            //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
-            Response response = _UserServices.Delete(user);
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (user != null)
+            {
+                //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
+                response = _UserServices.Delete(user);            
+            }
             return Json(response);
         }
 

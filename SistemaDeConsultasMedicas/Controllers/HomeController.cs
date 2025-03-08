@@ -13,9 +13,9 @@ namespace SistemaDeConsultasMedicas.Controllers
     {
         private readonly Consultories_System_Context db = new Consultories_System_Context();
 
+
         public HomeController()
         {
-
         }
 
         //Controladores de las vistas----------------------------------------------------------------------------------------
@@ -61,12 +61,11 @@ namespace SistemaDeConsultasMedicas.Controllers
                         URL = a.URL,
                         IsGet = a.IsGet,
                         IsPost = a.IsPost,
-                        Param = config.Param.ToString() ?? null,
-                        BodyParams = config.BodyParams,
+                        Param = a.IsGet ? config.Param.ToString() : "",
+                        BodyParams = a.IsPost ? config.BodyParams : null,
                     })
                     .FirstOrDefault();
             }
-
             return api;
         }
 
@@ -84,7 +83,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             if(api != null)
             {
                 using var client = new HttpClient();
-                using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, api.Param != null ? (api.URL + api.Param) : api.URL);
+                using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, (api.Param != null && api.Param != "") ? (api.URL + api.Param) : api.URL);
 
                 if (api.IsPost && api.BodyParams != null)
                 {
