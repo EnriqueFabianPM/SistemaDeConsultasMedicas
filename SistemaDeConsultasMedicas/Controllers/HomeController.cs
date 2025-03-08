@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
 using SistemaDeConsultasMedicas.Models;
 using SistemaDeConsultasMedicas.ViewModels;
+using SistemaDeConsultasMedicas.Services;
 using System.Text;
 using System.Text.Json;
 #pragma warning disable CS8600, CS8603, CS8602
@@ -15,7 +16,6 @@ namespace SistemaDeConsultasMedicas.Controllers
 
         public HomeController()
         {
-
         }
 
         //Controladores de las vistas----------------------------------------------------------------------------------------
@@ -24,22 +24,37 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
-        public IActionResult Users()
+        [HttpPost]
+        public IActionResult Users([FromBody] Config config)
+        {
+            //Buscar al usuario en la base de datos
+            object user = ConsumeApi(config);
+
+            if (user != null)
+            {
+
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Appointments([FromBody] Config config)
         {
             return View();
         }
 
-        public IActionResult Appointments()
+        [HttpPost]
+        public IActionResult Index([FromBody] Config config)
         {
             return View();
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Privacy([FromBody] Config config)
         {
             return View();
         }
@@ -61,8 +76,8 @@ namespace SistemaDeConsultasMedicas.Controllers
                         URL = a.URL,
                         IsGet = a.IsGet,
                         IsPost = a.IsPost,
-                        Param = config.Param.ToString() ?? null,
-                        BodyParams = config.BodyParams,
+                        Param = a.IsGet ? config.Param.ToString() : "",
+                        BodyParams = a.IsPost ? config.BodyParams : null,
                     })
                     .FirstOrDefault();
             }

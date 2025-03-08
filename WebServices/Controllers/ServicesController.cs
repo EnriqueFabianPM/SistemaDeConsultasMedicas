@@ -333,131 +333,93 @@ namespace WebServices.Controllers
             }
         }
 
-        //Servicios de AppointmensServices--------------------------------------------------------------------------------------
+        //Servicios de AppointmensServices---------------------------------------------------------------------------------------------------------
 
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
-        public JsonResult GetMunicipalities()
+        public List<MunicipalitiesList> GetMunicipalities()
         {
             //Llama al método del servicio AppointmentServices que consulta la lista total de municipios disponibles
             List<MunicipalitiesList> list = _AppointmentServices.Municipalities();
-            return Json(list);
+            return list;
         }
 
         //Devuelve la lista de consultorios filtrada por Municipio
         [HttpGet]
-        public JsonResult GetConsultories(int IdMunicipality)
+        public List<ConsultoriesList> GetConsultories(int IdMunicipality)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
             List<ConsultoriesList> list = _AppointmentServices.Consultories(IdMunicipality);
-            return Json(list);
+            return list;
         }
 
         //Devuelve la lista de Doctores filtrados por Consultorio
         [HttpGet]
-        public JsonResult GetDoctors(int IdConsultory)
+        public List<DoctorList> GetDoctors(int IdConsultory)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
             List<DoctorList> list = _AppointmentServices.Doctors(IdConsultory);
-            return Json(list);
+            return list;
         }
 
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
-        public JsonResult GetAppointments(int IdDoctor)
+        public List<AppointmentList> GetAppointments(int IdDoctor)
         {
             //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
             List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
-            return Json(list);
+            return list;
         }
-        //Servicios de UserServices -----------------------------------------------------------------------------------------
+        //Servicios de UserServices ---------------------------------------------------------------------------------------------------------------
         //Devuelve la lista de usuarios registrados en la base de datos
         [HttpGet]
-        public JsonResult GetUsers() 
+        public List<UsersList> GetUsers() 
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
             List<UsersList> Users = _UserServices.Users();
-            return Json(Users); //<------ retorna la lista de usuarios en formato Json
+            return Users; //<------ retorna la lista de usuarios en formato Json
         }
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public JsonResult UpdateUser(Users user)
+        public Response UpdateUser(Users user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = _UserServices.Update(user);
-            return Json(response);
+            return response;
         }
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public JsonResult DeleteUser(Users user)
+        public Response DeleteUser(Users user)
         {
             //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
             Response response = _UserServices.Delete(user);
-            return Json(response);
+            return response;
         }
 
-        //Manejo de servicios de correos----------------------------------------------------------------------------------------------
-        public async Task SendEmails(Email data)
+        //Manejo de servicios de correos-----------------------------------------------------------------------------------------------------------
+        public void SendEmails(Email data)
         {
-            // Validación de entrada
-            if (string.IsNullOrEmpty(data.consultory.Email) || string.IsNullOrEmpty(data.user.Email))
+            // Configurar el cliente SMTP
+            using (SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com"))
             {
-                Console.WriteLine("Error: los parámetros no pueden estar vacíos.");
-                return;
-            }
+                clienteSmtp.Port = 587;
+                clienteSmtp.Credentials = new NetworkCredential("martinezfloreseliasrafael123@gmail.com", "dibkiiqiviqfoufw"); // Usar contraseña de aplicación
+                clienteSmtp.EnableSsl = true;
 
-            try
-            {
-                string senderEmail = data.consultory.Email; // Correo del consultorio
-                string senderPassword = "UTSC2025"; // Usa una contraseña de aplicación si tienes 2FA
-
-                // Determinar el servidor SMTP según el correo del remitente
-                string smtpServer;
-                int port = 587;
-
-                if (senderEmail.EndsWith("@gmail.com"))
+                // Crear y enviar el correo
+                using (MailMessage email = new MailMessage())
                 {
-                    smtpServer = "smtp.gmail.com";
-                }
-                else if (senderEmail.EndsWith("@outlook.com") || senderEmail.EndsWith("@hotmail.com") || senderEmail.EndsWith("@live.com") || senderEmail.EndsWith("@virtual.utsc.edu.mx"))
-                {
-                    smtpServer = "smtp.office365.com";
-                }
-                else
-                {
-                    throw new Exception("Proveedor de correo no soportado.");
-                }
+                    email.From = new MailAddress("utconsultorio16@gmail.com");
+                    email.Subject = data.subject;
+                    email.Body = data.body;
+                    email.IsBodyHtml = true;
+                    email.To.Add(data.user.Email);
 
-                // Configurar el cliente SMTP
-                using (SmtpClient clienteSmtp = new SmtpClient(smtpServer))
-                {
-                    clienteSmtp.Port = port;
-                    clienteSmtp.Credentials = new NetworkCredential(senderEmail, senderPassword);
-                    clienteSmtp.EnableSsl = true;
-
-                    // Crear y enviar el correo
-                    using (MailMessage email = new MailMessage())
-                    {
-                        email.From = new MailAddress(senderEmail);
-                        email.Subject = data.subject;
-                        email.Body = data.body;
-                        email.IsBodyHtml = true;
-                        email.To.Add(data.user.Email);
-
-                        clienteSmtp.Send(email);
-                        Console.WriteLine("Correo enviado exitosamente.");
-                    }
+                    clienteSmtp.Send(email);
+                    Console.WriteLine("Correo enviado exitosamente.");
                 }
-            }
-            catch (SmtpException smtpEx)
-            {
-                Console.WriteLine($"Error al enviar correo (SMTP): {smtpEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al enviar correo: {ex.Message}");
             }
         }
     }
