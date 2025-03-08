@@ -1,5 +1,6 @@
 ﻿using WebServices.Data;
-using WebServices.Models; 
+using WebServices.Models;
+#pragma warning disable CS8618
 
 namespace WebServices.Models
 {
