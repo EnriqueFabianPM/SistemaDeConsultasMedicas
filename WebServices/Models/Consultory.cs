@@ -3,6 +3,6 @@
     public class Consultory
     {
         public string consultory { get; set; }
-        public string Email { get; set; }
+        public string email { get; set; }
     }
 }

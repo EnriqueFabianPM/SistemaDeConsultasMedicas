@@ -5,7 +5,6 @@ using WebServices.Data;
 using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-
 #pragma warning disable CS8618
 
 namespace WebServices.Services
@@ -36,7 +35,7 @@ namespace WebServices.Services
             return list;
         }
 
-        public Response Update(Users user)
+        public Response Update(User user)
         {
             var response = new Response();
             response.Success = false;
@@ -45,16 +44,16 @@ namespace WebServices.Services
             if(user != null)
             {
                 var row = db.Users
-                    .Where(u => u.Id_User == user.Id_User) 
+                    .Where(u => u.Id_User == user.id_User) 
                     .FirstOrDefault();  
 
                 if(row != null)
                 {
-                    row.Name = user.Name;
-                    row.Email = user.Email;
-                    row.Phone = user.Phone;
+                    row.Name = user.name;
+                    row.Email = user.email;
+                    row.Phone = user.phone;
                     row.fk_Sex = user.fk_Sex;
-                    row.Active = user.Active;
+                    row.Active = user.active;
 
                     response.Success = true;
                     response.Message = "Se ha actualizado el usuario";

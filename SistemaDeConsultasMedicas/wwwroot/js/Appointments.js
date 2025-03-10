@@ -104,24 +104,22 @@ const app = createApp({
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
-
         },
 
-        //Obtener los municipios
+        //Obtener los consultorios
         getConsultories() {
-            //Id para obtener los municipios
+
             this.config = {
-                IdApi: 2, //Id de la API (Base de datos)
-                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
-                Param: this.selectedMunicipality, //Objeto exclusivo para ÁPIs tipo "Get" se debe colocar como string (texto)
+                IdApi: 2, //Consultorios
+                BodyParams: null, //Al ser una api tipo Get se manda null
+                Param: `${this.selectedMunicipality}`, //Se transforma el valor en string
             };
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-                    console.log('Consultorios', response.data);
 
                     this.consultories = response.data;
-
+                    console.log('Consultorios', response.data);
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
