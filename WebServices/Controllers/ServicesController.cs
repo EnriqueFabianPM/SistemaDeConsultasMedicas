@@ -6,14 +6,14 @@ using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using MunicipalitiesDb = WebServices.Data.Municipalities;
-using Municipalities = WebServices.Services.Municipalities;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Threading.Tasks;
+using MunicipalitiesDb = WebServices.Data.Municipalities;
+using Municipalities = WebServices.Services.Municipalities;
 #pragma warning disable CS8600, CS8603, CS8602
 
 
@@ -21,16 +21,17 @@ namespace WebServices.Controllers
 {
     public class ServicesController : Controller
     {
+        //Instancia del contexto de los modelos de la base de datos
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext(); 
+
+        //Instancias de las clases con los servicios
         private readonly AppointmentsServices _AppointmentServices = new AppointmentsServices(); 
         private readonly UserServices _UserServices = new UserServices();
+        private readonly LoginServices _LoginServices = new LoginServices();
         //private readonly EmailServices _EmailServices = new EmailServices();
 
-        private readonly ILogger<ServicesController> _logger;
-
-        public ServicesController(ILogger<ServicesController> logger)
+        public ServicesController()
         {
-            _logger = logger;
         }
 
         public IActionResult Index()
@@ -47,104 +48,6 @@ namespace WebServices.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        //Método que valida las credenciales que manda el cliente
-        [HttpPost]
-        public Response Login(Users user)
-        {
-            Response response = new Response();
-            response.Success = false;
-
-            //valida que el usuario sea diferente a null
-            if (user != null)
-            {
-                //Busca al usuario en la base de datos
-                var row = db.Users
-                    .Where(u => u.Email == user.Email) 
-                    .FirstOrDefault();
-
-                //valida que el usuario sea diferente a null
-                if (row != null)
-                {
-                    //valida que la contraseña del usuario enviado sean las mismas que del usuario encontrado
-                    bool success = user.Password == row.Password;
-
-                    if (success)
-                    {
-                        //Respuesta para el cliente y manejo de alertas
-                        response.Success = true;
-
-                        //propiedad para validar que el usuario tenga sesión iniciada
-                        row.Login = true;
-
-                        //guardamos los cambios en la base de datos
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        //si "success" es false entonces mandamos este mensaje al template
-                        response.Message = "La contraseña es incorrecta";
-                    }
-
-
-                }
-            }
-            return response;
-        }
-
-        //Método para crear un usuario
-        [HttpPost]
-        public Response CreateUser(Users user)
-        {
-
-            Response response = new Response();
-
-            //Por defecto esta propiedad será False
-            response.Success = false;
-
-            //Manejo en caso de nulos
-            if (user != null)
-            {
-                var row = db.Users
-                    .Where(e => e.Email == user.Email)
-                    .FirstOrDefault();
-
-                /*
-                 En caso de que no se encuentre un usuario
-                 se crea el objeto en la base de datos.
-                 */
-                if (row == null)
-                {
-
-                    //Se crea el objeto con las clases de la base de datos
-                    Users NewUser = new Users
-                    {
-                        Name = user.Name,
-                        Email = user.Email,
-                        Password = user.Password,
-                        Phone = user.Phone,
-                        fk_Sex = user.fk_Sex,
-                        fk_Consultory = user.fk_Consultory,
-                        fk_Role = 1,
-                        fk_Schedule = user.fk_Schedule,
-                        fk_Type = user.fk_Type,
-                        Login = false,
-                    };
-
-                    //Se manda esta propiedad en caso de querer utilizarla para activar una alerta Success exitosa
-                    response.Success = true;
-
-                    db.Users.Add(NewUser);
-                    db.SaveChanges();
-                }
-                else
-                {
-                    //De lo contrario, Se añade este mensaje para advertir que ya existe un usuario con ese Email.
-                    response.Message = $"Ya existe un usuario registrado con este email '{user.Email}', favor de introducir un email diferente";
-                }
-            }
-            return response;
         }
 
         [HttpPost]
@@ -173,7 +76,6 @@ namespace WebServices.Controllers
             {
                 //lista vacía que alamcenará los municipios nuevos que encuentre en la API
                 List<MunicipalitiesDb> newMunicipalities = new List<MunicipalitiesDb>();
-
 
                 foreach (var municipality in municipalities)
                 {
@@ -318,7 +220,6 @@ namespace WebServices.Controllers
                                 }
                             }
                         }
-
                     }
 
                     if (newConsultories.Any())
@@ -327,14 +228,38 @@ namespace WebServices.Controllers
                     }
 
                     db.SaveChanges();
-
                 }
-
             }
         }
 
-        //Servicios de AppointmensServices---------------------------------------------------------------------------------------------------------
+        //Servicios de LoginServices---------------------------------------------------------------------------------------------------------------
+        //Validar las credenciales del usuario
+        [HttpPost]
+        public User Login([FromBody] Credentials credentials)
+        {
+            //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
+            User user = _LoginServices.Login(credentials);
+            return user;
+        }
 
+        //Cerrar Sesión
+        [HttpPost]
+        public Response Logout([FromBody] Credentials credentials)
+        {
+            //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
+            Response response = _LoginServices.Logout(credentials);
+            return response;
+        }
+
+        [HttpPost]
+        public Response Register([FromBody] User user)
+        {
+            //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
+            Response response = _LoginServices.CreateUser(user);
+            return response;
+        }
+
+        //Servicios de AppointmensServices---------------------------------------------------------------------------------------------------------
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
         public List<MunicipalitiesList> GetMunicipalities()
@@ -377,12 +302,12 @@ namespace WebServices.Controllers
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
             List<UsersList> Users = _UserServices.Users();
-            return Users; //<------ retorna la lista de usuarios en formato Json
+            return Users;
         }
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public Response UpdateUser(Users user)
+        public Response UpdateUser([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = _UserServices.Update(user);
@@ -391,7 +316,7 @@ namespace WebServices.Controllers
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public Response DeleteUser(Users user)
+        public Response DeleteUser([FromBody] Users user)
         {
             //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
             Response response = _UserServices.Delete(user);
@@ -411,14 +336,14 @@ namespace WebServices.Controllers
                 // Crear y enviar el correo
                 using (MailMessage email = new MailMessage())
                 {
-                    email.From = new MailAddress("utconsultorio16@gmail.com");
+                    email.From = new MailAddress("martinezfloreseliasrafael123@gmail.com");
                     email.Subject = data.subject;
                     email.Body = data.body;
                     email.IsBodyHtml = true;
-                    email.To.Add(data.user.Email);
+                    email.To.Add(data.user.email);
 
+                    //Mandar el correo
                     clienteSmtp.Send(email);
-                    Console.WriteLine("Correo enviado exitosamente.");
                 }
             }
         }

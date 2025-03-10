@@ -1,6 +1,6 @@
-﻿const { createApp } = Vue;
+﻿const { index } = Vue;
 
-const app = createApp({
+const app = index({
     data() {
         return {
 

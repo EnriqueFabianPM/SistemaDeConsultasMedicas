@@ -6,6 +6,8 @@ using SistemaDeConsultasMedicas.ViewModels;
 using SistemaDeConsultasMedicas.Services;
 using System.Text;
 using System.Text.Json;
+using System.Net;
+using Authorization = SistemaDeConsultasMedicas.Services.Authorization;
 #pragma warning disable CS8600, CS8603, CS8602
 
 namespace SistemaDeConsultasMedicas.Controllers
@@ -24,37 +26,29 @@ namespace SistemaDeConsultasMedicas.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Users([FromBody] Config config)
+        public IActionResult Users(Authorization Authorization)
         {
-            //Buscar al usuario en la base de datos
-            object user = ConsumeApi(config);
+            if (Authorization != null && Authorization.Success) return View(Authorization.User);
+            else return StatusCode(403);
+        }
 
-            if (user != null)
-            {
+        public IActionResult Appointments(Authorization Authorization)
+        {
+            if (Authorization != null && Authorization.Success) return View(Authorization.User);
+            else return StatusCode(403);
+        }
 
-                return View();
-            }
-            else
+        [HttpPost]
+        public IActionResult Index([FromBody] Authorization authorization)
+        {
+            if (authorization == null || !authorization.Success)
             {
                 return StatusCode(403);
             }
-        }
 
-        [HttpPost]
-        public IActionResult Appointments([FromBody] Config config)
-        {
-            return View();
+            return View(authorization.User); // Retorna la vista con el usuario
         }
-
-        [HttpPost]
-        public IActionResult Index([FromBody] Config config)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Privacy([FromBody] Config config)
+        public IActionResult Privacy()
         {
             return View();
         }
@@ -76,7 +70,7 @@ namespace SistemaDeConsultasMedicas.Controllers
                         URL = a.URL,
                         IsGet = a.IsGet,
                         IsPost = a.IsPost,
-                        Param = a.IsGet ? config.Param.ToString() : "",
+                        Param = a.IsGet ? (config.Param != null ? config.Param : "") : "",
                         BodyParams = a.IsPost ? config.BodyParams : null,
                     })
                     .FirstOrDefault();

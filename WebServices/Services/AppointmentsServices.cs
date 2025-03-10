@@ -99,7 +99,7 @@ namespace WebServices.Services
                     fk_Doctor = Appointment.fk_Doctor,
                     fk_Patient = Appointment.fk_Patient,
                     fk_Schedule = Appointment.fk_Schedule,
-                    Notes = Appointment.Notes,
+                    Notes = Appointment.notes,
                     Date = DateTime.Now,
                     fk_Status = 1,
                 };
@@ -126,7 +126,7 @@ namespace WebServices.Services
             if (Appointment != null) 
             {
                 var existingAppintment = db.Medical_Appointments
-                    .Where(a => Appointment.Id_Appointment == a.Id_Appointment)
+                    .Where(a => Appointment.id_Appointment == a.Id_Appointment)
                     .FirstOrDefault();
 
                 if (existingAppintment != null) 
@@ -134,7 +134,7 @@ namespace WebServices.Services
                     existingAppintment.fk_Patient = Appointment.fk_Patient;
                     existingAppintment.fk_Doctor = Appointment.fk_Doctor;
                     existingAppintment.fk_Status = Appointment.fk_Status;
-                    existingAppintment.Notes = Appointment.Notes;
+                    existingAppintment.Notes = Appointment.notes;
                 
                     db.SaveChanges();
 
