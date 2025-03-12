@@ -7,15 +7,20 @@
     @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
 </head>
 
-<div>
+<div id="indexApp">
     <h1 class="display-4">Bienvenido</h1>
-    <p>{{user.name}}</p>
+    <p>{{user?.name}}</p>
 </div>
 
 @section scripts{
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
-        window.Index = '@Url.Action("Index", "Home")';
+        window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+        window.login = '@Url.Action("Login", "Home")';
         window.user = @Html.Raw(Json.Serialize(ViewBag.User));
         // ...
     </script>

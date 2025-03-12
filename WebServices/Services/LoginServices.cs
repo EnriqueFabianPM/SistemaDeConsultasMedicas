@@ -85,10 +85,11 @@ namespace WebServices.Services
 
                 if (row != null) 
                 { 
-                    row .Login = false;
+                    row.Login = false;
                     db.SaveChanges();
 
                     response.Message = "Se ha cerrado sesión";
+                    response.Success = true;
                 }
             }
             return response;

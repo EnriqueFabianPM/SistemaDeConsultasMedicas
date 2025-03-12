@@ -8,22 +8,63 @@ const app = createApp({
                 User: null,
             },
 
-            user: window.user,
+            //Modelo para credenciales del usuario
+            credentials: {
+                Email: "",
+                Password: "",
+            },
+
+            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            config: {
+                IdApi: null, //Id de la API (Base de datos)
+                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+            },
+
+            user: {},
         };
     },
     methods: {
         //Aquí se crearán los métodos js
-        createUser() {
+        logout() {
+            this.credentials = {
+                Email: user.email,
+                Password: "",
+            }; 
 
-            axios.post(createUser, {
+            this.config = {
+                IdApi: 10,
+                BodyParams: this.credentials,
+                Param: null,
+            };
+            console.log('Se accedió a logout');
 
-            })
+            axios.post(window.callApiAsync, this.config)
                 .then(response => {
 
-                    console.log(response.data, 'respuesta del método');
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            window.location.href = window.login;
+                        })
+
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se ha podido cerrar sesión",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
                 })
                 .catch(error => {
-                    console.log(error, 'Mensaje de error')
+                    console.error("Error en la petición:", error);
                 });
         },
     },
@@ -34,6 +75,8 @@ const app = createApp({
                 Success: true,
                 User: null,
             };
+
+            this.user = window.user;
         }
     }
 });

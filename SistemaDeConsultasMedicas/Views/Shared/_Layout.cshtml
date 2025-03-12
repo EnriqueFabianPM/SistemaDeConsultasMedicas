@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SistemaDeConsultasMedicas</title>
+    <title>@ViewData["Title"] - App</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SistemaDeConsultasMedicas.styles.css" asp-append-version="true" />
@@ -21,7 +21,7 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" v-if="Authorization.Success">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">{{"Login"}}</a>
+                                <a class="nav-link text-dark" v-on:click="logout()">{{"Cerrar Sesión"}}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -29,7 +29,7 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Index</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" v-if="user?.fk_Role === 1">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Users</a>
                             </li>
                             <li class="nav-item">
@@ -52,13 +52,13 @@
             </div>
         </footer>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-
+    @section scripts{
+        <script src="~/js/Layout.js"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
