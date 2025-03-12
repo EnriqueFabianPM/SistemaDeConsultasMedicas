@@ -59,8 +59,7 @@ const app = createApp({
 
                     if (response.data.id_User != 0) {
 
-
-                        this.goToIndex(response.data);
+                        this.goToIndex(response.data.id_User);
 
                     } else {
                         Swal.fire({
@@ -91,27 +90,10 @@ const app = createApp({
                 });
         },
 
-        goToIndex(user) {
-            this.Authorization = {
-                Success: true,
-                User: user,
-            };
+        goToIndex(idUser) {
+            window.location.href = `${window.Index}?id=${idUser}`;
+        }
 
-            fetch(window.goToIndex, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(this.Authorization),
-            })
-                .then(response => response.text()) // Leer respuesta como texto
-                .then(html => {
-                    document.open();
-                    document.write(html); // Reemplaza el contenido de la página con la nueva vista
-                    document.close();
-                })
-                .catch(error => console.error("Error en la autorización:", error));
-        },
     },
     mounted() {
 

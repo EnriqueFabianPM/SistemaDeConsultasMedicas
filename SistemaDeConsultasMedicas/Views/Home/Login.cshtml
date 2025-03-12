@@ -62,12 +62,12 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    @*Añade tus scripts en la carpeta "js" en wwwroot*@
-    <script src="~/js/Login.js"></script>
-
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
         window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
-        window.goToIndex = '@Url.Action("Index", "Home")';
+        window.Index = '@Url.Action("Index", "Home")';
     </script>
+    @*Añade tus scripts en la carpeta "js" en wwwroot*@
+    <script src="~/js/Login.js"></script>
+
 }

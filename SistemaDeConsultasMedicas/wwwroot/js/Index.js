@@ -1,27 +1,14 @@
-﻿const { index } = Vue;
+﻿const { createApp } = Vue;
 
-const app = index({
+const app = createApp({
     data() {
         return {
+            Authorization: {
+                Success: false,
+                User: null,
+            },
 
-            /*
-             Aquí vas a declarar los modelos de vue
-             también hice ejemplos de cómo debes
-             inicializar los modelos dependiendo el 
-             tipo de cosa que quieras consumir de 
-             una API.
-
-             También para hacer modelos reactivos que
-             requieras para mostrar alertas o pasos
-
-             estos ejemplos se pueden eliminar para cambiarlos 
-             por los que sean necesarios, solo son ejemplos
-            */
-            Message: 'Hola desde modelo de Vue',
-            Array: [],
-            Object: {},
-            Int: 0,
-            boolean: false,
+            user: window.user,
         };
     },
     methods: {
@@ -41,9 +28,13 @@ const app = index({
         },
     },
     mounted() {
-
-        //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
-        console.log('Hola Mundo desde Vue (consola)');
+        console.log(window.user); // Ahora es un objeto JSON usable
+        if (window.user.id_User) {
+            this.Authorization = {
+                Success: true,
+                User: null,
+            };
+        }
     }
 });
 app.mount('#app');

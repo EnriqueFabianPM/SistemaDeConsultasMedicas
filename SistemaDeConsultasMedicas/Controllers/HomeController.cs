@@ -21,41 +21,94 @@ namespace SistemaDeConsultasMedicas.Controllers
         }
 
         //Controladores de las vistas----------------------------------------------------------------------------------------
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        public IActionResult Users(Authorization Authorization)
+        [HttpGet]
+        public async Task<IActionResult> Users(int id)
         {
-            if (Authorization != null && Authorization.Success) return View(Authorization.User);
-            else return StatusCode(403);
-        }
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
 
-        public IActionResult Appointments(Authorization Authorization)
-        {
-            if (Authorization != null && Authorization.Success) return View(Authorization.User);
-            else return StatusCode(403);
-        }
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
 
-        [HttpPost]
-        public IActionResult Index([FromBody] Authorization authorization)
-        {
-            if (authorization == null || !authorization.Success)
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
             {
                 return StatusCode(403);
             }
-
-            return View(authorization.User); // Retorna la vista con el usuario
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Appointments(int id)
+        {
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
+
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
+
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(int id)
+        {
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
+
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
+
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+        }
+
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
         }
 
-
         //Método para conseguir las urls de las Apis que se vayan a consumir
-        [HttpGet]
         public Api FetchAPI(Config config)
         {
             Api api = new Api();
@@ -118,7 +171,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             }
 
             // Devuelve el objeto deserializado como JSON
-            return Json(result);
+            return Json(result == null ? null : result);
         }
     }
 }
