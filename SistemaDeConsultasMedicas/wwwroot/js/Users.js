@@ -1,49 +1,42 @@
 ﻿const { createApp } = Vue;
 
-const app = createApp({
-    data() {
-        return {
+// Si no, asegúrate de incluir axios via CDN en el HTML:
+// <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-            /*
-             Aquí vas a declarar los modelos de vue
-             también hice ejemplos de cómo debes
-             inicializar los modelos dependiendo el 
-             tipo de cosa que quieras consumir de 
-             una API.
-
-             También para hacer modelos reactivos que
-             requieras para mostrar alertas o pasos
-
-             estos ejemplos se pueden eliminar para cambiarlos 
-             por los que sean necesarios, solo son ejemplos
-            */
-            Message: 'Hola desde modelo de Vue',
-            Array: [],
-            Object: {},
-            Int: 0,
-            boolean: false,
-        };
-    },
-    methods: {
-        //Aquí se crearán los métodos js
-        createUser() {
-
-            axios.post(createUser, {
-
-            })
-                .then(response => {
-
-                    console.log(response.data, 'respuesta del método');
-                })
-                .catch(error => {
-                    console.log(error, 'Mensaje de error')
-                });
-        },
+// Datos y lógica de Vue.js
+const app = new Vue({
+    el: '#app',
+    data: {
+        users: [] // Inicialmente vacío
     },
     mounted() {
-
-        //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
-        console.log('Hola Mundo desde Vue (consola)');
+        // Llamar a la función para obtener datos del backend
+        this.fetchUsers();
+    },
+    methods: {
+        // Función para obtener datos del backend
+        fetchUsers() {
+            axios.get('http://localhost:3000/api/users') // Cambia la URL por la de tu backend
+                .then(response => {
+                    this.users = response.data; // Asignar los datos a la variable users
+                    this.initializeDataTable(); // Inicializar DataTables después de obtener los datos
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    alert('No se pudieron cargar los datos. Por favor, inténtalo de nuevo.');
+                });
+        },
+        // Función para inicializar DataTables
+        initializeDataTable() {
+            $('#users-table').DataTable({
+                paging: true, // Habilitar paginación
+                searching: true, // Habilitar búsqueda
+                ordering: true, // Habilitar ordenación
+                info: true, // Mostrar información de paginación
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' // Español
+                }
+            });
+        }
     }
 });
-app.mount('#app');

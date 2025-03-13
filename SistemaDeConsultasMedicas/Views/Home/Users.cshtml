@@ -4,35 +4,46 @@
 }
 
 <head>
-    @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Usuarios con DataTables</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="Users.css">
 </head>
 
-<div id="app">
-    <h1 class="display-4">Iniciar Sesión</h1>
-    @* <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
-
-    <!--Cuando quieras usar una variable de vue en el Template usa "{{ NombreDelModelo }}"-->
-    <div v-for="i in Message">
-        <p>Letra: <strong>{{i !== ' ' ? i : '~'}}</strong></p>
+<body>
+    <div id="app">
+        <h1>Lista de Usuarios</h1>
+        <div class="table-container">
+            <table id="users-table" class="display">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Activo</th>
+                        <th>Roles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users" :key="user.email">
+                        <td>{{ user.nombre }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.telefono }}</td>
+                        <td>{{ user.active ? 'Sí' : 'No' }}</td>
+                        <td>{{ user.roles.join(', ') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-</div>
-
-@section scripts{
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    @*Añade tus scripts en la carpeta "js" en wwwroot*@
-    <script src="~/js/Users.js"></script>
-
-    @*Aquí vas a consumir las APIs que vayas a utilizar*@
-    <script>
-
-        /*este es un ejemplo:
-        ("Method", "Controller")
-        en el primer espacio apuntas al método que quieres consumir 
-        y en el segundo al controlador donde está el método*/
-
-        const createUser = '@Url.Action("CreateUser", "Home")'; 
-        // ...
-    </script>
-}
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <!-- jQuery (requerido por DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Nuestro archivo JS -->
+    <script src="Users.js"></script>
+</body>
