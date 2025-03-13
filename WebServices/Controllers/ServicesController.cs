@@ -235,92 +235,101 @@ namespace WebServices.Controllers
         //Servicios de LoginServices---------------------------------------------------------------------------------------------------------------
         //Validar las credenciales del usuario
         [HttpPost]
-        public User Login([FromBody] Credentials credentials)
+        public ActionResult Login([FromBody] Credentials credentials)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             User user = _LoginServices.Login(credentials);
-            return user;
+            return Json(user == null ? null : user);
         }
 
         //Cerrar Sesión
         [HttpPost]
-        public Response Logout([FromBody] Credentials credentials)
+        public ActionResult Logout([FromBody] Credentials credentials)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = _LoginServices.Logout(credentials);
-            return response;
+            return Json(!response.Success ? null : response);
         }
 
         [HttpPost]
-        public Response Register([FromBody] User user)
+        public ActionResult Register([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = _LoginServices.CreateUser(user);
-            return response;
+            return Json(!response.Success ? null : response);
         }
 
         //Servicios de AppointmensServices---------------------------------------------------------------------------------------------------------
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
-        public List<MunicipalitiesList> GetMunicipalities()
+        public ActionResult GetMunicipalities()
         {
             //Llama al método del servicio AppointmentServices que consulta la lista total de municipios disponibles
             List<MunicipalitiesList> list = _AppointmentServices.Municipalities();
-            return list;
+            return Json(list.Count() == 0 ? null : list);
         }
 
         //Devuelve la lista de consultorios filtrada por Municipio
         [HttpGet]
-        public List<ConsultoriesList> GetConsultories(int IdMunicipality)
+        public ActionResult GetConsultories(int IdMunicipality)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
             List<ConsultoriesList> list = _AppointmentServices.Consultories(IdMunicipality);
-            return list;
+            return Json(list.Count() == 0 ? null : list);
         }
 
         //Devuelve la lista de Doctores filtrados por Consultorio
         [HttpGet]
-        public List<DoctorList> GetDoctors(int IdConsultory)
+        public ActionResult GetDoctors(int IdConsultory)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
             List<DoctorList> list = _AppointmentServices.Doctors(IdConsultory);
-            return list;
+            return Json(list.Count() == 0 ? null : list);
         }
 
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpGet]
-        public List<AppointmentList> GetAppointments(int IdDoctor)
+        public ActionResult GetAppointments(int IdDoctor)
         {
             //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
             List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
-            return list;
+            return Json(list.Count() == 0 ? null : list);
         }
         //Servicios de UserServices ---------------------------------------------------------------------------------------------------------------
         //Devuelve la lista de usuarios registrados en la base de datos
         [HttpGet]
-        public List<UsersList> GetUsers() 
+        public ActionResult GetUsers() 
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
-            List<UsersList> Users = _UserServices.Users();
-            return Users;
+            List<UsersList> list = _UserServices.Users();
+            return Json(list.Count() == 0 ? null : list);
+        }
+
+        //Devuelve un usuario registrados en la base de datos
+        [HttpGet]
+        public ActionResult GetUser(int id) 
+        {
+            //Llama al método del servicio UserServices que devuelve la lista total de usuarios
+            User user = _UserServices.User(id);
+            return Json(user == null ? null : user);
         }
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public Response UpdateUser([FromBody] User user)
+        public ActionResult UpdateUser([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = _UserServices.Update(user);
-            return response;
+            return Json(!response.Success ? null : response);
         }
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public Response DeleteUser([FromBody] Users user)
+        public ActionResult DeleteUser([FromBody] Users user)
         {
             //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
             Response response = _UserServices.Delete(user);
-            return response;
+            return Json(!response.Success ? null : response);
         }
 
         //Manejo de servicios de correos-----------------------------------------------------------------------------------------------------------

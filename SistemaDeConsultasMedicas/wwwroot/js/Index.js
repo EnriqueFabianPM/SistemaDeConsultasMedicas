@@ -1,49 +1,83 @@
-﻿const { index } = Vue;
+﻿const { createApp } = Vue;
 
-const app = index({
+const app = createApp({
     data() {
         return {
+            Authorization: {
+                Success: false,
+                User: null,
+            },
 
-            /*
-             Aquí vas a declarar los modelos de vue
-             también hice ejemplos de cómo debes
-             inicializar los modelos dependiendo el 
-             tipo de cosa que quieras consumir de 
-             una API.
+            //Modelo para credenciales del usuario
+            credentials: {
+                Email: "",
+                Password: "",
+            },
 
-             También para hacer modelos reactivos que
-             requieras para mostrar alertas o pasos
+            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            config: {
+                IdApi: null, //Id de la API (Base de datos)
+                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+            },
 
-             estos ejemplos se pueden eliminar para cambiarlos 
-             por los que sean necesarios, solo son ejemplos
-            */
-            Message: 'Hola desde modelo de Vue',
-            Array: [],
-            Object: {},
-            Int: 0,
-            boolean: false,
+            user: {},
         };
     },
     methods: {
         //Aquí se crearán los métodos js
-        createUser() {
+        logout() {
+            this.credentials = {
+                Email: user.email,
+                Password: "",
+            }; 
 
-            axios.post(createUser, {
+            this.config = {
+                IdApi: 10,
+                BodyParams: this.credentials,
+                Param: null,
+            };
+            console.log('Se accedió a logout');
 
-            })
+            axios.post(window.callApiAsync, this.config)
                 .then(response => {
 
-                    console.log(response.data, 'respuesta del método');
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            window.location.href = window.login;
+                        })
+
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se ha podido cerrar sesión",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
                 })
                 .catch(error => {
-                    console.log(error, 'Mensaje de error')
+                    console.error("Error en la petición:", error);
                 });
         },
     },
     mounted() {
+        console.log(window.user); // Ahora es un objeto JSON usable
+        if (window.user.id_User) {
+            this.Authorization = {
+                Success: true,
+                User: null,
+            };
 
-        //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
-        console.log('Hola Mundo desde Vue (consola)');
+            this.user = window.user;
+        }
     }
 });
 app.mount('#app');

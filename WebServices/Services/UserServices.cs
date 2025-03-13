@@ -33,6 +33,27 @@ namespace WebServices.Services
                 .ToList();
 
             return list;
+        } 
+
+        public User User(int id)
+        {
+                var user = db.Users
+                .Include(s => s.fk_SexNavigation)
+                .Include(r => r.fk_RoleNavigation)
+                .Where(u => u.Id_User == id && u.Login)
+                .Select(u => new User
+                {
+                    id_User = u.Id_User,
+                    name = u.Name,
+                    email = u.Email,
+                    phone = u.Phone,
+                    sex = u.fk_SexNavigation.Name,
+                    role = u.fk_RoleNavigation.Name,
+                    active = u.Active
+                })
+                .FirstOrDefault();
+
+            return user;
         }
 
         public Response Update(User user)
