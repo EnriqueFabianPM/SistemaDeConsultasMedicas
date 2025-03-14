@@ -1,0 +1,88 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.table-container {
+    background: rgba(255, 255, 255, 0.8); /* Fondo transparente */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    border-radius: 15px; /* Esquinas redondeadas */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 30px; /* Más espacio interno */
+    width: 95%; /* Más ancho */
+    max-width: 1400px; /* Ancho máximo aumentado */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 16px; /* Más espacio en las celdas */
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    font-size: 16px; /* Tamaño de fuente más grande */
+}
+
+tr:nth-child(even) {
+    background-color: rgba(242, 242, 242, 0.7); /* Fondo semi-transparente */
+}
+
+tr:hover {
+    background-color: rgba(221, 221, 221, 0.7); /* Fondo semi-transparente al hacer hover */
+}
+
+td {
+    border-bottom: 1px solid rgba(221, 221, 221, 0.5); /* Borde semi-transparente */
+    font-size: 14px; /* Tamaño de fuente más grande */
+}
+
+/* Estilos personalizados para DataTables */
+.dataTables_wrapper {
+    width: 100%;
+}
+
+.dataTables_filter input {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px; /* Más espacio en el input de búsqueda */
+    font-size: 14px;
+}
+
+.dataTables_length select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px; /* Más espacio en el select */
+    font-size: 14px;
+}
+
+.dataTables_paginate .paginate_button {
+    padding: 8px 12px; /* Más espacio en los botones de paginación */
+    margin: 0 4px; /* Más espacio entre botones */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+    .dataTables_paginate .paginate_button:hover {
+        background: #007BFF;
+        color: white;
+    }
