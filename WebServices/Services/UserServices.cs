@@ -48,6 +48,7 @@ namespace WebServices.Services
                     email = u.Email,
                     phone = u.Phone,
                     sex = u.fk_SexNavigation.Name,
+                    fk_Role = u.fk_Role,
                     role = u.fk_RoleNavigation.Name,
                     active = u.Active
                 })

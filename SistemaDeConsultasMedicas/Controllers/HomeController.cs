@@ -102,12 +102,6 @@ namespace SistemaDeConsultasMedicas.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         //Método para conseguir las urls de las Apis que se vayan a consumir
         public Api FetchAPI(Config config)
         {

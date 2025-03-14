@@ -19,8 +19,17 @@
 
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
+
+        //Consumir apis
         window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+
+        //redireccionar a vistas
         window.login = '@Url.Action("Login", "Home")';
+        window.appointments = '@Url.Action("Appointments", "Home")';
+        window.users = '@Url.Action("Users", "Home")';
+        window.index = '@Url.Action("Index", "Home")';
+
+        //objeto Usuario
         window.user = @Html.Raw(Json.Serialize(ViewBag.User));
         // ...
     </script>

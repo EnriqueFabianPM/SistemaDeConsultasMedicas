@@ -19,20 +19,27 @@
 </div>
 
 @section scripts{
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     @*Añade tus scripts en la carpeta "js" en wwwroot*@
-    <script src="~/js/Users.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
+        //Consumir apis
+        window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
 
-        /*este es un ejemplo:
-        ("Method", "Controller")
-        en el primer espacio apuntas al método que quieres consumir 
-        y en el segundo al controlador donde está el método*/
+        //redireccionar a vistas
+        window.login = '@Url.Action("Login", "Home")';
+        window.appointments = '@Url.Action("Appointments", "Home")';
+        window.users = '@Url.Action("Users", "Home")';
+        window.index = '@Url.Action("Index", "Home")';
 
-        const createUser = '@Url.Action("CreateUser", "Home")'; 
+        //objeto Usuario
+        window.user = @Html.Raw(Json.Serialize(ViewBag.User));
         // ...
     </script>
+    <script src="~/js/Users.js"></script>
+
 }

@@ -25,12 +25,24 @@ const app = createApp({
         };
     },
     methods: {
+        Index(idUser) {
+            window.location.href = `${window.index}?id=${idUser}`;
+        },
+
+        Appointments(idUser) {
+            window.location.href = `${window.appointments}?id=${idUser}`;
+        },
+
+        Users(idUser) {
+            window.location.href = `${window.users}?id=${idUser}`;
+        },
+
         //Aquí se crearán los métodos js
         logout() {
             this.credentials = {
                 Email: user.email,
                 Password: "",
-            }; 
+            };
 
             this.config = {
                 IdApi: 10,
@@ -49,6 +61,7 @@ const app = createApp({
                             icon: "success",
                             timer: 1500,
                             showConfirmButton: false,
+                        //    allowClickOutside: false,
                         }).then(() => {
                             window.location.href = window.login;
                         })
@@ -67,6 +80,7 @@ const app = createApp({
                     console.error("Error en la petición:", error);
                 });
         },
+
     },
     mounted() {
         console.log(window.user); // Ahora es un objeto JSON usable
