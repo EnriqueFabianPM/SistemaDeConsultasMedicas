@@ -11,32 +11,24 @@
 <body>
     <div id="app">
         <header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Consultas Medicas</a>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between p-2">
+                <div class="d-flex">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Login">Consultas Medicas</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" v-if="Authorization.Success">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" v-on:click="logout()">{{"Cerrar Sesión"}}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Index</a>
-                            </li>
-                            <li class="nav-item" v-if="user?.fk_Role === 1">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Appointments">Appointments</a>
-                            </li>
-                        </ul>
+                        <div>
+                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Index(user?.id_User)">Index</a>
+                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Users(user?.id_User)" v-if="user?.fk_Role === 1">Users</a>
+                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Appointments(user?.id_User)">Appointments</a>
+                        </div>
                     </div>
+                </div>
+                <div class="d-flex justify-content-center" v-if="Authorization.Success">
+                    <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
+                    <button class="btn btn-outline-secondary" v-on:click="logout()">{{"Cerrar Sesión"}}</button>
                 </div>
             </nav>
         </header>

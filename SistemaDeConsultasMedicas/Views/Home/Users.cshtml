@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Login";
 }
@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="Users.css">
 </head>
 
-<body>
     <div id="app">
         <h1>Lista de Usuarios</h1>
         <div class="table-container">
@@ -38,12 +37,28 @@
         </div>
     </div>
 
-    <!-- Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <!-- jQuery (requerido por DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <!-- Nuestro archivo JS -->
-    <script src="Users.js"></script>
-</body>
+@section scripts{
+
+    @*Añade tus scripts en la carpeta "js" en wwwroot*@
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @*Aquí vas a consumir las APIs que vayas a utilizar*@
+    <script>
+        //Consumir apis
+        window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+
+        //redireccionar a vistas
+        window.login = '@Url.Action("Login", "Home")';
+        window.appointments = '@Url.Action("Appointments", "Home")';
+        window.users = '@Url.Action("Users", "Home")';
+        window.index = '@Url.Action("Index", "Home")';
+
+        //objeto Usuario
+        window.user = @Html.Raw(Json.Serialize(ViewBag.User));
+        // ...
+    </script>
+    <script src="~/js/Users.js"></script>
+
+}

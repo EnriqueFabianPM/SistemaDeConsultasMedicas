@@ -1,42 +1,95 @@
-﻿const { createApp } = Vue;
+const { createApp } = Vue;
+const app = createApp({
+    data() {
+        return {
+            Authorization: {
+                Success: false,
+                User: null,
+            },
 
-// Si no, asegúrate de incluir axios via CDN en el HTML:
-// <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            //Modelo para credenciales del usuario
+            credentials: {
+                Email: "",
+                Password: "",
+            },
 
-// Datos y lógica de Vue.js
-const app = new Vue({
-    el: '#app',
-    data: {
-        users: [] // Inicialmente vacío
-    },
-    mounted() {
-        // Llamar a la función para obtener datos del backend
-        this.fetchUsers();
+            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            config: {
+                IdApi: null, //Id de la API (Base de datos)
+                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+            },
+
+            user: {},
+        };
     },
     methods: {
-        // Función para obtener datos del backend
-        fetchUsers() {
-            axios.get('http://localhost:3000/api/users') // Cambia la URL por la de tu backend
+        Index(idUser) {
+            window.location.href = `${window.index}?id=${idUser}`;
+        },
+
+        Appointments(idUser) {
+            window.location.href = `${window.appointments}?id=${idUser}`;
+        },
+
+        Users(idUser) {
+            window.location.href = `${window.users}?id=${idUser}`;
+        },
+
+        //Aquí se crearán los métodos js
+        logout() {
+            this.credentials = {
+                Email: user.email,
+                Password: "",
+            };
+
+            this.config = {
+                IdApi: 10,
+                BodyParams: this.credentials,
+                Param: null,
+            };
+            console.log('Se accedió a logout');
+
+            axios.post(window.callApiAsync, this.config)
                 .then(response => {
-                    this.users = response.data; // Asignar los datos a la variable users
-                    this.initializeDataTable(); // Inicializar DataTables después de obtener los datos
+
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        //    allowClickOutside: false,
+                        }).then(() => {
+                            window.location.href = window.login;
+                        })
+
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se ha podido cerrar sesión",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
                 })
                 .catch(error => {
-                    console.error('Error al obtener los datos:', error);
-                    alert('No se pudieron cargar los datos. Por favor, inténtalo de nuevo.');
+                    console.error("Error en la petición:", error);
                 });
         },
-        // Función para inicializar DataTables
-        initializeDataTable() {
-            $('#users-table').DataTable({
-                paging: true, // Habilitar paginación
-                searching: true, // Habilitar búsqueda
-                ordering: true, // Habilitar ordenación
-                info: true, // Mostrar información de paginación
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' // Español
-                }
-            });
+
+    },
+    mounted() {
+        console.log(window.user); // Ahora es un objeto JSON usable
+        if (window.user?.id_User) {
+            this.Authorization = {
+                Success: true,
+                User: null,
+            };
+
+            this.user = window.user;
         }
     }
 });

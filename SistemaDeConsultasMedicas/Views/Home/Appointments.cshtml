@@ -12,7 +12,7 @@
 <div id="app">
     <h1>Agenda tu cita aquí</h1>
 
-    <div class="card shadow">
+    <div v-if="user?.fk_Role !== 2" class="card shadow">
         <div class="card-body">
             <!-- Select para seleccionar municipio, consultorio y doctor -->
             <div class= "d-flex">
@@ -39,7 +39,7 @@
                     <label for="doctor">Seleccione un doctor:</label>
                     <select id="doctor" v-model="selectedDoctor">
                         <option value="" disabled selected>Seleccione un doctor</option>
-                        <option v-for="doctor in filteredDoctors" :value="doctor.id">{{ doctor.name }}</option>
+                        <option v-for="doctor in filteredDoctors" :value="doctor">{{ doctor.name }}</option>
                     </select>
                 </div>
             </div>
@@ -61,11 +61,15 @@
             <p v-if="showErrorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
     </div>
+    <div v-else>
+
+    </div>
 </div>
 
 @section scripts{
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @*Añade tus scripts en la carpeta "js" en wwwroot*@
     <script src="~/js/Appointments.js" defer></script>
@@ -73,12 +77,17 @@
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
 
-        /*este es un ejemplo:
-        ("Method", "Controller")
-        en el primer espacio apuntas al método que quieres consumir 
-        y en el segundo al controlador donde está el método*/
-
+        //Consumir apis
         window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+
+        //redireccionar a vistas
+        window.login = '@Url.Action("Login", "Home")';
+        window.appointments = '@Url.Action("Appointments", "Home")';
+        window.users = '@Url.Action("Users", "Home")';
+        window.index = '@Url.Action("Index", "Home")';
+
+        //objeto Usuario
+        window.user = @Html.Raw(Json.Serialize(ViewBag.User));
         // ...
     </script>
 }
