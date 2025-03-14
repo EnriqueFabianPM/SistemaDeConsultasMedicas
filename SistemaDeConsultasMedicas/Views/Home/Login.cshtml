@@ -7,32 +7,67 @@
     @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
 </head>
 
-<div id="app">
-    <h1 class="display-4">Iniciar Sesión</h1>
-    @* <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+<div id="app" class=" justify-content-centers align-content-center">
+    <section class="gradient-custom">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
 
-    <!--Cuando quieras usar una variable de vue en el Template usa "{{ NombreDelModelo }}"-->
-    <div v-for="i in Message">
-        <p>Letra: <strong>{{i !== ' ' ? i : '~'}}</strong></p>
-    </div>
+                            <div class="mb-md-5 mt-md-4 pb-5">
 
+                                <h2 class="fw-bold mb-2 text-uppercase">Iniciar Sesión</h2>
+                                <p class="text-white-50 mb-5">Por favor, escribe tus credenciales.</p>
+
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input type="email" id="typeEmailX" class="form-control form-control-lg" v-model="credentials.Email" />
+                                    <label class="form-label" for="typeEmailX">Email</label>
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input type="password" id="typePasswordX" class="form-control form-control-lg" v-model="credentials.Password" />
+                                    <label class="form-label" for="typePasswordX">Contraseña</label>
+                                </div>
+
+                                <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
+
+                                <button 
+                                    data-mdb-button-init 
+                                    data-mdb-ripple-init
+                                    :disabled="!credentials.Password || !credentials.Email"
+                                    class="btn btn-outline-light btn-lg px-5" 
+                                    type="submit" @@click="login()">
+                                    <i class=""></i> Iniciar sesión
+                                </button>
+                            </div>
+
+                            <div>
+                                <p class="mb-0">
+                                    No tienes cuenta? <a href="#!" class="text-white-50 fw-bold">Regístrate</a>
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
 </div>
 
 @section scripts{
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    @*Añade tus scripts en la carpeta "js" en wwwroot*@
-    <script src="~/js/Login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>
-
-        /*este es un ejemplo:
-        ("Method", "Controller")
-        en el primer espacio apuntas al método que quieres consumir 
-        y en el segundo al controlador donde está el método*/
-
-        const createUser = '@Url.Action("CreateUser", "Home")'; 
-        // ...
+        window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+        window.Index = '@Url.Action("Index", "Home")';
     </script>
+    @*Añade tus scripts en la carpeta "js" en wwwroot*@
+    <script src="~/js/Login.js"></script>
+
 }

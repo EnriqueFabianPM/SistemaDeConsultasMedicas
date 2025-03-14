@@ -19,6 +19,8 @@ public partial class Consultories
 
     public string Email { get; set; }
 
+    public string Name { get; set; }
+
     public virtual ICollection<Users> Users { get; set; } = new List<Users>();
 
     public virtual Municipalities fk_MunicipalityNavigation { get; set; }

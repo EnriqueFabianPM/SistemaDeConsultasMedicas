@@ -3,24 +3,9 @@
 const app = createApp({
     data() {
         return {
-            municipalities: [
-                { id: 1, name: 'Municipio 1' },
-                { id: 2, name: 'Municipio 2' },
-                { id: 3, name: 'Municipio 3' }
-            ],
-            consultories: [
-                { id: 1, name: 'Consultorio 1', municipalityId: 1 },
-                { id: 2, name: 'Consultorio 2', municipalityId: 1 },
-                { id: 3, name: 'Consultorio 3', municipalityId: 2 },
-                { id: 4, name: 'Consultorio 4', municipalityId: 3 }
-            ],
-            doctors: [
-                { id: 1, name: 'Doctor 1', consultoryId: 1 },
-                { id: 2, name: 'Doctor 2', consultoryId: 1 },
-                { id: 3, name: 'Doctor 3', consultoryId: 2 },
-                { id: 4, name: 'Doctor 4', consultoryId: 3 },
-                { id: 5, name: 'Doctor 5', consultoryId: 4 }
-            ],
+            municipalities: [],
+            consultories: [],
+            doctors: [],
             selectedMunicipality: null,
             selectedConsultory: null,
             selectedDoctor: null,
@@ -28,25 +13,28 @@ const app = createApp({
             isLoading: false,
             showSuccessMessage: false,
             showErrorMessage: false,
-            errorMessage: ''
+            errorMessage: '',
+
+            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            config: {
+                IdApi: null, //Id de la API (Base de datos)
+                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+            }
         };
-    },
-    computed: {
-        filteredConsultories() {
-            return this.consultories.filter(consultory => consultory.municipalityId === this.selectedMunicipality);
-        },
-        filteredDoctors() {
-            return this.doctors.filter(doctor => doctor.consultoryId === this.selectedConsultory);
-        }
     },
     methods: {
         onMunicipalityChange() {
             this.selectedConsultory = null;
             this.selectedDoctor = null;
+
+            this.getConsultories();
         },
+
         onConsultoryChange() {
             this.selectedDoctor = null;
         },
+
         async submitAppointment() {
             if (!this.selectedMunicipality || !this.selectedConsultory || !this.selectedDoctor) {
                 this.showErrorMessage = true;
@@ -99,12 +87,63 @@ const app = createApp({
             } finally {
                 this.isLoading = false;
             }
-        }
+        },
+
+        //Obtener los municipios
+        getMunicipalities() {
+            //Id para obtener los municipios
+            this.config.IdApi = 1;
+
+            axios.post(window.callApiAsync, this.config)  
+                .then(response => {
+                    console.log('Municipios', response.data);
+
+                    this.municipalities = response.data;
+                   
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
+        //Obtener los consultorios
+        getConsultories() {
+
+            this.config = {
+                IdApi: 2, //Consultorios
+                BodyParams: null, //Al ser una api tipo Get se manda null
+                Param: `${this.selectedMunicipality}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    this.consultories = response.data;
+                    console.log('Consultorios', response.data);
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
+        },
+
+
+    //    postApi() {
+    //        console.log('configuración',this.config);
+
+    //        axios.post(window.callApiAsync, this.config)  // Enviar directamente el objeto "api"
+    //            .then(response => {
+    //                console.log('Respuesta del método genérico',response.data);
+    //            })
+    //            .catch(error => {
+    //                console.error("Error en la petición:", error);
+    //            });
+    //    }
     },
     mounted() {
 
         //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
-        console.log('Hola Mundo desde Vue (consola)');
+        this.getMunicipalities();
     }
 });
 app.mount('#app');

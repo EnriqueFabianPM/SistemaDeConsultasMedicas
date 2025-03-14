@@ -9,13 +9,13 @@ public partial class Schedules
 {
     public int Id_Schedule { get; set; }
 
-    public string Schedule_Name { get; set; }
-
     public TimeSpan From { get; set; }
 
     public TimeSpan To { get; set; }
 
     public bool Active { get; set; }
+
+    public string Name { get; set; }
 
     public virtual ICollection<Medical_Appointments> Medical_Appointments { get; set; } = new List<Medical_Appointments>();
 

@@ -15,31 +15,7 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Consultories]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Medical_Appointments]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Roles]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Schedules]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Sexes]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Types]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Users]",
+         "Name": "[dbo].[APIs]",
          "ObjectType": 0
       }
    ],

@@ -57,6 +57,7 @@ public partial class Consultories_System_DevContext : DbContext
             entity.Property(e => e.Length)
                 .IsRequired()
                 .IsUnicode(false);
+            entity.Property(e => e.Name).IsUnicode(false);
 
             entity.HasOne(d => d.fk_MunicipalityNavigation).WithMany(p => p.Consultories)
                 .HasForeignKey(d => d.fk_Municipality)
@@ -122,9 +123,9 @@ public partial class Consultories_System_DevContext : DbContext
             entity.ToTable("Schedules", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
-            entity.Property(e => e.Schedule_Name)
+            entity.Property(e => e.Name)
                 .IsRequired()
-                .HasMaxLength(50);
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Sexes>(entity =>

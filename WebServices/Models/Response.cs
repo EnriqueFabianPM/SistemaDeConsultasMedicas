@@ -1,4 +1,5 @@
 ﻿using System.Security.Principal;
+#pragma warning disable CS8618
 
 namespace WebServices.Models
 {

@@ -5,7 +5,6 @@ using WebServices.Data;
 using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-
 #pragma warning disable CS8618
 
 namespace WebServices.Services
@@ -34,9 +33,30 @@ namespace WebServices.Services
                 .ToList();
 
             return list;
+        } 
+
+        public User User(int id)
+        {
+                var user = db.Users
+                .Include(s => s.fk_SexNavigation)
+                .Include(r => r.fk_RoleNavigation)
+                .Where(u => u.Id_User == id && u.Login)
+                .Select(u => new User
+                {
+                    id_User = u.Id_User,
+                    name = u.Name,
+                    email = u.Email,
+                    phone = u.Phone,
+                    sex = u.fk_SexNavigation.Name,
+                    role = u.fk_RoleNavigation.Name,
+                    active = u.Active
+                })
+                .FirstOrDefault();
+
+            return user;
         }
 
-        public Response Update(Users user)
+        public Response Update(User user)
         {
             var response = new Response();
             response.Success = false;
@@ -45,16 +65,16 @@ namespace WebServices.Services
             if(user != null)
             {
                 var row = db.Users
-                    .Where(u => u.Id_User == user.Id_User) 
+                    .Where(u => u.Id_User == user.id_User) 
                     .FirstOrDefault();  
 
                 if(row != null)
                 {
-                    row.Name = user.Name;
-                    row.Email = user.Email;
-                    row.Phone = user.Phone;
+                    row.Name = user.name;
+                    row.Email = user.email;
+                    row.Phone = user.phone;
                     row.fk_Sex = user.fk_Sex;
-                    row.Active = user.Active;
+                    row.Active = user.active;
 
                     response.Success = true;
                     response.Message = "Se ha actualizado el usuario";

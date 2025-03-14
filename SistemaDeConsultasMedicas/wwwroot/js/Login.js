@@ -4,46 +4,99 @@ const app = createApp({
     data() {
         return {
 
-            /*
-             Aquí vas a declarar los modelos de vue
-             también hice ejemplos de cómo debes
-             inicializar los modelos dependiendo el 
-             tipo de cosa que quieras consumir de 
-             una API.
+            //Modelo para credenciales del usuario
+            credentials: {
+                Email: "",
+                Password: "",
+            },
 
-             También para hacer modelos reactivos que
-             requieras para mostrar alertas o pasos
+            //Modelo para manejar autorización y almacenar datos del usuario
+            Authorization: {
+                Success: false,
+                User: null,
+            },
 
-             estos ejemplos se pueden eliminar para cambiarlos 
-             por los que sean necesarios, solo son ejemplos
-            */
-            Message: 'Hola desde modelo de Vue',
-            Array: [],
-            Object: {},
-            Int: 0,
-            boolean: false,
+            //Modelo para nuevos usuarios
+            newUser: {
+                id_User: null,
+                name: "",
+                email: "",
+                password: "",
+                phone: null,
+                fk_Sex: null,
+                fk_Role: null,
+                fk_Consultory: null,
+                fk_Type: null,
+                fk_Schedule: null,
+                active: false,
+                sex: "",
+                role: "",
+                consultory: "",
+                type: "",
+                schedule: "",
+            },
+
+            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            config: {
+                IdApi: null, //Id de la API (Base de datos)
+                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
+                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+            }
         };
     },
     methods: {
-        //Aquí se crearán los métodos js
-        createUser() {
+        //Obtener Autorización
+        login() {
+            this.config = {
+                IdApi: 9,
+                BodyParams: this.credentials,
+                Param: null,
+            };
 
-            axios.post(createUser, {
-
-            })
+            axios.post(window.callApiAsync, this.config)
                 .then(response => {
+                    console.log('Usuario', response.data);
 
-                    console.log(response.data, 'respuesta del método');
+                    if (response.data.id_User != 0) {
+
+                        this.goToIndex(response.data.id_User);
+
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "Las credenciales son incorrectas",
+                            icon: "error",
+                            timer: 1000,
+                            showConfirmButton: false,
+                        });
+
+                        //Modelo para credenciales del usuario
+                        this.credentials = {
+                            email: "",
+                            password: "",
+                        };
+
+                        //Modelo para manejar autorización y almacenar datos del usuario
+                        this.Authorization = {
+                            Success: false,
+                            User: null,
+                        };
+                    }
+                    console.log('Autorización', this.Authorization);
+
                 })
                 .catch(error => {
-                    console.log(error, 'Mensaje de error')
+                    console.error("Error en la petición:", error);
                 });
         },
+
+        goToIndex(idUser) {
+            window.location.href = `${window.Index}?id=${idUser}`;
+        }
+
     },
     mounted() {
 
-        //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
-        console.log('Hola Mundo desde Vue (consola)');
     }
 });
 app.mount('#app');

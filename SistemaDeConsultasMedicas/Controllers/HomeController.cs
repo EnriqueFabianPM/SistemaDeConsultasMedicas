@@ -1,62 +1,177 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
+using SistemaDeConsultasMedicas.Models;
+using SistemaDeConsultasMedicas.ViewModels;
+using SistemaDeConsultasMedicas.Services;
+using System.Text;
+using System.Text.Json;
+using System.Net;
+using Authorization = SistemaDeConsultasMedicas.Services.Authorization;
+#pragma warning disable CS8600, CS8603, CS8602
 
 namespace SistemaDeConsultasMedicas.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly Consultories_System_Context db = new Consultories_System_Context();
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
         }
 
         //Controladores de las vistas----------------------------------------------------------------------------------------
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        public IActionResult Users()
+        [HttpGet]
+        public async Task<IActionResult> Users(int id)
         {
-            return View();
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
+
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
+
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
 
-        public IActionResult Appointments()
+        [HttpGet]
+        public async Task<IActionResult> Appointments(int id)
         {
-            return View();
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
+
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
+
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int id)
         {
-            return View();
+            Config config = new Config()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = id.ToString(),
+            };
+
+            JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
+            object user = jsonResult?.Value; // Extraer el objeto real
+
+
+            if (user != null)
+            {
+                ViewBag.User = user;
+                return View();
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
 
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
         }
 
-        //Método genérico para consumir una api de tipo get
-        [HttpGet]
-        public async Task<ActionResult> GetMunicipalities()
+        //Método para conseguir las urls de las Apis que se vayan a consumir
+        public Api FetchAPI(Config config)
         {
-            //Variable para compilar en otros equipos
-            string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
-            //string url = "https://localhost:7098/Services/GetMunicipalities";
+            Api api = new Api();
+            if (config.IdApi != null && config.IdApi > 0)
+            {
+                api = db.APIs
+                    .Where(a => a.Id_API == config.IdApi)
+                    .Select(a => new Api
+                    {
+                        Id_API = a.Id_API,
+                        Name = a.Name,
+                        URL = a.URL,
+                        IsGet = a.IsGet,
+                        IsPost = a.IsPost,
+                        Param = a.IsGet ? (config.Param != null ? config.Param : "") : "",
+                        BodyParams = a.IsPost ? config.BodyParams : null,
+                    })
+                    .FirstOrDefault();
+            }
 
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            return api;
+        }
 
-            return Json(await response.Content.ReadAsStringAsync());
+        //Método genérico para consumir APIs Get y Post
+        [HttpPost]
+        public async Task<ActionResult> ConsumeApi([FromBody] Config config)
+        {
+            //Buscar la api y mapear sus parámetros
+            Api api = FetchAPI(config);
+
+            //Declarar el objeto que se devolverá
+            object result = null;
+
+            //Validar que api no sea nulo
+            if(api != null)
+            {
+                using var client = new HttpClient();
+                using var request = new HttpRequestMessage(api.IsGet ? HttpMethod.Get : HttpMethod.Post, api.Param != "" ? (api.URL + api.Param) : api.URL);
+
+                if (api.IsPost && api.BodyParams != null)
+                {
+                    var json = JsonSerializer.Serialize(api.BodyParams);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+
+                using var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                // Leer la respuesta como string
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                // Configurar JsonSerializerOptions para evitar la conversión a camelCase
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null // Esto evita que los nombres de las propiedades se cambien
+                };
+
+                // Deserializar la respuesta a un objeto genérico
+                result = JsonSerializer.Deserialize<object>(responseString, options);
+            }
+
+            // Devuelve el objeto deserializado como JSON
+            return Json(result == null ? null : result);
         }
     }
 }
