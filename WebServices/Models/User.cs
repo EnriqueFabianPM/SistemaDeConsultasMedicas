@@ -13,12 +13,10 @@
         public int fk_Role { get; set; }
         public int? fk_Consultory { get; set; }
         public int? fk_Type { get; set; }
-        public int? fk_Schedule { get; set; }
         public bool active { get; set; }
         public string sex { get; set; }
         public string role { get; set; }
         public string? consultory { get; set; }
         public string? type { get; set; }
-        public string? schedule { get; set; }
     }
 }

@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SistemaDeConsultasMedicas.styles.css" asp-append-version="true" />
+
+    <style>
+        .d-flex {
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -28,7 +34,7 @@
                 </div>
                 <div class="d-flex justify-content-center" v-if="Authorization.Success">
                     <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
-                    <button class="btn btn-outline-secondary" v-on:click="logout()">{{"Cerrar Sesión"}}</button>
+                    <button class="btn btn-outline-secondary" v-on:click="logout()" style="width: 100%;">{{"Cerrar Sesión"}}</button>
                 </div>
             </nav>
         </header>

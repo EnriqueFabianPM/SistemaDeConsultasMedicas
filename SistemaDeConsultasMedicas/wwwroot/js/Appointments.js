@@ -46,60 +46,7 @@ const app = createApp({
 
         onConsultoryChange() {
             this.selectedDoctor = null;
-        },
-
-        async submitAppointment() {
-            if (!this.selectedMunicipality || !this.selectedConsultory || !this.selectedDoctor) {
-                this.showErrorMessage = true;
-                this.errorMessage = "Por favor, complete todos los campos obligatorios.";
-                setTimeout(() => {
-                    this.showErrorMessage = false;
-                }, 3000);
-                return;
-            }
-
-            this.isLoading = true;
-
-            const appointment = {
-                municipalityId: this.selectedMunicipality,
-                consultoryId: this.selectedConsultory,
-                doctorId: this.selectedDoctor,
-                notes: this.notes
-            };
-
-            try {
-                // Simulación de una llamada a la API
-                const response = await fetch('https://api.example.com/appointments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appointment)
-                });
-
-                if (!response.ok) throw new Error('Error al crear la cita');
-
-                console.log('Cita creada con éxito:', appointment);
-
-                // Resetear el formulario
-                this.selectedMunicipality = null;
-                this.selectedConsultory = null;
-                this.selectedDoctor = null;
-                this.notes = '';
-
-                // Mostrar mensaje de éxito
-                this.showSuccessMessage = true;
-                setTimeout(() => {
-                    this.showSuccessMessage = false;
-                }, 3000);
-            } catch (error) {
-                console.error('Error:', error);
-                this.showErrorMessage = true;
-                this.errorMessage = 'Hubo un error al crear la cita. Por favor, inténtelo de nuevo.';
-                setTimeout(() => {
-                    this.showErrorMessage = false;
-                }, 3000);
-            } finally {
-                this.isLoading = false;
-            }
+            this.getDoctors();
         },
 
         //Obtener los municipios
@@ -140,6 +87,56 @@ const app = createApp({
 
         },
 
+        //Obtener los consultorios
+        getDoctors() {
+            this.config = {
+                IdApi: 3,
+                BodyParams: null,
+                Param: `${this.selectedConsultory}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    this.doctors = response.data;
+                    console.log('Doctores', response.data);
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
+        },
+
+        submitAppointment() {
+            this.config = {
+                IdApi: 5,
+                BodyParams: {
+                    fk_Doctor: this.selectedMunicipality,
+                    fk_Patient: this.user.id_User,
+                    notes: this.notes,
+                },
+                Param: null, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    Swal.fire({
+                        title: "¡Listo!",
+                        text: `${response.data.message}`,
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        allowClickOutside: false,
+                    }).then(() => {
+                        this.Index(user.id_User);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
         Index(idUser) {
             window.location.href = `${window.index}?id=${idUser}`;
         },
@@ -176,7 +173,7 @@ const app = createApp({
                             icon: "success",
                             timer: 1500,
                             showConfirmButton: false,
-                            //    allowClickOutside: false,
+                            allowClickOutside: false,
                         }).then(() => {
                             window.location.href = window.login;
                         })

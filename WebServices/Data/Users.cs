@@ -25,8 +25,6 @@ public partial class Users
 
     public int? fk_Type { get; set; }
 
-    public int? fk_Schedule { get; set; }
-
     public bool Active { get; set; }
 
     public bool Login { get; set; }
@@ -38,8 +36,6 @@ public partial class Users
     public virtual Consultories fk_ConsultoryNavigation { get; set; }
 
     public virtual Roles fk_RoleNavigation { get; set; }
-
-    public virtual Schedules fk_ScheduleNavigation { get; set; }
 
     public virtual Sexes fk_SexNavigation { get; set; }
 

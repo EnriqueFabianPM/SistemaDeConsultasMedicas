@@ -19,10 +19,11 @@ public class EmailServices : IViewRenderService
     private readonly ICompositeViewEngine _viewEngine;
     private readonly ITempDataProvider _tempDataProvider;
     private readonly IServiceProvider _serviceProvider;
-    public EmailServices(
-        ICompositeViewEngine viewEngine,
-        ITempDataProvider tempDataProvider,
-        IServiceProvider serviceProvider)
+    ICompositeViewEngine viewEngine;
+    ITempDataProvider tempDataProvider;
+    IServiceProvider serviceProvider;
+
+    public EmailServices()
     {
         _viewEngine = viewEngine;
         _tempDataProvider = tempDataProvider;

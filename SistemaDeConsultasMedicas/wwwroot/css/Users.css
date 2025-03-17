@@ -1,14 +1,4 @@
-﻿body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-h1 {
+﻿h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
@@ -35,8 +25,7 @@ th, td {
 }
 
 th {
-    background-color: #007BFF;
-    color: white;
+    color: black;
     font-weight: bold;
     font-size: 16px; /* Tamaño de fuente más grande */
 }

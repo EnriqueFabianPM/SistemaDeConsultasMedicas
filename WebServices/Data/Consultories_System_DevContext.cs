@@ -25,8 +25,6 @@ public partial class Consultories_System_DevContext : DbContext
 
     public virtual DbSet<Roles> Roles { get; set; }
 
-    public virtual DbSet<Schedules> Schedules { get; set; }
-
     public virtual DbSet<Sexes> Sexes { get; set; }
 
     public virtual DbSet<Status> Status { get; set; }
@@ -36,7 +34,7 @@ public partial class Consultories_System_DevContext : DbContext
     public virtual DbSet<Users> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=192.168.192.193,1433;Initial Catalog=Consultories_System_Dev;Persist Security Info=True;User ID=UTSC_USER;Password=S1stem@5.UTSC2025;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -66,31 +64,27 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Medical_Appointments>(entity =>
         {
-            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF9027B3B02A5");
+            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF90271E6728F");
 
             entity.ToTable("Medical_Appointments", "dbo");
 
-            entity.Property(e => e.Date).HasColumnType("date");
+            entity.Property(e => e.Appointment_Date).HasColumnType("date");
+            entity.Property(e => e.Created_Date).HasColumnType("date");
 
             entity.HasOne(d => d.fk_DoctorNavigation).WithMany(p => p.Medical_Appointmentsfk_DoctorNavigation)
                 .HasForeignKey(d => d.fk_Doctor)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_DOCTOR_USERS");
+                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_DOCTOR");
 
             entity.HasOne(d => d.fk_PatientNavigation).WithMany(p => p.Medical_Appointmentsfk_PatientNavigation)
                 .HasForeignKey(d => d.fk_Patient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_PATIENT_USERS");
-
-            entity.HasOne(d => d.fk_ScheduleNavigation).WithMany(p => p.Medical_Appointments)
-                .HasForeignKey(d => d.fk_Schedule)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_SCHEDULES");
+                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_PATIENT");
 
             entity.HasOne(d => d.fk_StatusNavigation).WithMany(p => p.Medical_Appointments)
                 .HasForeignKey(d => d.fk_Status)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Medical_Appointments_Status");
+                .HasConstraintName("FK_MEDICAL_APPOINTMENTS_STATUS");
         });
 
         modelBuilder.Entity<Municipalities>(entity =>
@@ -109,18 +103,6 @@ public partial class Consultories_System_DevContext : DbContext
             entity.HasKey(e => e.Id_Role).HasName("PK__Roles__34ADFA605FD948DE");
 
             entity.ToTable("Roles", "dbo");
-
-            entity.Property(e => e.Active).HasDefaultValue(true);
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<Schedules>(entity =>
-        {
-            entity.HasKey(e => e.Id_Schedule).HasName("PK__Schedule__1E84FB4B767D22FB");
-
-            entity.ToTable("Schedules", "dbo");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Name)
@@ -187,10 +169,6 @@ public partial class Consultories_System_DevContext : DbContext
                 .HasForeignKey(d => d.fk_Role)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_USERS_ROLES");
-
-            entity.HasOne(d => d.fk_ScheduleNavigation).WithMany(p => p.Users)
-                .HasForeignKey(d => d.fk_Schedule)
-                .HasConstraintName("FK_USERS_Schedule");
 
             entity.HasOne(d => d.fk_SexNavigation).WithMany(p => p.Users)
                 .HasForeignKey(d => d.fk_Sex)
