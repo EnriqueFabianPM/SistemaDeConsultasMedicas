@@ -30,7 +30,6 @@ namespace WebServices.Services
                     .Include(r => r.fk_RoleNavigation)
                     .Include(c => c.fk_ConsultoryNavigation)
                     .Include(t => t.fk_TypeNavigation)
-                    .Include(s => s.fk_ScheduleNavigation)
                     .Where(u => u.Email == credentials.email && u.Active)
                     .FirstOrDefault();
 
@@ -50,13 +49,11 @@ namespace WebServices.Services
                         user.fk_Role = row.fk_Role;
                         user.fk_Consultory = row.fk_Consultory;
                         user.fk_Type = row.fk_Type;
-                        user.fk_Schedule = row.fk_Schedule;
                         user.active = row.Active;
                         user.sex = row.fk_SexNavigation.Name;
                         user.role = row.fk_RoleNavigation.Name;
                         user.consultory = row.fk_ConsultoryNavigation != null ? row.fk_ConsultoryNavigation.Name : null;
                         user.type = row.fk_TypeNavigation != null ? row.fk_TypeNavigation.Name : null;
-                        user.schedule = row.fk_ScheduleNavigation != null ? row.fk_SexNavigation.Name : null;
 
                         ////Respuesta para el cliente y manejo de alertas
                         //response.Success = true;
@@ -128,7 +125,6 @@ namespace WebServices.Services
                         fk_Sex = user.fk_Sex,
                         fk_Consultory = user.fk_Consultory,
                         fk_Role = 1,
-                        fk_Schedule = user.fk_Schedule,
                         fk_Type = user.fk_Type,
                         Login = false,
                     };

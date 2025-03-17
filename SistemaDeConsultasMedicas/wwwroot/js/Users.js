@@ -13,6 +13,8 @@ const app = createApp({
                 Password: "",
             },
 
+            users: [],
+
             //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
             config: {
                 IdApi: null, //Id de la API (Base de datos)
@@ -34,6 +36,39 @@ const app = createApp({
 
         Users(idUser) {
             window.location.href = `${window.users}?id=${idUser}`;
+        },
+
+        getUsers() {
+            this.config.IdApi = 6;
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Lista de usuarios',response.data)
+                    this.users = response.data;
+
+                    // Destruir la instancia previa de DataTable antes de inicializarla nuevamente
+                    this.$nextTick(() => {
+                        // Destruir la instancia de DataTable si ya existe
+                        if ($.fn.dataTable.isDataTable(this.$refs.userTable)) {
+                            $(this.$refs.userTable).DataTable().destroy();
+                        }
+
+                        // Inicializar DataTable después de que Vue haya terminado de renderizar los datos
+                        $(this.$refs.userTable).DataTable({
+                            paging: true,
+                            searching: true,
+                            ordering: true,
+                            responsive: true,
+                            scrollY: '500px', // Esto habilita el scroll vertical a partir de 500px de altura
+                            scrollCollapse: true, // Permite que la tabla colapse si no se necesita el scroll
+                        });
+                    });
+
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
         },
 
         //Aquí se crearán los métodos js
@@ -82,7 +117,7 @@ const app = createApp({
 
     },
     mounted() {
-        console.log(window.user); // Ahora es un objeto JSON usable
+        console.log(window.user, 'Usuario'); // Ahora es un objeto JSON usable
         if (window.user?.id_User) {
             this.Authorization = {
                 Success: true,
@@ -91,5 +126,12 @@ const app = createApp({
 
             this.user = window.user;
         }
+
+        this.getUsers();
+    },
+    beforeDestroy() {
+        // Destruye la instancia de DataTables cuando el componente se destruya para evitar fugas de memoria
+        $(this.$refs.userTable).DataTable().destroy();
     }
 });
+app.mount('#app');

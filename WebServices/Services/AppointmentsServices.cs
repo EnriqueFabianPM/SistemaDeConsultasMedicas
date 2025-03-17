@@ -1,13 +1,20 @@
 ﻿using System.Text.Json;
 using WebServices.Data;
 using WebServices.Models;
+using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts;
+using WebServices.Controllers;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
+using NuGet.Common;
 #pragma warning disable CS8618
 
 namespace WebServices.Services
 {
     public class AppointmentsServices
     {
+        private readonly ServicesController _servicesController;
+        private readonly EmailServices _EmailServices = new EmailServices();
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
         //Devuelve una lista de citas médicas filtradas por doctor
@@ -25,7 +32,7 @@ namespace WebServices.Services
                     fk_Status = a.fk_Status,
                     Status = a.fk_StatusNavigation.Name, 
                     Patient = a.fk_PatientNavigation.Name,
-                    Date = a.Date.ToString(),
+                    Date = a.Created_Date.ToString(),
                 })
                 .ToList();
 
@@ -92,16 +99,20 @@ namespace WebServices.Services
                 Message = "",
             };
 
-            if (Appointment != null) 
+            if (Appointment != null)
             {
+
+                DateTime currentDate = DateTime.Now.Date;
+                DateTime appointmentDate = GetToDateFromDateAndWorkDays(currentDate, 1);
+
                 Medical_Appointments newAppintment = new Medical_Appointments
                 {
                     fk_Doctor = Appointment.fk_Doctor,
                     fk_Patient = Appointment.fk_Patient,
-                    fk_Schedule = Appointment.fk_Schedule,
-                    Notes = Appointment.notes,
-                    Date = DateTime.Now,
                     fk_Status = 1,
+                    Created_Date = currentDate,
+                    Appointment_Date = appointmentDate,
+                    Notes = Appointment.notes,
                 };
 
                 db.Medical_Appointments.Add(newAppintment);
@@ -146,6 +157,36 @@ namespace WebServices.Services
 
             return response;
         }
+
+        //Obtiene la fecha actual y además devuelve la fecha de la cita
+        public static DateTime GetToDateFromDateAndWorkDays(DateTime fromDate, int workDays)
+        {
+            // Excluir los fines de semana
+            int weekendDays = 0;
+            DateTime toDate = fromDate;
+
+            while (workDays > 0)
+            {
+                toDate = toDate.AddDays(1);
+                if (!IsWeekendDay(toDate))
+                {
+                    workDays--;
+                }
+                else
+                {
+                    weekendDays++;
+                }
+            }
+
+            return toDate;
+        }
+
+        public static bool IsWeekendDay(DateTime date)
+        {
+            DayOfWeek day = date.DayOfWeek;
+            return day == DayOfWeek.Saturday || day == DayOfWeek.Sunday;
+        }
+
     }
 
     //ViewModels
