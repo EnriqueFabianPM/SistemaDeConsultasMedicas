@@ -1,0 +1,9 @@
+﻿custom-button {
+    height: 100%;
+    border-radius: 20px;
+    background-color: white;
+}
+
+    custom-button:hover {
+        background-color: transparent;
+    }

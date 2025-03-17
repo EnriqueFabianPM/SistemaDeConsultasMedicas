@@ -3,11 +3,6 @@
     ViewData["Title"] = "Index";
 }
 
-<head>
-    @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-
 <div style="height:70vh;">
     <h1 class="display-4">Bienvenido</h1>
     <p>{{user?.name}}</p>
@@ -26,7 +21,7 @@
         </button>
 
         <!-- Log Out Button -->
-        <button class="flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-3 mx-5 " style="height:100%; border-radius:20px;" v-on:click="logout()">
+        <button :class="user?.fk_Role === 1 ? 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-3 mx-5' : 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-5 mx-5'" style="height:100%; border-radius:20px;" v-on:click="logout()">
                 <i class="fas fa-sign-out-alt w-100"></i>
             <span class="text-3xl font-bold">Log Out</span>
         </button>

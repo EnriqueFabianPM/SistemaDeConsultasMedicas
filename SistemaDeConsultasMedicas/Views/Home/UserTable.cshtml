@@ -4,25 +4,6 @@
 
 <div class="container">
     <h2>Tabla de Usuarios</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Status de Cita</th>
-                <th class="actions">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="userTableBody">
-            <!-- Aquí se insertarán los datos con JavaScript -->
-            <tr v-for="user in users">
-                <td> {{user.paciente}}</td>
-                <td> {{user.correo}}</td>
-                <td> {{user.status}}</td>
-            </tr>
-        </tbody>
-    </table>
 </div>
 
 <script src="~/js/userTable.js"></script>

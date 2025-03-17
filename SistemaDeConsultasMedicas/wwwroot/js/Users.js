@@ -43,32 +43,105 @@ const app = createApp({
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-                    console.log('Lista de usuarios',response.data)
+                    console.log('Lista de usuarios', response.data)
                     this.users = response.data;
 
-                    // Destruir la instancia previa de DataTable antes de inicializarla nuevamente
                     this.$nextTick(() => {
                         // Destruir la instancia de DataTable si ya existe
                         if ($.fn.dataTable.isDataTable(this.$refs.userTable)) {
                             $(this.$refs.userTable).DataTable().destroy();
                         }
 
-                        // Inicializar DataTable después de que Vue haya terminado de renderizar los datos
-                        $(this.$refs.userTable).DataTable({
-                            paging: true,
-                            searching: true,
-                            ordering: true,
-                            responsive: true,
-                            scrollY: '500px', // Esto habilita el scroll vertical a partir de 500px de altura
-                            scrollCollapse: true, // Permite que la tabla colapse si no se necesita el scroll
+                        this.$nextTick(() => {
+                            $(this.$refs.userTable).DataTable({
+                                paging: true,
+                                searching: true,
+                                ordering: true,
+                                responsive: true,
+                                scrollY: '600px',
+                                scrollCollapse: true,
+                                language: {
+                                    processing: "Procesando...",
+                                    search: "Buscar:",
+                                    lengthMenu: "Mostrar _MENU_ registros",
+                                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                    infoEmpty: "No hay registros disponibles",
+                                    infoFiltered: "(filtrado de _MAX_ registros en total)",
+                                    loadingRecords: "Cargando...",
+                                    zeroRecords: "No se encontraron registros",
+                                    emptyTable: "No hay datos disponibles en la tabla",
+                                    paginate: {
+                                        first: "Primero",
+                                        previous: "Anterior",
+                                        next: "Siguiente",
+                                        last: "Último"
+                                    },
+                                    aria: {
+                                        sortAscending: ": activar para ordenar ascendente",
+                                        sortDescending: ": activar para ordenar descendente"
+                                    }
+                                }
+                            });
                         });
                     });
-
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
+        },
 
+        blockUser(user){
+            console.log(`Usuario a bloquear`, user);
+
+            Swal.fire({
+                title: "Bloqueando usuario...",
+                text: "Por favor, espera",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            this.config = {
+                IdApi: 7,
+                BodyParams: {
+                    Id_User: user.id_User,
+                    Name: user.name,
+                    Email: user.email,
+                    Phone: user.phone === "-" ? null : user.phone,
+                    Active: user.active === "Activo" ? false : true,
+                },
+                Param: null,
+            }
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        }).then(() => {
+                            this.Users(this.user.id_User);
+                        })
+
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se ha podido bloquear el usuario",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
         },
 
         //Aquí se crearán los métodos js

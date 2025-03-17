@@ -8,31 +8,39 @@
     <link rel="stylesheet" href="~/css/Users.css" />
 </head>
 
-    <div>
-        <h1>Lista de Usuarios</h1>
-        <div class="table-container">
+<div>
+    <h1><strong>Lista de Usuarios</strong></h1>
+    <div class="table-container card shadow">
         <table ref="userTable">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Status</th>
-                        <th>Rol</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in users" :key="item.id_user">
-                        <td>{{ item.name}}</td>
-                        <td>{{ item.email}}</td>
-                        <td>{{ item.phone}}</td>
-                        <td>{{ item.active}}</td>
-                        <td>{{ item.role}}</td>
-                    </tr>
-                </tbody>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Status</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in users" :key="item.id_user">
+                    <td>{{item.name.toUpperCase()}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.phone}}</td>
+                    <td>{{item.role}}</td>
+                    <td :class="item.active === 'Activo' ? 'text-success' : 'text-danger'">{{item.active}}</td>
+                    <td>
+                        <a :class="item.active === 'Activo' ? 'text-danger' : text-success" 
+                        v-on:click="blockUser(item)" 
+                        style="text-decoration: none; cursor:pointer;">
+                            <i :class="item.active === 'Activo' ? 'fas fa-lock' : 'fas fa-unlock-alt'"></i>
+                            {{item.active === 'Activo' ? 'Bloquear' : 'Desbloquear'}}</a>
+                    </td>
+                </tr>
+            </tbody>
             </table>
-        </div>
     </div>
+</div>
 
 @section scripts{
 

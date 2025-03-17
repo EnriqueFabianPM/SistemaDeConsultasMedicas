@@ -8,7 +8,7 @@
         public string name { get; set; }
         public string email { get; set; }
         public string? password { get; set; }
-        public int? phone { get; set; }
+        public string? phone { get; set; }
         public int fk_Sex { get; set; }
         public int fk_Role { get; set; }
         public int? fk_Consultory { get; set; }

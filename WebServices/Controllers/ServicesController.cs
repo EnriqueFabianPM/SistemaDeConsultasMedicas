@@ -304,6 +304,12 @@ namespace WebServices.Controllers
             Response response = _AppointmentServices.CreateAppointment(Appointment);
             return Json(!response.Success ? null : response);
         }
+        public ActionResult DeleteAppointment([FromBody] Appointment Appointment)
+        {
+            //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
+            Response response = _AppointmentServices.DeleteAppointment(Appointment);
+            return Json(!response.Success ? null : response);
+        }
         //Servicios de UserServices ---------------------------------------------------------------------------------------------------------------
         //Devuelve la lista de usuarios registrados en la base de datos
         [HttpGet]

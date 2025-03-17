@@ -14,28 +14,55 @@ namespace WebServices.Services
     public class AppointmentsServices
     {
         private readonly ServicesController _servicesController;
-        private readonly EmailServices _EmailServices = new EmailServices();
+        //private readonly EmailServices _EmailServices = new EmailServices();
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
         //Devuelve una lista de citas médicas filtradas por doctor
         public List<AppointmentList> Appointments(int? IdDoctor)
         {
-            List<AppointmentList> list = db.Medical_Appointments
-                .Include(p => p.fk_PatientNavigation)
-                .Include(s => s.fk_StatusNavigation)
-                .Where(a => a.fk_Doctor == IdDoctor)
-                .Select(a => new AppointmentList
-                {
-                    Id = a.Id_Appointment,
-                    fk_Doctor = a.fk_Doctor,
-                    fk_Patient = a.fk_Patient,
-                    fk_Status = a.fk_Status,
-                    Status = a.fk_StatusNavigation.Name, 
-                    Patient = a.fk_PatientNavigation.Name,
-                    Date = a.Created_Date.ToString(),
-                })
-                .ToList();
+            var user = db.Users
+                .Where(u => u.Id_User == IdDoctor)
+                .FirstOrDefault();
 
+            List<AppointmentList> list = new List<AppointmentList>();
+
+            if(user?.fk_Role == 1)
+            {
+                list = db.Medical_Appointments
+                    .Include(p => p.fk_PatientNavigation)
+                    .Include(s => s.fk_StatusNavigation)
+                    .Select(a => new AppointmentList
+                    {
+                        Id = a.Id_Appointment,
+                        fk_Doctor = a.fk_Doctor,
+                        fk_Patient = a.fk_Patient,
+                        fk_Status = a.fk_Status,
+                        Patient = a.fk_PatientNavigation.Name,
+                        Created = a.Created_Date.ToString(),
+                        Assigned = a.Appointment_Date.ToString(),
+                        Status = a.fk_StatusNavigation.Name,
+                    })
+                    .ToList();
+            }
+            else
+            {
+                list = db.Medical_Appointments
+                    .Include(p => p.fk_PatientNavigation)
+                    .Include(s => s.fk_StatusNavigation)
+                    .Where(a => a.fk_Doctor == IdDoctor)
+                    .Select(a => new AppointmentList
+                    {
+                        Id = a.Id_Appointment,
+                        fk_Doctor = a.fk_Doctor,
+                        fk_Patient = a.fk_Patient,
+                        fk_Status = a.fk_Status,
+                        Patient = a.fk_PatientNavigation.Name,
+                        Created = a.Created_Date.ToString(),
+                        Assigned = a.Appointment_Date.ToString(),
+                        Status = a.fk_StatusNavigation.Name,
+                    })
+                    .ToList();
+            }
             return list;
         }
 
@@ -121,7 +148,37 @@ namespace WebServices.Services
                 response.Success = true;
                 response.Message = "¡Se ha agendado la cita!";
             }
+            return response;
+        }
 
+        //Método para crear una una cita médica
+        public Response DeleteAppointment(Appointment Appointment)
+        {
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (Appointment != null)
+            {
+                var appointment = db.Medical_Appointments
+                    .Where(a => a.Id_Appointment == Appointment.id_Appointment)
+                    .FirstOrDefault();
+
+                if (appointment != null) 
+                {
+                    db.Medical_Appointments.Remove(appointment);
+                    db.SaveChanges();
+                    response.Message = "¡Se ha Cancelado la cita!";
+                }
+                else
+                {
+                    response.Message = "¡La cita no existe o ya ha sido cancelada!";
+                }
+
+                response.Success = true;            
+            }
             return response;
         }
 
@@ -198,7 +255,8 @@ namespace WebServices.Services
         public int fk_Status { get; set; }
         public string Patient { get; set; }
         public string Status { get; set; }
-        public string Date { get; set; }
+        public string Created { get; set; }
+        public string Assigned { get; set; }
         public string Notes { get; set; }
     }
 

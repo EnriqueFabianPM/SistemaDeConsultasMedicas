@@ -6,6 +6,7 @@ const app = createApp({
             municipalities: [],
             consultories: [],
             doctors: [],
+            appointments: [],
             selectedMunicipality: null,
             selectedConsultory: null,
             selectedDoctor: null,
@@ -68,7 +69,6 @@ const app = createApp({
 
         //Obtener los consultorios
         getConsultories() {
-
             this.config = {
                 IdApi: 2, //Consultorios
                 BodyParams: null, //Al ser una api tipo Get se manda null
@@ -107,11 +107,67 @@ const app = createApp({
 
         },
 
+        //Obtener los consultorios
+        getAppointments() {
+            this.config = {
+                IdApi: 4,
+                BodyParams: null,
+                Param: `${this.user.id_User}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    this.appointments = response.data;
+                    console.log('citas', response.data);
+
+                    this.$nextTick(() => {
+                        $(this.$refs.appointmentsTable).DataTable({
+                            paging: true,
+                            searching: true,
+                            ordering: true,
+                            responsive: true,
+                            scrollY: this.user.fk_Role === 1 ? '225px' : '600px',
+                            scrollCollapse: true,
+                            language: {
+                                processing: "Procesando...",
+                                search: "Buscar:",
+                                lengthMenu: "Mostrar _MENU_ registros",
+                                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                infoEmpty: "No hay registros disponibles",
+                                infoFiltered: "(filtrado de _MAX_ registros en total)",
+                                loadingRecords: "Cargando...",
+                                zeroRecords: "No se encontraron registros",
+                                emptyTable: "No hay datos disponibles en la tabla",
+                                paginate: {
+                                    first: "Primero",
+                                    previous: "Anterior",
+                                    next: "Siguiente",
+                                    last: "Último"
+                                },
+                                aria: {
+                                    sortAscending: ": activar para ordenar ascendente",
+                                    sortDescending: ": activar para ordenar descendente"
+                                }
+                            }
+                        });
+
+                    });
+
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
+        },
+
         submitAppointment() {
+            this.isLoading = true;
+
             this.config = {
                 IdApi: 5,
                 BodyParams: {
-                    fk_Doctor: this.selectedMunicipality,
+                    fk_Doctor: this.selectedDoctor,
                     fk_Patient: this.user.id_User,
                     notes: this.notes,
                 },
@@ -129,7 +185,38 @@ const app = createApp({
                         showConfirmButton: false,
                         allowClickOutside: false,
                     }).then(() => {
-                        this.Index(user.id_User);
+                        this.isLoading = false;
+
+                        if (this.user.fk_Role === 1) this.Appointments(this.user.id_User);
+                        else this.Index(user.id_User);
+
+                    });
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
+        deleteAppointment(idAppointment) {
+            this.config = {
+                IdApi: 13,
+                BodyParams: {
+                    id_Appointment: idAppointment,
+                },
+                Param: null, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    Swal.fire({
+                        title: "¡Listo!",
+                        text: `${response.data.message}`,
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        allowClickOutside: false,
+                    }).then(() => {
+                        this.Appointments(user.id_User);
                     });
                 })
                 .catch(error => {
@@ -202,6 +289,9 @@ const app = createApp({
             };
 
             this.user = window.user;
+            this.$nextTick(() => {
+                if (this.user.fk_Role !== 2) this.getAppointments();
+            });
         }
 
         //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
