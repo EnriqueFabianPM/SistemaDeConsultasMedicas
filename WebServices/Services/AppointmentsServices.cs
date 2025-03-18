@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using WebServices.Data;
 using WebServices.Models;
+using WebServices.Controllers;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable CS8618
 
@@ -8,6 +9,7 @@ namespace WebServices.Services
 {
     public class AppointmentsServices
     {
+        private readonly ServicesController _Controller = new ServicesController();
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
         //Devuelve una lista de citas médicas filtradas por doctor
@@ -103,6 +105,45 @@ namespace WebServices.Services
                     Date = DateTime.Now,
                     fk_Status = 1,
                 };
+
+                var doctor = db.Users
+                    .Where(u => u.Id_User == Appointment.fk_Doctor)
+                    .Select(u => new User
+                    {
+                        name = u.Name,
+                        email = u.Email,
+                    })
+                    .FirstOrDefault();
+
+                var patient = db.Users
+                    .Where(u => u.Id_User == Appointment.fk_Patient)
+                    .Select(u => new User
+                    {
+                        name = u.Name,
+                        email = u.Email,
+                    })
+                    .FirstOrDefault();
+
+                if (doctor != null && patient != null)
+                {
+                    Email data = new Email
+                    {
+                        //Asunto del correo
+                        subject = "[Aviso] ¡Se te ha asignado una nueva cita!",
+                        //Construir el cuerpo del correo
+                        body = $@"
+                            <h1><strong>{doctor.name}</strong></h1>
+                            <br>
+                            <p>Se ha asignado una nueva cita con el paciente {patient.name}</p>
+                            <p>Gracias, de parte de <br>SistemadeConsultasMedicas_8A</p>
+                        ",
+                        //Usuario que contiene el email que lo va a recibir
+                        user = doctor,
+                    };
+
+                    //Mandar el email
+                    //_Controller.SendEmails(data);
+                }
 
                 db.Medical_Appointments.Add(newAppintment);
                 db.SaveChanges();

@@ -25,7 +25,5 @@ public partial class Medical_Appointments
 
     public virtual Users fk_PatientNavigation { get; set; }
 
-    public virtual Schedules fk_ScheduleNavigation { get; set; }
-
     public virtual Status fk_StatusNavigation { get; set; }
 }

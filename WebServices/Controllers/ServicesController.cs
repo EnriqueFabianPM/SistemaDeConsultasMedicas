@@ -339,13 +339,13 @@ namespace WebServices.Controllers
             using (SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com"))
             {
                 clienteSmtp.Port = 587;
-                clienteSmtp.Credentials = new NetworkCredential("martinezfloreseliasrafael123@gmail.com", "dibkiiqiviqfoufw"); // Usar contraseña de aplicación
+                clienteSmtp.Credentials = new NetworkCredential("perezmedellinenriquefabian@gmail.com", "inwqkdvoubvdugcv"); // Contraseña de aplicación Fabian
                 clienteSmtp.EnableSsl = true;
 
                 // Crear y enviar el correo
                 using (MailMessage email = new MailMessage())
                 {
-                    email.From = new MailAddress("martinezfloreseliasrafael123@gmail.com");
+                    email.From = new MailAddress("perezmedellinenriquefabian@gmail.com");
                     email.Subject = data.subject;
                     email.Body = data.body;
                     email.IsBodyHtml = true;
