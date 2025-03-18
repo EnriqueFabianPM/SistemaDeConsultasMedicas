@@ -1,41 +1,46 @@
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Users";
 }
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Usuarios con DataTables</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="Users.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="~/css/Users.css" />
 </head>
 
-    <div id="app">
-        <h1>Lista de Usuarios</h1>
-        <div class="table-container">
-            <table id="users-table" class="display">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Activo</th>
-                        <th>Roles</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in users" :key="user.email">
-                        <td>{{ user.nombre }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.telefono }}</td>
-                        <td>{{ user.active ? 'Sí' : 'No' }}</td>
-                        <td>{{ user.roles.join(', ') }}</td>
-                    </tr>
-                </tbody>
+<div>
+    <h1><strong>Lista de Usuarios</strong></h1>
+    <div class="table-container card shadow">
+        <table ref="userTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Status</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in users" :key="item.id_user">
+                    <td>{{item.name.toUpperCase()}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.phone}}</td>
+                    <td>{{item.role}}</td>
+                    <td :class="item.active === 'Activo' ? 'text-success' : 'text-danger'">{{item.active}}</td>
+                    <td>
+                        <a :class="item.active === 'Activo' ? 'text-danger' : text-success" 
+                        v-on:click="blockUser(item)" 
+                        style="text-decoration: none; cursor:pointer;">
+                            <i :class="item.active === 'Activo' ? 'fas fa-lock' : 'fas fa-unlock-alt'"></i>
+                            {{item.active === 'Activo' ? 'Bloquear' : 'Desbloquear'}}</a>
+                    </td>
+                </tr>
+            </tbody>
             </table>
-        </div>
     </div>
+</div>
 
 @section scripts{
 
@@ -43,6 +48,8 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>

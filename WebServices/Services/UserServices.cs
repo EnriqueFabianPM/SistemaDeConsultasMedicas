@@ -5,7 +5,7 @@ using WebServices.Data;
 using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-#pragma warning disable CS8618
+#pragma warning disable CS8618, CS8603
 
 namespace WebServices.Services
 {
@@ -25,7 +25,7 @@ namespace WebServices.Services
                     Id_User = u.Id_User,
                     Name = u.Name, 
                     Email = u.Email,
-                    Phone = u.Phone.ToString() ?? "-",
+                    Phone = u.Phone == null ? "-" : u.Phone.ToString() ?? "",
                     Sex = u.fk_SexNavigation.Name,
                     Role = u.fk_RoleNavigation.Name,
                     Active = u.Active ? "Activo" : "Inactivo"
@@ -40,7 +40,7 @@ namespace WebServices.Services
                 var user = db.Users
                 .Include(s => s.fk_SexNavigation)
                 .Include(r => r.fk_RoleNavigation)
-                .Where(u => u.Id_User == id && u.Login)
+                .Where(u => u.Id_User == id && u.Login && u.Active)
                 .Select(u => new User
                 {
                     id_User = u.Id_User,
@@ -74,7 +74,6 @@ namespace WebServices.Services
                     row.Name = user.name;
                     row.Email = user.email;
                     row.Phone = user.phone;
-                    row.fk_Sex = user.fk_Sex;
                     row.Active = user.active;
 
                     response.Success = true;

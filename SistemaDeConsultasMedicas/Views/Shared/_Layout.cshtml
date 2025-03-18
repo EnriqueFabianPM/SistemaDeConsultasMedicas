@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - App</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Layout.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SistemaDeConsultasMedicas.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        .d-flex {
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <header>
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between p-2">
                 <div class="d-flex">
@@ -28,7 +36,7 @@
                 </div>
                 <div class="d-flex justify-content-center" v-if="Authorization.Success">
                     <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
-                    <button class="btn btn-outline-secondary" v-on:click="logout()">{{"Cerrar Sesión"}}</button>
+                    <button class="btn btn-outline-secondary" v-on:click="logout()" style="width: 100%;">{{"Cerrar Sesión"}}</button>
                 </div>
             </nav>
         </header>

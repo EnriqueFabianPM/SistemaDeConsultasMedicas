@@ -53,13 +53,32 @@ const app = createApp({
                 Param: null,
             };
 
+            Swal.fire({
+                title: "Iniciando sesión...",
+                text: "Por favor, espera",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Usuario', response.data);
 
                     if (response.data.id_User != 0) {
 
-                        this.goToIndex(response.data.id_User);
+                        Swal.fire({
+                            title: "Éxito",
+                            text: "Inicio de sesión exitoso",
+                            icon: "success",
+                            timer: 1500,
+                            allowOutsideClick: false,
+                            showConfirmButton: false
+                        }).then(() => {
+                            this.goToIndex(response.data.id_User);
+                        })
 
                     } else {
                         Swal.fire({

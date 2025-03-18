@@ -1,25 +1,28 @@
 @{
-#pragma warning disable HTML0209
+    #pragma warning disable HTML0209
 
     Layout = "_Layout";
     ViewData["Title"] = "Login";
 }
+
 <head>
     @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <link href="~/css/Appointments.css" rel="stylesheet" />
 </head>
 
 <div id="app">
-    <h1>Agenda tu cita aquí</h1>
+    <h1 v-if="user?.fk_Role === 1"><strong>Administrador de Citas</strong></h1>
+    <h1 v-else><strong>{{ user?.fk_Role !== 3 ? 'Agendar cita' : 'Lista de citas'}}</strong></h1>
 
-    <div v-if="user?.fk_Role !== 2" class="card shadow">
+    <div v-if="user?.fk_Role !== 3 || user?.fk_Role === 1" class="card shadow mb-2">
         <div class="card-body">
             <!-- Select para seleccionar municipio, consultorio y doctor -->
-            <div class= "d-flex">
+            <div class="d-flex">
                 <!-- Select para seleccionar un municipio -->
                 <div class="form-group">
                     <label for="municipality">Seleccione un municipio:</label>
-                    <select id="municipality" v-model="selectedMunicipality" @@change="onMunicipalityChange">
+                    <select class="shadow custom-fields" id="municipality" v-model="selectedMunicipality" v-on:change="onMunicipalityChange">
                         <option value="" disabled selected>Seleccione un municipio</option>
                         <option v-for="municipality in municipalities" :value="municipality.id">{{ municipality.name}}</option>
                     </select>
@@ -28,7 +31,7 @@
                 <!-- Select para seleccionar un consultorio -->
                 <div class="form-group" v-if="selectedMunicipality">
                     <label for="consultory">Seleccione un consultorio:</label>
-                    <select id="consultory" v-model="selectedConsultory" @@change="onConsultoryChange">
+                    <select class="shadow custom-fields" id="consultory" v-model="selectedConsultory" v-on:change="onConsultoryChange">
                         <option value="" disabled selected>Seleccione un consultorio</option>
                         <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.email }}</option>
                     </select>
@@ -37,9 +40,9 @@
                 <!-- Select para seleccionar un doctor -->
                 <div class="form-group" v-if="selectedConsultory">
                     <label for="doctor">Seleccione un doctor:</label>
-                    <select id="doctor" v-model="selectedDoctor">
+                    <select class="shadow custom-fields" id="doctor" v-model="selectedDoctor">
                         <option value="" disabled selected>Seleccione un doctor</option>
-                        <option v-for="doctor in filteredDoctors" :value="doctor">{{ doctor.name }}</option>
+                        <option v-for="doctor in doctors" :value="doctor.id">{{ doctor.name }}</option>
                     </select>
                 </div>
             </div>
@@ -48,21 +51,55 @@
             <!-- Notas -->
             <div class="form-group">
                 <label for="notes">Notas y sugerencias adicionales:</label>
-                <textarea id="notes" v-model="notes" placeholder="Escribe aquí..."></textarea>
+                <textarea class="shadow custom-fields" style="max-height:300px; min-height:100px;" id="notes" v-model="notes" placeholder="Escribe aquí..."></textarea>
             </div>
 
             <!-- Botón de Enviar -->
-            <button @@click="submitAppointment" :disabled="isLoading || notes === ''">
-                {{ isLoading ? 'Enviando...' : 'Enviar' }}
-            </button>
-
+            <div>
+                <button 
+                    class="btn btn-primary"
+                    style="width: 100%;" 
+                    v-on:click="submitAppointment"
+                    :disabled="isLoading || !selectedDoctor">
+                    {{ isLoading ? 'Enviando...' : 'Enviar' }}
+                </button>
+            </div>
             <!-- Mensajes de éxito y error -->
             <p v-if="showSuccessMessage" class="success-message">Cita creada con éxito</p>
             <p v-if="showErrorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
     </div>
-    <div v-else>
+    <div v-if="user?.fk_Role !== 2">
+        <div class="table-container card shadow">
+            <table ref="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Creada</th>
+                        <th>Asignada</th>
+                        <th>Status</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody ref="appointmentTable">
+                    <!-- Aquí se insertarán los datos con JavaScript -->
+                    <tr v-for="appointment in appointments">
+                        <td> {{appointment.patient}}</td>
+                        <td> {{appointment.created}}</td>
+                        <td> {{appointment.assigned}}</td>
+                        <td> {{appointment.status}}</td>
+                        <td>
+                            <a class="text-danger"
+                               v-on:click="deleteAppointment(appointment.id)"
+                               style="text-decoration: none; cursor:pointer;">
+                                <i class="fa-solid fa-trash-can"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
+        </div>
     </div>
 </div>
 
@@ -70,6 +107,8 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     @*Añade tus scripts en la carpeta "js" en wwwroot*@
     <script src="~/js/Appointments.js" defer></script>

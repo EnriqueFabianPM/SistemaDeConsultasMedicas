@@ -6,6 +6,7 @@ const app = createApp({
             municipalities: [],
             consultories: [],
             doctors: [],
+            appointments: [],
             selectedMunicipality: null,
             selectedConsultory: null,
             selectedDoctor: null,
@@ -46,60 +47,7 @@ const app = createApp({
 
         onConsultoryChange() {
             this.selectedDoctor = null;
-        },
-
-        async submitAppointment() {
-            if (!this.selectedMunicipality || !this.selectedConsultory || !this.selectedDoctor) {
-                this.showErrorMessage = true;
-                this.errorMessage = "Por favor, complete todos los campos obligatorios.";
-                setTimeout(() => {
-                    this.showErrorMessage = false;
-                }, 3000);
-                return;
-            }
-
-            this.isLoading = true;
-
-            const appointment = {
-                municipalityId: this.selectedMunicipality,
-                consultoryId: this.selectedConsultory,
-                doctorId: this.selectedDoctor,
-                notes: this.notes
-            };
-
-            try {
-                // Simulación de una llamada a la API
-                const response = await fetch('https://api.example.com/appointments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appointment)
-                });
-
-                if (!response.ok) throw new Error('Error al crear la cita');
-
-                console.log('Cita creada con éxito:', appointment);
-
-                // Resetear el formulario
-                this.selectedMunicipality = null;
-                this.selectedConsultory = null;
-                this.selectedDoctor = null;
-                this.notes = '';
-
-                // Mostrar mensaje de éxito
-                this.showSuccessMessage = true;
-                setTimeout(() => {
-                    this.showSuccessMessage = false;
-                }, 3000);
-            } catch (error) {
-                console.error('Error:', error);
-                this.showErrorMessage = true;
-                this.errorMessage = 'Hubo un error al crear la cita. Por favor, inténtelo de nuevo.';
-                setTimeout(() => {
-                    this.showErrorMessage = false;
-                }, 3000);
-            } finally {
-                this.isLoading = false;
-            }
+            this.getDoctors();
         },
 
         //Obtener los municipios
@@ -121,7 +69,6 @@ const app = createApp({
 
         //Obtener los consultorios
         getConsultories() {
-
             this.config = {
                 IdApi: 2, //Consultorios
                 BodyParams: null, //Al ser una api tipo Get se manda null
@@ -138,6 +85,143 @@ const app = createApp({
                     console.error("Error en la petición:", error);
                 });
 
+        },
+
+        //Obtener los consultorios
+        getDoctors() {
+            this.config = {
+                IdApi: 3,
+                BodyParams: null,
+                Param: `${this.selectedConsultory}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    this.doctors = response.data;
+                    console.log('Doctores', response.data);
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
+        },
+
+        //Obtener los consultorios
+        getAppointments() {
+            this.config = {
+                IdApi: 4,
+                BodyParams: null,
+                Param: `${this.user.id_User}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    this.appointments = response.data;
+                    console.log('citas', response.data);
+
+                    this.$nextTick(() => {
+                        $(this.$refs.appointmentsTable).DataTable({
+                            paging: true,
+                            searching: true,
+                            ordering: true,
+                            responsive: true,
+                            scrollY: this.user.fk_Role === 1 ? '225px' : '600px',
+                            scrollCollapse: true,
+                            language: {
+                                processing: "Procesando...",
+                                search: "Buscar:",
+                                lengthMenu: "Mostrar _MENU_ registros",
+                                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                infoEmpty: "No hay registros disponibles",
+                                infoFiltered: "(filtrado de _MAX_ registros en total)",
+                                loadingRecords: "Cargando...",
+                                zeroRecords: "No se encontraron registros",
+                                emptyTable: "No hay datos disponibles en la tabla",
+                                paginate: {
+                                    first: "Primero",
+                                    previous: "Anterior",
+                                    next: "Siguiente",
+                                    last: "Último"
+                                },
+                                aria: {
+                                    sortAscending: ": activar para ordenar ascendente",
+                                    sortDescending: ": activar para ordenar descendente"
+                                }
+                            }
+                        });
+
+                    });
+
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
+        },
+
+        submitAppointment() {
+            this.isLoading = true;
+
+            this.config = {
+                IdApi: 5,
+                BodyParams: {
+                    fk_Doctor: this.selectedDoctor,
+                    fk_Patient: this.user.id_User,
+                    notes: this.notes,
+                },
+                Param: null, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+
+                    Swal.fire({
+                        title: "¡Listo!",
+                        text: `${response.data.message}`,
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        allowClickOutside: false,
+                    }).then(() => {
+                        this.isLoading = false;
+
+                        if (this.user.fk_Role === 1) this.Appointments(this.user.id_User);
+                        else this.Index(user.id_User);
+
+                    });
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
+        deleteAppointment(idAppointment) {
+            this.config = {
+                IdApi: 13,
+                BodyParams: {
+                    id_Appointment: idAppointment,
+                },
+                Param: null, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    Swal.fire({
+                        title: "¡Listo!",
+                        text: `${response.data.message}`,
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        allowClickOutside: false,
+                    }).then(() => {
+                        this.Appointments(user.id_User);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
         },
 
         Index(idUser) {
@@ -176,7 +260,7 @@ const app = createApp({
                             icon: "success",
                             timer: 1500,
                             showConfirmButton: false,
-                            //    allowClickOutside: false,
+                            allowClickOutside: false,
                         }).then(() => {
                             window.location.href = window.login;
                         })
@@ -205,6 +289,9 @@ const app = createApp({
             };
 
             this.user = window.user;
+            this.$nextTick(() => {
+                if (this.user.fk_Role !== 2) this.getAppointments();
+            });
         }
 
         //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando

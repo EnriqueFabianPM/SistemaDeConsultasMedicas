@@ -15,8 +15,6 @@ public partial class Users
 
     public string Password { get; set; }
 
-    public int? Phone { get; set; }
-
     public int fk_Sex { get; set; }
 
     public int fk_Role { get; set; }
@@ -25,11 +23,11 @@ public partial class Users
 
     public int? fk_Type { get; set; }
 
-    public int? fk_Schedule { get; set; }
-
     public bool Active { get; set; }
 
     public bool Login { get; set; }
+
+    public string Phone { get; set; }
 
     public virtual ICollection<Medical_Appointments> Medical_Appointmentsfk_DoctorNavigation { get; set; } = new List<Medical_Appointments>();
 
@@ -38,8 +36,6 @@ public partial class Users
     public virtual Consultories fk_ConsultoryNavigation { get; set; }
 
     public virtual Roles fk_RoleNavigation { get; set; }
-
-    public virtual Schedules fk_ScheduleNavigation { get; set; }
 
     public virtual Sexes fk_SexNavigation { get; set; }
 

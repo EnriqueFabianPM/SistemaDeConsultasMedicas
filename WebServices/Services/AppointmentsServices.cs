@@ -1,36 +1,68 @@
 ﻿using System.Text.Json;
 using WebServices.Data;
 using WebServices.Models;
-using WebServices.Controllers;
+using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts;
+using WebServices.Controllers;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
+using NuGet.Common;
 #pragma warning disable CS8618
 
 namespace WebServices.Services
 {
     public class AppointmentsServices
     {
-        private readonly ServicesController _Controller = new ServicesController();
+        private readonly ServicesController _servicesController;
+        //private readonly EmailServices _EmailServices = new EmailServices();
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
 
         //Devuelve una lista de citas médicas filtradas por doctor
         public List<AppointmentList> Appointments(int? IdDoctor)
         {
-            List<AppointmentList> list = db.Medical_Appointments
-                .Include(p => p.fk_PatientNavigation)
-                .Include(s => s.fk_StatusNavigation)
-                .Where(a => a.fk_Doctor == IdDoctor)
-                .Select(a => new AppointmentList
-                {
-                    Id = a.Id_Appointment,
-                    fk_Doctor = a.fk_Doctor,
-                    fk_Patient = a.fk_Patient,
-                    fk_Status = a.fk_Status,
-                    Status = a.fk_StatusNavigation.Name, 
-                    Patient = a.fk_PatientNavigation.Name,
-                    Date = a.Date.ToString(),
-                })
-                .ToList();
+            var user = db.Users
+                .Where(u => u.Id_User == IdDoctor)
+                .FirstOrDefault();
 
+            List<AppointmentList> list = new List<AppointmentList>();
+
+            if(user?.fk_Role == 1)
+            {
+                list = db.Medical_Appointments
+                    .Include(p => p.fk_PatientNavigation)
+                    .Include(s => s.fk_StatusNavigation)
+                    .Select(a => new AppointmentList
+                    {
+                        Id = a.Id_Appointment,
+                        fk_Doctor = a.fk_Doctor,
+                        fk_Patient = a.fk_Patient,
+                        fk_Status = a.fk_Status,
+                        Patient = a.fk_PatientNavigation.Name,
+                        Created = a.Created_Date.ToString(),
+                        Assigned = a.Appointment_Date.ToString(),
+                        Status = a.fk_StatusNavigation.Name,
+                    })
+                    .ToList();
+            }
+            else
+            {
+                list = db.Medical_Appointments
+                    .Include(p => p.fk_PatientNavigation)
+                    .Include(s => s.fk_StatusNavigation)
+                    .Where(a => a.fk_Doctor == IdDoctor)
+                    .Select(a => new AppointmentList
+                    {
+                        Id = a.Id_Appointment,
+                        fk_Doctor = a.fk_Doctor,
+                        fk_Patient = a.fk_Patient,
+                        fk_Status = a.fk_Status,
+                        Patient = a.fk_PatientNavigation.Name,
+                        Created = a.Created_Date.ToString(),
+                        Assigned = a.Appointment_Date.ToString(),
+                        Status = a.fk_StatusNavigation.Name,
+                    })
+                    .ToList();
+            }
             return list;
         }
 
@@ -94,56 +126,21 @@ namespace WebServices.Services
                 Message = "",
             };
 
-            if (Appointment != null) 
+            if (Appointment != null)
             {
+
+                DateTime currentDate = DateTime.Now.Date;
+                DateTime appointmentDate = GetToDateFromDateAndWorkDays(currentDate, 1);
+
                 Medical_Appointments newAppintment = new Medical_Appointments
                 {
                     fk_Doctor = Appointment.fk_Doctor,
                     fk_Patient = Appointment.fk_Patient,
-                    fk_Schedule = Appointment.fk_Schedule,
-                    Notes = Appointment.notes,
-                    Date = DateTime.Now,
                     fk_Status = 1,
+                    Created_Date = currentDate,
+                    Appointment_Date = appointmentDate,
+                    Notes = Appointment.notes,
                 };
-
-                var doctor = db.Users
-                    .Where(u => u.Id_User == Appointment.fk_Doctor)
-                    .Select(u => new User
-                    {
-                        name = u.Name,
-                        email = u.Email,
-                    })
-                    .FirstOrDefault();
-
-                var patient = db.Users
-                    .Where(u => u.Id_User == Appointment.fk_Patient)
-                    .Select(u => new User
-                    {
-                        name = u.Name,
-                        email = u.Email,
-                    })
-                    .FirstOrDefault();
-
-                if (doctor != null && patient != null)
-                {
-                    Email data = new Email
-                    {
-                        //Asunto del correo
-                        subject = "[Aviso] ¡Se te ha asignado una nueva cita!",
-                        //Construir el cuerpo del correo
-                        body = $@"
-                            <h1><strong>{doctor.name}</strong></h1>
-                            <br>
-                            <p>Se ha asignado una nueva cita con el paciente {patient.name}</p>
-                            <p>Gracias, de parte de <br>SistemadeConsultasMedicas_8A</p>
-                        ",
-                        //Usuario que contiene el email que lo va a recibir
-                        user = doctor,
-                    };
-
-                    //Mandar el email
-                    //_Controller.SendEmails(data);
-                }
 
                 db.Medical_Appointments.Add(newAppintment);
                 db.SaveChanges();
@@ -151,7 +148,37 @@ namespace WebServices.Services
                 response.Success = true;
                 response.Message = "¡Se ha agendado la cita!";
             }
+            return response;
+        }
 
+        //Método para crear una una cita médica
+        public Response DeleteAppointment(Appointment Appointment)
+        {
+            Response response = new Response
+            {
+                Success = false,
+                Message = "",
+            };
+
+            if (Appointment != null)
+            {
+                var appointment = db.Medical_Appointments
+                    .Where(a => a.Id_Appointment == Appointment.id_Appointment)
+                    .FirstOrDefault();
+
+                if (appointment != null) 
+                {
+                    db.Medical_Appointments.Remove(appointment);
+                    db.SaveChanges();
+                    response.Message = "¡Se ha Cancelado la cita!";
+                }
+                else
+                {
+                    response.Message = "¡La cita no existe o ya ha sido cancelada!";
+                }
+
+                response.Success = true;            
+            }
             return response;
         }
 
@@ -187,6 +214,36 @@ namespace WebServices.Services
 
             return response;
         }
+
+        //Obtiene la fecha actual y además devuelve la fecha de la cita
+        public static DateTime GetToDateFromDateAndWorkDays(DateTime fromDate, int workDays)
+        {
+            // Excluir los fines de semana
+            int weekendDays = 0;
+            DateTime toDate = fromDate;
+
+            while (workDays > 0)
+            {
+                toDate = toDate.AddDays(1);
+                if (!IsWeekendDay(toDate))
+                {
+                    workDays--;
+                }
+                else
+                {
+                    weekendDays++;
+                }
+            }
+
+            return toDate;
+        }
+
+        public static bool IsWeekendDay(DateTime date)
+        {
+            DayOfWeek day = date.DayOfWeek;
+            return day == DayOfWeek.Saturday || day == DayOfWeek.Sunday;
+        }
+
     }
 
     //ViewModels
@@ -198,7 +255,8 @@ namespace WebServices.Services
         public int fk_Status { get; set; }
         public string Patient { get; set; }
         public string Status { get; set; }
-        public string Date { get; set; }
+        public string Created { get; set; }
+        public string Assigned { get; set; }
         public string Notes { get; set; }
     }
 

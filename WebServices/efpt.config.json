@@ -31,10 +31,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Schedules]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Sexes]",
          "ObjectType": 0
       },

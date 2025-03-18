@@ -13,11 +13,11 @@ public partial class Medical_Appointments
 
     public int fk_Patient { get; set; }
 
-    public int fk_Schedule { get; set; }
-
     public int fk_Status { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateTime Created_Date { get; set; }
+
+    public DateTime Appointment_Date { get; set; }
 
     public string Notes { get; set; }
 
