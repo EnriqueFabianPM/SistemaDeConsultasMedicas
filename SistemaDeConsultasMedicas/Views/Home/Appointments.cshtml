@@ -33,7 +33,7 @@
                     <label for="consultory">Seleccione un consultorio:</label>
                     <select class="shadow custom-fields" id="consultory" v-model="selectedConsultory" v-on:change="onConsultoryChange">
                         <option value="" disabled selected>Seleccione un consultorio</option>
-                        <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.email }}</option>
+                        <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.name }}</option>
                     </select>
                 </div>
 

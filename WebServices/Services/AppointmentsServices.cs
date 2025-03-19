@@ -93,6 +93,7 @@ namespace WebServices.Services
                     Latitude = c.Latitude,
                     Length = c.Length,
                     Email = c.Email ?? "-",
+                    Name = c.Name,
                 })
                 .ToList();
 
@@ -273,6 +274,7 @@ namespace WebServices.Services
         public string Latitude { get; set; }
         public string Length { get; set; }
         public string Email { get; set; }
+        public string Name { get; set; }
 
     }
 
