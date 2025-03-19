@@ -58,7 +58,7 @@ const app = createApp({
                                 searching: true,
                                 ordering: true,
                                 responsive: true,
-                                scrollY: '600px',
+                                scrollY: '500px',
                                 scrollCollapse: true,
                                 language: {
                                     processing: "Procesando...",
