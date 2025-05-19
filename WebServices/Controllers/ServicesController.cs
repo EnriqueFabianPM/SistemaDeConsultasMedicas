@@ -102,22 +102,15 @@ namespace WebServices.Controllers
                 }
 
                 //Si existen objetos en la lista, crearlos en la base de datos
-                if (newMunicipalities.Any())
-                {
-                    await db.Municipalities.AddRangeAsync(newMunicipalities);
-                }
-
+                if (newMunicipalities.Any()) await db.Municipalities.AddRangeAsync(newMunicipalities);
                 await db.SaveChangesAsync();
-
-                CreateTypes();
-                CreateConsultories(municipalities);
             }
 
             return municipalities;
         }
 
         //Métodó para crear las filas de las especialidades médicas
-        public async void CreateTypes()
+        public async Task CreateTypes()
         {
             var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Get, "https://www.economia.gob.mx/apidatamexico/tesseract/data.jsonrecords?Resources+Categories=18&cube=health_resources&drilldowns=Resources+Subcategories&locale=es&measures=Total");
