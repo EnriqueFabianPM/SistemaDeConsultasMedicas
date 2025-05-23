@@ -4,15 +4,15 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace SistemaDeConsultasMedicas.Models;
+namespace SistemasDeConsultasMedicasEntities.Data;
 
-public partial class Consultories_System_Context : DbContext
+public partial class Consultories_System_DevContext : DbContext
 {
-    public Consultories_System_Context()
+    public Consultories_System_DevContext()
     {
     }
 
-    public Consultories_System_Context(DbContextOptions<Consultories_System_Context> options)
+    public Consultories_System_DevContext(DbContextOptions<Consultories_System_DevContext> options)
         : base(options)
     {
     }
@@ -25,13 +25,9 @@ public partial class Consultories_System_Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("db_datareader");
-
         modelBuilder.Entity<APIs>(entity =>
         {
             entity.HasKey(e => e.Id_API);
-
-            entity.ToTable("APIs", "dbo");
 
             entity.Property(e => e.Name)
                 .IsRequired()

@@ -1,7 +1,10 @@
-﻿namespace SistemasDeConsultasMedicas___Mobile
+﻿using SistemasDeConsultasMedicasEntities.Data;
+
+namespace SistemasDeConsultasMedicas___Mobile
 {
     public partial class MainPage : ContentPage
     {
+        private readonly Consultories_System_DevContext db = new();
         int count = 0;
 
         public MainPage()
@@ -21,5 +24,4 @@
             SemanticScreenReader.Announce(CounterBtn.Text);
         }
     }
-
 }

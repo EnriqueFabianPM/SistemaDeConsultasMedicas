@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
 using SistemaDeConsultasMedicas.Models;
 using SistemaDeConsultasMedicas.ViewModels;
-using SistemaDeConsultasMedicas.Services;
 using System.Text;
 using System.Text.Json;
-using System.Net;
-using Authorization = SistemaDeConsultasMedicas.Services.Authorization;
 #pragma warning disable CS8600, CS8603, CS8602
 
 namespace SistemaDeConsultasMedicas.Controllers
