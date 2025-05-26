@@ -1,8 +1,11 @@
-﻿const { createApp } = Vue;
+﻿const { map } = require("jquery");
+
+const { createApp } = Vue;
 
 const app = createApp({
     data() {
         return {
+            map:null,
             municipalities: [],
             consultories: [],
             doctors: [],
@@ -38,6 +41,43 @@ const app = createApp({
         };
     },
     methods: {
+
+        generateMap() {
+
+
+            this.map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 19.4326, lng: -99.1332 },
+                zoom: 12,
+            });
+
+        },
+
+        
+        updateMapMarkers() {
+            const consultory = consultories.find(o => o.id === this.selectedConsultory);
+            const map = this.map;
+            if (consultory) {
+                const marker = new google.maps.Marker({
+                    position: {
+                        lat: parseFloat(consultory.latitude),
+                        lng: parseFloat(consultory.length)
+                    },
+                    map,
+                    title: consultory.name
+                });
+
+                if (marker) {
+                        map.setCenter({
+                            lat: parseFloat(consultory.latitude),
+                            lng: parseFloat(consultory.length)
+                        });
+                }
+
+            }
+            //if (consultorios.length > 0) {
+            //}
+        },
+
         onMunicipalityChange() {
             this.selectedConsultory = null;
             this.selectedDoctor = null;
@@ -48,6 +88,8 @@ const app = createApp({
         onConsultoryChange() {
             this.selectedDoctor = null;
             this.getDoctors();
+
+            this.updateMapMarkers();
         },
 
         //Obtener los municipios
