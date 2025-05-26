@@ -1,6 +1,4 @@
-﻿const { map } = require("jquery");
-
-const { createApp } = Vue;
+﻿const { createApp } = Vue;
 
 const app = createApp({
     data() {
@@ -42,14 +40,14 @@ const app = createApp({
     },
     methods: {
 
-        generateMap() {
-
-
-            this.map = new google.maps.Map(document.getElementById("map"), {
+        initMap() {
+            const initMap = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: 19.4326, lng: -99.1332 },
                 zoom: 12,
             });
 
+            this.map = initMap;
+            console.log(this.map,'mapa');
         },
 
         
@@ -83,6 +81,9 @@ const app = createApp({
             this.selectedDoctor = null;
 
             this.getConsultories();
+            if (!this.map) {
+                this.initMap();
+            }
         },
 
         onConsultoryChange() {
