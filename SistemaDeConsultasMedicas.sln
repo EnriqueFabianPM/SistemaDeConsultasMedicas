@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SistemaDeConsultasMedicas",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServices", "WebServices\WebServices.csproj", "{C3F02493-1E5C-4EF3-AC5B-C17FB80BAC49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemasDeConsultasMedicas - Mobile", "SistemasDeConsultasMedicas - Mobile\SistemasDeConsultasMedicas - Mobile.csproj", "{C1E4E645-3253-4827-B1F7-D68193DA9311}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,11 +21,6 @@ Global
 		{C3F02493-1E5C-4EF3-AC5B-C17FB80BAC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3F02493-1E5C-4EF3-AC5B-C17FB80BAC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3F02493-1E5C-4EF3-AC5B-C17FB80BAC49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1E4E645-3253-4827-B1F7-D68193DA9311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1E4E645-3253-4827-B1F7-D68193DA9311}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1E4E645-3253-4827-B1F7-D68193DA9311}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{C1E4E645-3253-4827-B1F7-D68193DA9311}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1E4E645-3253-4827-B1F7-D68193DA9311}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

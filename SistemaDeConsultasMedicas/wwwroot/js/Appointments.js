@@ -46,28 +46,30 @@ const app = createApp({
                 zoom: 12,
             });
         },
-
         
         updateMapMarkers() {
-            const consultory = consultories.find(o => o.id === this.selectedConsultory);
+            const consultory = this.consultories.find(o => o.id === this.selectedConsultory);
             const map = this.map;
-            if (consultory) {
-                const marker = new google.maps.Marker({
-                    position: {
-                        lat: parseFloat(consultory.latitude),
-                        lng: parseFloat(consultory.length)
-                    },
-                    map,
-                    title: consultory.name
-                });
 
-                if (marker) {
-                    map.setCenter({
-                        lat: parseFloat(consultory.latitude),
-                        lng: parseFloat(consultory.length)
+            if (consultory) {
+                const position = {
+                    lat: parseFloat(consultory.latitude),
+                    lng: parseFloat(consultory.length)
+                };
+
+                // Si ya hay un marcador previo, lo movemos
+                if (this.marker) {
+                    this.marker.setPosition(position);
+                } else {
+                    // Si no existe aún, lo creamos
+                    this.marker = new google.maps.Marker({
+                        position,
+                        map,
+                        title: consultory.name
                     });
                 }
 
+                map.setCenter(position);
             }
         },
 
