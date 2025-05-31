@@ -3,7 +3,12 @@
 const app = createApp({
     data() {
         return {
-
+            isLogin: true,
+            credentials: {
+                Email: '',
+                Password: ''
+            },
+            
             //Modelo para credenciales del usuario
             credentials: {
                 Email: "",
@@ -25,15 +30,7 @@ const app = createApp({
                 phone: null,
                 fk_Sex: null,
                 fk_Role: null,
-                fk_Consultory: null,
-                fk_Type: null,
-                fk_Schedule: null,
                 active: false,
-                sex: "",
-                role: "",
-                consultory: "",
-                type: "",
-                schedule: "",
             },
 
             //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
@@ -106,6 +103,72 @@ const app = createApp({
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
+                });
+        },
+
+        register() {
+            this.config = {
+                IdApi: 11, // Cambiar según el Id de tu API para registrar
+                BodyParams: this.newUser,
+                Param: null,
+            };
+
+            Swal.fire({
+                title: "Registrando usuario...",
+                text: "Por favor, espera",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Respuesta de registro', response.data);
+
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "Éxito",
+                            text: response.data.message || "Usuario registrado correctamente",
+                            icon: "success",
+                            timer: 2000,
+                            allowOutsideClick: false,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Puedes redirigir o pasar automáticamente a login
+                            this.isLogin = true;
+                            // Limpiar campos del formulario
+                            this.newUser = {
+                                id_User: null,
+                                name: "",
+                                email: "",
+                                password: "",
+                                phone: null,
+                                fk_Sex: null,
+                                fk_Role: null,
+                                active: false,
+                            };
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: response.data.message || "No se pudo registrar el usuario",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la petición de registro:", error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "Hubo un error al registrar el usuario",
+                        icon: "error",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                 });
         },
 
