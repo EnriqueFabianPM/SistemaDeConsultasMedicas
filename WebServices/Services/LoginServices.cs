@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Text.Json;
-using WebServices.Data;
+﻿using WebServices.Data;
 using WebServices.Models;
-using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable CS8618
 
@@ -11,9 +7,8 @@ namespace WebServices.Services
 {
     public class LoginServices
     {
-
-        public LoginServices() { }
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
+        public LoginServices() { }
 
         //Método que valida las credenciales que manda el cliente
         public User Login(Credentials credentials)
@@ -124,8 +119,9 @@ namespace WebServices.Services
                         Phone = user.phone,
                         fk_Sex = user.fk_Sex,
                         fk_Consultory = user.fk_Consultory,
-                        fk_Role = 1,
+                        fk_Role = user.fk_Role,
                         fk_Type = user.fk_Type,
+                        Active = true,
                         Login = false,
                     };
 

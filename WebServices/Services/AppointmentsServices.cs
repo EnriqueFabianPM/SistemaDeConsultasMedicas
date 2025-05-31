@@ -1,12 +1,7 @@
-﻿using System.Text.Json;
-using WebServices.Data;
+﻿using WebServices.Data;
 using WebServices.Models;
-using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts;
 using WebServices.Controllers;
-using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
-using NuGet.Common;
 #pragma warning disable CS8618
 
 namespace WebServices.Services

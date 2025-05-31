@@ -5,13 +5,8 @@ using WebServices.Data;
 using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Net.Mail;
 using System.Net;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System.Threading.Tasks;
 using MunicipalitiesDb = WebServices.Data.Municipalities;
 using Municipalities = WebServices.Services.Municipalities;
 #pragma warning disable CS8600, CS8603, CS8602
@@ -344,25 +339,21 @@ namespace WebServices.Controllers
         public void SendEmails(Email data)
         {
             // Configurar el cliente SMTP
-            using (SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com"))
-            {
-                clienteSmtp.Port = 587;
-                clienteSmtp.Credentials = new NetworkCredential("perezmedellinenriquefabian@gmail.com", "inwqkdvoubvdugcv"); // Contraseña de aplicación Fabian
-                clienteSmtp.EnableSsl = true;
+            SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com");
+            clienteSmtp.Port = 587;
+            clienteSmtp.Credentials = new NetworkCredential("perezmedellinenriquefabian@gmail.com", "inwqkdvoubvdugcv"); // Contraseña de aplicación Fabian
+            clienteSmtp.EnableSsl = true;
 
-                // Crear y enviar el correo
-                using (MailMessage email = new MailMessage())
-                {
-                    email.From = new MailAddress("perezmedellinenriquefabian@gmail.com");
-                    email.Subject = data.subject;
-                    email.Body = data.body;
-                    email.IsBodyHtml = true;
-                    email.To.Add(data.user.email);
+            // Crear y enviar el correo
+            MailMessage email = new MailMessage();
+            email.From = new MailAddress("perezmedellinenriquefabian@gmail.com");
+            email.Subject = data.subject;
+            email.Body = data.body;
+            email.IsBodyHtml = true;
+            email.To.Add(data.user.email);
 
-                    //Mandar el correo
-                    clienteSmtp.Send(email);
-                }
-            }
+            //Mandar el correo
+            clienteSmtp.Send(email);
         }
     }
 }

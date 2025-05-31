@@ -38,69 +38,80 @@
                                 </button>
                             </div>
 
-                            <!-- Formulario de Registro -->
-                            <div v-else class="mb-md-5 mt-md-4 pb-5">
-                                <h2 class="fw-bold mb-2 text-uppercase">Registro</h2>
-                                <p class="text-white-50 mb-5">Crea tu cuenta rellenando los datos.</p>
+                            <!-- Register -->
+                            <div v-else class="mt-md-4" style="max-width: 900px; margin: 0 auto;">
+                                <h2 class="fw-bold mb-2 text-uppercase text-center">Registro</h2>
+                                <p class="text-white-50 mb-5 text-center">Crea tu cuenta rellenando los datos.</p>
 
-                                <!-- Nombre -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="text" id="registerName" class="form-control form-control-lg" v-model="newUser.name" />
-                                    <label class="form-label" for="registerName">Nombre</label>
+                                <div class="row justify-content-center">
+                                    <!-- Columna izquierda con borde derecho -->
+                                    <div class="col-6 pe-4" style="border-right: 1px solid #fff;">
+                                        <!-- Nombre -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerName">Nombre</label>
+                                            <input type="text" id="registerName" class="form-control form-control-lg" v-model="newUser.name" />
+                                        </div>
+
+                                        <!-- Correo electrónico -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerEmail">Correo electrónico</label>
+                                            <input type="email" id="registerEmail" class="form-control form-control-lg" v-model="newUser.email" />
+                                        </div>
+
+                                        <!-- Teléfono -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerPhone">Número</label>
+                                            <input type="tel" id="registerPhone" class="form-control form-control-lg" v-model="newUser.phone" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Columna derecha con borde izquierdo -->
+                                    <div class="col-6 ps-4" style="border-left: 1px solid #fff;">
+                                        <!-- Sexo (Select) -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerSex">Sexo</label>
+                                            <select id="registerSex" class="form-control form-control-lg" v-model="newUser.fk_Sex">
+                                                <option disabled value="">Seleccione una opción</option>
+                                                <option :value="1">Hombre</option>
+                                                <option :value="2">Mujer</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Contraseña -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerPassword">Contraseña</label>
+                                            <input type="password" id="registerPassword" class="form-control form-control-lg" v-model="newUser.password" />
+                                        </div>
+
+                                        <!-- Confirmar Contraseña -->
+                                        <div class="form-outline form-white mb-4">
+                                            <label class="form-label" for="registerConfirmPassword">Confirmar Contraseña</label>
+                                            <input type="password" id="registerConfirmPassword" class="form-control form-control-lg" v-model="newUser.confirmPassword" />
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <!-- Correo electrónico -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="email" id="registerEmail" class="form-control form-control-lg" v-model="newUser.email" />
-                                    <label class="form-label" for="registerEmail">Correo electrónico</label>
-                                </div>
-
-                                <!-- Teléfono -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="tel" id="registerPhone" class="form-control form-control-lg" v-model="newUser.phone" />
-                                    <label class="form-label" for="registerPhone">Número</label>
-                                </div>
-
-                                <!-- Contraseña -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="password" id="registerPassword" class="form-control form-control-lg" v-model="newUser.password" />
-                                    <label class="form-label" for="registerPassword">Contraseña</label>
-                                </div>
-
-                                <!-- Confirmar Contraseña -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="password" id="registerConfirmPassword" class="form-control form-control-lg" v-model="newUser.confirmPassword" />
-                                    <label class="form-label" for="registerConfirmPassword">Confirmar Contraseña</label>
-                                </div>
-
-                                <!-- Sexo -->
-                                <div class="form-outline form-white mb-4">
-                                    <input type="text" id="registerSex" class="form-control form-control-lg" v-model="newUser.sex" />
-                                    <label class="form-label" for="registerSex">Sexo</label>
-                                </div>
-
-                                <button class="btn btn-outline-light btn-lg px-5"
-                                        type="submit"
-                                        :disabled="!newUser.email || !newUser.password || newUser.password !== newUser.confirmPassword"
-                                        @@click="register()">
-                                    Registrarse
-                                </button>
                             </div>
 
                             <!-- Enlace para cambiar de formulario -->
                             <div>
-                                <p class="mb-0">
-                                    <span v-if="isLogin">
-                                        ¿No tienes cuenta?
-                                        <a href="#" class="text-white-50 fw-bold" @@click.prevent="isLogin = false">Regístrate</a>
-                                    </span>
-                                    <span v-else>
+                                <span v-if="isLogin">
+                                    ¿No tienes cuenta?
+                                    <a href="#" class="text-white-50 fw-bold" @@click.prevent="isLogin = false">Regístrate</a>
+                                </span>
+                                <!-- Botón de registro -->
+                                <div v-else class="form-outline form-white mb-4 mt-4">
+                                    <button class="btn btn-outline-light btn-lg px-5"
+                                            type="submit"
+                                            :disabled="!newUser.email || !newUser.password || newUser.password !== newUser.confirmPassword"
+                                            @@click="register()">
+                                        Registrarse
+                                    </button>
+                                    <p class="m-0">
                                         ¿Ya tienes una cuenta?
                                         <a href="#" class="text-white-50 fw-bold" @@click.prevent="isLogin = true">Inicia sesión</a>
-                                    </span>
-                                </p>
+                                    </p>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -122,5 +133,4 @@
     </script>
     @*Añade tus scripts en la carpeta "js" en wwwroot*@
     <script src="~/js/Login.js"></script>
-
 }

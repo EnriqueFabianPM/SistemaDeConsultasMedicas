@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Text.Json;
-using WebServices.Data;
+﻿using WebServices.Data;
 using WebServices.Models;
-using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable CS8618, CS8603
 

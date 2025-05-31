@@ -4,15 +4,11 @@ const app = createApp({
     data() {
         return {
             isLogin: true,
-            credentials: {
-                Email: '',
-                Password: ''
-            },
             
             //Modelo para credenciales del usuario
             credentials: {
-                Email: "",
-                Password: "",
+                Email: '',
+                Password: '',
             },
 
             //Modelo para manejar autorización y almacenar datos del usuario
@@ -23,15 +19,16 @@ const app = createApp({
 
             //Modelo para nuevos usuarios
             newUser: {
-                id_User: null,
-                name: "",
-                email: "",
-                password: "",
-                phone: null,
-                fk_Sex: null,
-                fk_Role: null,
-                active: false,
+                id_User: 0,
+                name: '',
+                email: '',
+                password: '',
+                phone: '',
+                fk_Sex: '',
+                fk_Role: 2,
             },
+
+            confirmPassword: '',
 
             //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
             config: {
@@ -63,6 +60,7 @@ const app = createApp({
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Usuario', response.data);
+                    
 
                     if (response.data.id_User != 0) {
 
@@ -88,8 +86,8 @@ const app = createApp({
 
                         //Modelo para credenciales del usuario
                         this.credentials = {
-                            email: "",
-                            password: "",
+                            email: '',
+                            password: '',
                         };
 
                         //Modelo para manejar autorización y almacenar datos del usuario
@@ -107,11 +105,26 @@ const app = createApp({
         },
 
         register() {
+
+            if (this.newUser.password === this.confirmPassword) {
+
+                Swal.fire({
+                    title: "Error",
+                    text: "Las contraseñas son diferentes",
+                    icon: "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
             this.config = {
                 IdApi: 11, // Cambiar según el Id de tu API para registrar
                 BodyParams: this.newUser,
                 Param: null,
             };
+
+            console.log('Registrando usuario', this.newUser);
 
             Swal.fire({
                 title: "Registrando usuario...",
@@ -140,14 +153,13 @@ const app = createApp({
                             this.isLogin = true;
                             // Limpiar campos del formulario
                             this.newUser = {
-                                id_User: null,
-                                name: "",
-                                email: "",
-                                password: "",
-                                phone: null,
-                                fk_Sex: null,
-                                fk_Role: null,
-                                active: false,
+                                id_User: 0,
+                                name: '',
+                                email: '',
+                                password: '',
+                                phone: '',
+                                fk_Sex: '',
+                                fk_Role: 2,
                             };
                         });
                     } else {
