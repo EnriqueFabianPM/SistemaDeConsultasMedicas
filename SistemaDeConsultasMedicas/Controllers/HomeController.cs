@@ -11,9 +11,7 @@ namespace SistemaDeConsultasMedicas.Controllers
     {
         private readonly Consultories_System_Context db = new Consultories_System_Context();
 
-        public HomeController()
-        {
-        }
+        public HomeController(){}
 
         //Controladores de las vistas----------------------------------------------------------------------------------------
         [HttpGet]
@@ -41,10 +39,7 @@ namespace SistemaDeConsultasMedicas.Controllers
                 ViewBag.User = user;
                 return View();
             }
-            else
-            {
-                return StatusCode(403);
-            }
+            else return StatusCode(403);
         }
 
         [HttpGet]
@@ -66,10 +61,7 @@ namespace SistemaDeConsultasMedicas.Controllers
                 ViewBag.User = user;
                 return View();
             }
-            else
-            {
-                return StatusCode(403);
-            }
+            else return StatusCode(403);
         }
 
         [HttpGet]
@@ -85,16 +77,12 @@ namespace SistemaDeConsultasMedicas.Controllers
             JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
             object user = jsonResult?.Value; // Extraer el objeto real
 
-
             if (user != null)
             {
                 ViewBag.User = user;
                 return View();
             }
-            else
-            {
-                return StatusCode(403);
-            }
+            else return StatusCode(403);
         }
 
         //Método para conseguir las urls de las Apis que se vayan a consumir

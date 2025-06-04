@@ -1,6 +1,4 @@
-﻿const { createApp } = Vue;
-
-const app = createApp({
+﻿const app = Vue.createApp({
     data() {
         return {
             isLogin: true,
@@ -60,7 +58,6 @@ const app = createApp({
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Usuario', response.data);
-                    
 
                     if (response.data.id_User != 0) {
 
@@ -105,7 +102,6 @@ const app = createApp({
         },
 
         register() {
-
             if (this.newUser.password === this.confirmPassword) {
 
                 Swal.fire({
@@ -185,12 +181,11 @@ const app = createApp({
         },
 
         goToIndex(idUser) {
-            window.location.href = `${window.Index}?id=${idUser}`;
+            const root = window.index || null;
+            if (root) window.location.href = `${root}?id=${idUser}`;
         }
-
     },
     mounted() {
-
-    }
+    } 
 });
 app.mount('#app');

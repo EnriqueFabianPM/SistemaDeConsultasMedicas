@@ -1,64 +1,71 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - App</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/Layout.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/SistemaDeConsultasMedicas.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - App</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/Layout.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/SistemaDeConsultasMedicas.styles.css" asp-append-version="true" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <style>
-        .d-flex {
-            gap: 15px;
-        }
-    </style>
-</head>
-<body>
-    <div id="app" v-cloak>
-        <header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between p-2">
-                <div class="d-flex">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Login">Consultas Medicas</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" v-if="Authorization.Success">
-                        <div>
-                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Index(user?.id_User)">Index</a>
-                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Users(user?.id_User)" v-if="user?.fk_Role === 1">Users</a>
-                            <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" v-on:click="Appointments(user?.id_User)">Appointments</a>
+        <style>
+            .d-flex {
+                gap: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <header id="layout" v-cloak>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between p-2">
+                    <div class="d-flex">
+                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Login">Consultas Medicas</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" v-if="Authorization.Success">
+                            <div>
+                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Index(user?.id_User)">Index</a>
+                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Users(user?.id_User)" v-if="user?.fk_Role === 1">Users</a>
+                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Appointments(user?.id_User)">Appointments</a>
+                            </div>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center" v-if="Authorization.Success">
+                        <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
+                        <button class="btn btn-outline-secondary" v-on:click="logout()" style="width: 100%;">{{"Cerrar Sesión"}}</button>
+                    </div>
+                </nav>
+            </header>
+            <div id="app" v-cloak class="container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+
+            <footer class="border-top footer text-muted">
+                <div class="container">
+                    &copy; @DateTime.Now.Date.Year - SistemaDeConsultasMedicas - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </div>
-                <div class="d-flex justify-content-center" v-if="Authorization.Success">
-                    <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
-                    <button class="btn btn-outline-secondary" v-on:click="logout()" style="width: 100%;">{{"Cerrar Sesión"}}</button>
-                </div>
-            </nav>
-        </header>
-        <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
+            </footer>
         </div>
 
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2025 - SistemaDeConsultasMedicas - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </div>
-        </footer>
-    </div>
-
-    @section scripts{
-        <script src="~/js/Layout.js"></script>
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    }
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script >
+            window.callApiAsync = '@Url.Action("ConsumeApi", "Home")';
+            window.login = '@Url.Action("Login", "Home")';
+            window.appointments = '@Url.Action("Appointments", "Home")';
+            window.users = '@Url.Action("Users", "Home")';
+            window.index = '@Url.Action("Index", "Home")';
+        </script>
+        @await RenderSectionAsync("scripts", required: false)
+    </body>
 </html>
