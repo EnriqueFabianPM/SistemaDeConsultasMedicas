@@ -20,10 +20,10 @@ namespace WebServices.Controllers
         private readonly Consultories_System_DevContext db = new Consultories_System_DevContext(); 
 
         //Instancias de las clases con los servicios
-        private readonly AppointmentsServices _AppointmentServices = new AppointmentsServices(); 
-        private readonly UserServices _UserServices = new UserServices();
-        private readonly LoginServices _LoginServices = new LoginServices();
-        //private readonly EmailServices _EmailServices = new EmailServices();
+        private readonly AppointmentsServices _AppointmentServices = new(); 
+        private readonly UserServices _UserServices = new();
+        private readonly LoginServices _LoginServices = new();
+        //private readonly EmailServices _EmailServices = new();
 
         public ServicesController()
         {
