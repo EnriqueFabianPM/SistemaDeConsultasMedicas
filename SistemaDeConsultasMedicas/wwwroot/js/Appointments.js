@@ -225,7 +225,7 @@ const app = createApp({
                     }).then(() => {
                         this.isLoading = false;
 
-                        if (this.user.fk_Role === 1) this.Appointments(this.user.id_User);
+                        if (this.user.fk_Role === 1) window.location.reload();
                         else this.Index(user.id_User);
 
                     });
@@ -257,9 +257,7 @@ const app = createApp({
                         this.Appointments(user.id_User);
                     });
                 })
-                .catch(error => {
-                    console.error("Error en la petición:", error);
-                });
+                .catch(error => console.error("Error en la petición:", error));
         },
     },
     mounted() {

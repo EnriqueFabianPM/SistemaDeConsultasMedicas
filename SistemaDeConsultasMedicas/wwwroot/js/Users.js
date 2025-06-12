@@ -114,7 +114,7 @@ const app = createApp({
                             showConfirmButton: false,
                             allowOutsideClick: false,
                         }).then(() => {
-                            this.Users(this.user.id_User);
+                            window.location.reload();
                         })
 
                     } else {
