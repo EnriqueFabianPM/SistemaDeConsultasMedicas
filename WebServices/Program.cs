@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using WebServices.Data;
+using WebServices.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IViewRenderService, EmailServices>();
+builder.Services.AddScoped<AppointmentsServices>();
+builder.Services.AddScoped<UserServices>();
+builder.Services.AddScoped<LoginServices>();
+builder.Services.AddDbContext<Consultories_System_DevContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 var app = builder.Build();
 

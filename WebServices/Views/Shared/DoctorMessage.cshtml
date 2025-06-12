@@ -1,25 +1,24 @@
 ﻿@{
+	@model WebServices.Models.Email;
+
     #pragma warning disable CS8600, CS8602
     Layout = null;  // Specify if there's a layout or not
-    Email data = ViewData["data"] as Email;
+    Email data = Model;
 }
 
 <!DOCTYPE html>
 <html lang="en">
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2>Estimado Doctor: @data.user.Name</h2>
 
-    <body style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Estimado Doctor: @data.user.name</h2>
+    <p>Se ha agendado una nueva cita médica.</p>
 
-        <p>Se ha agendado una nueva cita médica.</p>
+    <p><strong>Motivo de la visita o necesidades del paciente:</strong></p>
+    <p>@data.message</p>
 
-        <p><strong>Motivo de la visita o necesidades del paciente:</strong></p>
-        <p>@data.message</p>
-
-        <p>Por favor, revise esta información antes de la consulta para una mejor preparación.</p>
-
-        <p>
-            Gracias por su atención,<br>
-            <strong>SistemadeConsultasMedicas_8A</strong>
-        </p>
-    </body>
+    <p>
+        Gracias por su atención,<br>
+        <strong>SistemadeConsultasMedicas_8A</strong>
+    </p>
+</body>
 </html>

@@ -5,8 +5,6 @@ using WebServices.Data;
 using WebServices.Models;
 using WebServices.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
-using System.Net;
 using MunicipalitiesDb = WebServices.Data.Municipalities;
 using Municipalities = WebServices.Services.Municipalities;
 #pragma warning disable CS8600, CS8603, CS8602
@@ -16,17 +14,21 @@ namespace WebServices.Controllers
 {
     public class ServicesController : Controller
     {
-        //Instancia del contexto de los modelos de la base de datos
-        private readonly Consultories_System_DevContext db = new Consultories_System_DevContext(); 
+        private readonly Consultories_System_DevContext _db;
+        private readonly AppointmentsServices _appointmentServices;
+        private readonly UserServices _userServices;
+        private readonly LoginServices _loginServices;
 
-        //Instancias de las clases con los servicios
-        private readonly AppointmentsServices _AppointmentServices = new(); 
-        private readonly UserServices _UserServices = new();
-        private readonly LoginServices _LoginServices = new();
-        //private readonly EmailServices _EmailServices = new();
-
-        public ServicesController()
+        public ServicesController(
+            Consultories_System_DevContext db,
+            AppointmentsServices appointmentServices,
+            UserServices userServices,
+            LoginServices loginServices)
         {
+            _db = db;
+            _appointmentServices = appointmentServices;
+            _userServices = userServices;
+            _loginServices = loginServices;
         }
 
         public IActionResult Index()
@@ -75,7 +77,7 @@ namespace WebServices.Controllers
                 foreach (var municipality in municipalities)
                 {
                     //Buscar si el objeto ya existe en la base de datos
-                    var existingMunicipality = db.Municipalities
+                    var existingMunicipality = _db.Municipalities
                         .Where(e => e.Zip_Code == municipality.CodigoPostal)
                         .FirstOrDefault();
 
@@ -97,8 +99,8 @@ namespace WebServices.Controllers
                 }
 
                 //Si existen objetos en la lista, crearlos en la base de datos
-                if (newMunicipalities.Any()) await db.Municipalities.AddRangeAsync(newMunicipalities);
-                await db.SaveChangesAsync();
+                if (newMunicipalities.Any()) await _db.Municipalities.AddRangeAsync(newMunicipalities);
+                await _db.SaveChangesAsync();
             }
 
             return municipalities;
@@ -131,7 +133,7 @@ namespace WebServices.Controllers
 
                 foreach (var speciality in specialties)
                 {
-                    var existingType = db.Types
+                    var existingType = _db.Types
                         .Where(e => e.Name == speciality.Name)
                         .FirstOrDefault();
 
@@ -153,11 +155,11 @@ namespace WebServices.Controllers
                 //Si la lista contiene nuevas especialidades se agregan a la base de datos
                 if (types.Any())
                 {
-                    await db.Types.AddRangeAsync(types);
+                    await _db.Types.AddRangeAsync(types);
                 }
 
                 //Guardar los cambios
-                db.SaveChanges();
+                _db.SaveChanges();
             }
         }
 
@@ -168,7 +170,7 @@ namespace WebServices.Controllers
         public async void CreateConsultories(List<Municipalities> consultories)
         {
             //Traer todos los municipos desde la base de datos
-            var existingMunicipalities = await db.Municipalities.ToListAsync();
+            var existingMunicipalities = await _db.Municipalities.ToListAsync();
 
             //Verificar que la lista de consultorios no sea nulo
             if (consultories != null)
@@ -187,7 +189,7 @@ namespace WebServices.Controllers
                         {
                             foreach (var consultory in filteredConsultories)
                             {
-                                var existingConsultory = db.Consultories
+                                var existingConsultory = _db.Consultories
                                     .Where(e => e.Length == consultory.Longitud && e.Latitude == consultory.Latitud)
                                     .FirstOrDefault();
 
@@ -212,10 +214,10 @@ namespace WebServices.Controllers
 
                     if (newConsultories.Any())
                     {
-                        await db.Consultories.AddRangeAsync(newConsultories);
+                        await _db.Consultories.AddRangeAsync(newConsultories);
                     }
 
-                    db.SaveChanges();
+                    _db.SaveChanges();
                 }
             }
         }
@@ -226,7 +228,7 @@ namespace WebServices.Controllers
         public ActionResult Login([FromBody] Credentials credentials)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            User user = _LoginServices.Login(credentials);
+            User user = _loginServices.Login(credentials);
             return Json(user == null ? null : user);
         }
 
@@ -235,7 +237,7 @@ namespace WebServices.Controllers
         public ActionResult Logout([FromBody] Credentials credentials)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _LoginServices.Logout(credentials);
+            Response response = _loginServices.Logout(credentials);
             return Json(!response.Success ? null : response);
         }
 
@@ -243,7 +245,7 @@ namespace WebServices.Controllers
         public ActionResult Register([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _LoginServices.CreateUser(user);
+            Response response = _loginServices.CreateUser(user);
             return Json(!response.Success ? null : response);
         }
 
@@ -253,7 +255,7 @@ namespace WebServices.Controllers
         public ActionResult GetMunicipalities()
         {
             //Llama al método del servicio AppointmentServices que consulta la lista total de municipios disponibles
-            List<MunicipalitiesList> list = _AppointmentServices.Municipalities();
+            List<MunicipalitiesList> list = _appointmentServices.Municipalities();
             return Json(list.Count() == 0 ? null : list);
         }
 
@@ -262,7 +264,7 @@ namespace WebServices.Controllers
         public ActionResult GetConsultories(int IdMunicipality)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de consultorios filtrada por municipio
-            List<ConsultoriesList> list = _AppointmentServices.Consultories(IdMunicipality);
+            List<ConsultoriesList> list = _appointmentServices.Consultories(IdMunicipality);
             return Json(list.Count() == 0 ? null : list);
         }
 
@@ -271,7 +273,7 @@ namespace WebServices.Controllers
         public ActionResult GetDoctors(int IdConsultory)
         {
             //Llama al método del servicio AppointmentServices que consulta una lista de doctores filtrada por consultorio
-            List<DoctorList> list = _AppointmentServices.Doctors(IdConsultory);
+            List<DoctorList> list = _appointmentServices.Doctors(IdConsultory);
             return Json(list.Count() == 0 ? null : list);
         }
 
@@ -280,22 +282,29 @@ namespace WebServices.Controllers
         public ActionResult GetAppointments(int IdDoctor)
         {
             //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
-            List<AppointmentList> list = _AppointmentServices.Appointments(IdDoctor);
+            List<AppointmentList> list = _appointmentServices.Appointments(IdDoctor);
             return Json(list.Count() == 0 ? null : list);
         }
 
         //Devuelve la lista de citas filtrada por usuario(Doctor)
         [HttpPost]
-        public ActionResult CreateAppointment([FromBody] Appointment Appointment)
+        public async Task<ActionResult> CreateAppointment([FromBody] Appointment Appointment)
         {
             //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
-            Response response = _AppointmentServices.CreateAppointment(Appointment);
+            Response response = await _appointmentServices.Create(Appointment);
             return Json(!response.Success ? null : response);
         }
         public ActionResult DeleteAppointment([FromBody] Appointment Appointment)
         {
             //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
-            Response response = _AppointmentServices.DeleteAppointment(Appointment);
+            Response response = _appointmentServices.Delete(Appointment);
+            return Json(!response.Success ? null : response);
+        }
+
+        public ActionResult UpdateAppointment([FromBody] Appointment Appointment)
+        {
+            //Llama al método del servicio AppointmentServices que consulta las citas relacionadas a un doctor
+            Response response = _appointmentServices.Update(Appointment);
             return Json(!response.Success ? null : response);
         }
         //Servicios de UserServices ---------------------------------------------------------------------------------------------------------------
@@ -304,7 +313,7 @@ namespace WebServices.Controllers
         public ActionResult GetUsers() 
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
-            List<UsersList> list = _UserServices.Users();
+            List<UsersList> list = _userServices.Users();
             return Json(list.Count() == 0 ? null : list);
         }
 
@@ -313,7 +322,7 @@ namespace WebServices.Controllers
         public ActionResult GetUser(int id) 
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
-            User user = _UserServices.User(id);
+            User user = _userServices.User(id);
             return Json(user == null ? null : user);
         }
 
@@ -322,7 +331,7 @@ namespace WebServices.Controllers
         public ActionResult UpdateUser([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _UserServices.Update(user);
+            Response response = _userServices.Update(user);
             return Json(!response.Success ? null : response);
         }
 
@@ -331,29 +340,8 @@ namespace WebServices.Controllers
         public ActionResult DeleteUser([FromBody] Users user)
         {
             //Llama al método del servicio UserServices que elimina a un usuario de la base de datos
-            Response response = _UserServices.Delete(user);
+            Response response = _userServices.Delete(user);
             return Json(!response.Success ? null : response);
-        }
-
-        //Manejo de servicios de correos-----------------------------------------------------------------------------------------------------------
-        public void SendEmails(Email data)
-        {
-            // Configurar el cliente SMTP
-            SmtpClient clienteSmtp = new SmtpClient("smtp.gmail.com");
-            clienteSmtp.Port = 587;
-            clienteSmtp.Credentials = new NetworkCredential("perezmedellinenriquefabian@gmail.com", "inwqkdvoubvdugcv"); // Contraseña de aplicación Fabian
-            clienteSmtp.EnableSsl = true;
-
-            // Crear y enviar el correo
-            MailMessage email = new MailMessage();
-            email.From = new MailAddress("perezmedellinenriquefabian@gmail.com");
-            email.Subject = data.subject;
-            email.Body = data.body;
-            email.IsBodyHtml = true;
-            email.To.Add(data.user.email);
-
-            //Mandar el correo
-            clienteSmtp.Send(email);
         }
     }
 }

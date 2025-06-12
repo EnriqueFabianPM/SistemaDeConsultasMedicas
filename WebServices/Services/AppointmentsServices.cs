@@ -8,14 +8,21 @@ namespace WebServices.Services
 {
     public class AppointmentsServices
     {
-        private readonly ServicesController _servicesController;
-        //private readonly EmailServices _EmailServices = new EmailServices();
-        private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
+        private readonly IViewRenderService _emailServices;
+        private readonly Consultories_System_DevContext _db;
+
+        public AppointmentsServices(
+            IViewRenderService emailServices,
+            Consultories_System_DevContext db)
+        {
+            _emailServices = emailServices;
+            _db = db;
+        }
 
         //Devuelve una lista de citas médicas filtradas por doctor
         public List<AppointmentList> Appointments(int? IdDoctor)
         {
-            var user = db.Users
+            var user = _db.Users
                 .Where(u => u.Id_User == IdDoctor)
                 .FirstOrDefault();
 
@@ -23,7 +30,7 @@ namespace WebServices.Services
 
             if(user?.fk_Role == 1)
             {
-                list = db.Medical_Appointments
+                list = _db.Medical_Appointments
                     .Include(p => p.fk_PatientNavigation)
                     .Include(s => s.fk_StatusNavigation)
                     .Select(a => new AppointmentList
@@ -41,7 +48,7 @@ namespace WebServices.Services
             }
             else
             {
-                list = db.Medical_Appointments
+                list = _db.Medical_Appointments
                     .Include(p => p.fk_PatientNavigation)
                     .Include(s => s.fk_StatusNavigation)
                     .Where(a => a.fk_Doctor == IdDoctor)
@@ -65,7 +72,7 @@ namespace WebServices.Services
         //devuelve la lista total de municipios de la base de datos
         public List<MunicipalitiesList> Municipalities()
         {
-            List<MunicipalitiesList> list = db.Municipalities
+            List<MunicipalitiesList> list = _db.Municipalities
                 .Select(m => new MunicipalitiesList
                 {
                     Id = m.Id_Municipality,
@@ -80,7 +87,7 @@ namespace WebServices.Services
         //Devuelve una lista de consultorios filtrados por municipio
         public List<ConsultoriesList> Consultories(int? IdMunicipalty)
         {
-            List<ConsultoriesList> list = db.Consultories
+            List<ConsultoriesList> list = _db.Consultories
                 .Where(c => c.Active && c.fk_Municipality == IdMunicipalty)
                 .Select(c => new ConsultoriesList
                 {
@@ -98,7 +105,7 @@ namespace WebServices.Services
         //Devuelve una lista de usuarios que estén relacionados a un consultorio
         public List<DoctorList> Doctors(int? IdConsultory)
         {
-            List<DoctorList> list = db.Users
+            List<DoctorList> list = _db.Users
                 .Include(s => s.fk_SexNavigation)
                 .Where(d => d.Active && d.fk_Consultory == IdConsultory)
                 .Select(d => new DoctorList
@@ -114,7 +121,7 @@ namespace WebServices.Services
         }
 
         //Método para crear una una cita médica
-        public Response CreateAppointment(Appointment Appointment)
+        public async Task<Response> Create(Appointment Appointment)
         {
             Response response = new Response
             {
@@ -138,17 +145,41 @@ namespace WebServices.Services
                     Notes = Appointment.notes,
                 };
 
-                db.Medical_Appointments.Add(newAppintment);
-                db.SaveChanges();
+                _db.Medical_Appointments.Add(newAppintment);
+                _db.SaveChanges();
+
+                var doctor = _db.Users
+                    .Include(d => d.fk_ConsultoryNavigation)
+                    .Where(d => d.Id_User == Appointment.fk_Doctor)
+                    .FirstOrDefault();
+
+                if (doctor != null)
+                {
+                    Email email = new()
+                    {
+                        subject = "Cita Solicitada",
+                        user = doctor,
+                        consultory = doctor.fk_ConsultoryNavigation,
+                        message = Appointment.notes ?? "No hay notas disponibles.",
+                    };
+
+                    email.body = await _emailServices.RenderToStringAsync("DoctorMessage", email);
+
+                    if(email.body != null)
+                    {
+                        _emailServices.SendEmail(email);
+                    }
+                }
 
                 response.Success = true;
                 response.Message = "¡Se ha agendado la cita!";
             }
+
             return response;
         }
 
         //Método para crear una una cita médica
-        public Response DeleteAppointment(Appointment Appointment)
+        public Response Delete(Appointment Appointment)
         {
             Response response = new Response
             {
@@ -158,20 +189,17 @@ namespace WebServices.Services
 
             if (Appointment != null)
             {
-                var appointment = db.Medical_Appointments
+                var appointment = _db.Medical_Appointments
                     .Where(a => a.Id_Appointment == Appointment.id_Appointment)
                     .FirstOrDefault();
 
                 if (appointment != null) 
                 {
-                    db.Medical_Appointments.Remove(appointment);
-                    db.SaveChanges();
+                    _db.Medical_Appointments.Remove(appointment);
+                    _db.SaveChanges();
                     response.Message = "¡Se ha Cancelado la cita!";
                 }
-                else
-                {
-                    response.Message = "¡La cita no existe o ya ha sido cancelada!";
-                }
+                else response.Message = "¡La cita no existe o ya ha sido cancelada!";
 
                 response.Success = true;            
             }
@@ -179,7 +207,7 @@ namespace WebServices.Services
         }
 
         //Método para Actualizar una cita médica
-        public Response UpdateAppointment(Appointment Appointment)
+        public Response Update(Appointment Appointment)
         {
             Response response = new Response
             {
@@ -189,23 +217,20 @@ namespace WebServices.Services
 
             if (Appointment != null) 
             {
-                var existingAppintment = db.Medical_Appointments
+                var existingAppintment = _db.Medical_Appointments
                     .Where(a => Appointment.id_Appointment == a.Id_Appointment)
                     .FirstOrDefault();
 
                 if (existingAppintment != null) 
                 { 
-                    existingAppintment.fk_Patient = Appointment.fk_Patient;
-                    existingAppintment.fk_Doctor = Appointment.fk_Doctor;
-                    existingAppintment.fk_Status = Appointment.fk_Status;
-                    existingAppintment.Notes = Appointment.notes;
+                    if (Appointment?.fk_Status != null) existingAppintment.fk_Status = Appointment.fk_Status;
+                    if (Appointment?.notes != null) existingAppintment.Notes = Appointment.notes;
                 
-                    db.SaveChanges();
+                    _db.SaveChanges();
 
                     response.Success = true;
                     response.Message = "¡Se ha actualizado la cita!";
                 }
-
             }
 
             return response;
@@ -221,14 +246,8 @@ namespace WebServices.Services
             while (workDays > 0)
             {
                 toDate = toDate.AddDays(1);
-                if (!IsWeekendDay(toDate))
-                {
-                    workDays--;
-                }
-                else
-                {
-                    weekendDays++;
-                }
+                if (!IsWeekendDay(toDate)) workDays--;
+                else weekendDays++;
             }
 
             return toDate;

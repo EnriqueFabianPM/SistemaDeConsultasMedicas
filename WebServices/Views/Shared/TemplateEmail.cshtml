@@ -1,5 +1,7 @@
 ﻿@{
+    #pragma warning disable CS8600, CS8602
     Layout = null;  // Specify if there's a layout or not
+    Email data = ViewData["data"] as Email;
 }
 
 <!DOCTYPE html>
@@ -10,7 +12,7 @@
     <title>¡Noticias para la Visita!</title>
 </head>
 <body>
-    <h2>@((ViewData["data"] as Email)?.user.name)</h2>
+    <h2>@data.user.Name</h2>
     <p>Ya tienes cita para tu visita.</p>
 
     <p>Gracias, de parte de <br>SistemadeConsultasMedicas_8A</p>  <!-- Directly hard-coded App Name -->
