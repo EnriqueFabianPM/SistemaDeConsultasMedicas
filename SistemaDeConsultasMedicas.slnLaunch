@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "WebApp&Services",
+    "Projects": [
+      {
+        "Path": "SistemaDeConsultasMedicas\\SistemaDeConsultasMedicas.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "WebServices\\WebServices.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

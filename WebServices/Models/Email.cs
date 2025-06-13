@@ -11,5 +11,6 @@ namespace WebServices.Models
         public string message { get; set; } //Mensaje del correo
         public Users? user { get; set; } //Datos del usuario para personalización
         public Consultories? consultory { get; set; } //Datos del consultorio para personalización
+        public Medical_Appointments appointment { get; set; } // Cita médica
     }
 }

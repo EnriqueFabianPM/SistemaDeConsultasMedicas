@@ -1,7 +1,8 @@
-﻿using WebServices.Data;
-using WebServices.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using WebServices.Controllers;
+using WebServices.Data;
+using WebServices.Models;
 #pragma warning disable CS8618
 
 namespace WebServices.Services
@@ -148,6 +149,7 @@ namespace WebServices.Services
                 _db.Medical_Appointments.Add(newAppintment);
                 _db.SaveChanges();
 
+                //Buscar al doctor para enviarle un correos
                 var doctor = _db.Users
                     .Include(d => d.fk_ConsultoryNavigation)
                     .Where(d => d.Id_User == Appointment.fk_Doctor)
@@ -155,6 +157,7 @@ namespace WebServices.Services
 
                 if (doctor != null)
                 {
+                    //crear objeto de correo electrónico
                     Email email = new()
                     {
                         subject = "Cita Solicitada",
@@ -163,11 +166,47 @@ namespace WebServices.Services
                         message = Appointment.notes ?? "No hay notas disponibles.",
                     };
 
+                    //obtener el cuerpo del correo electrónico renderizado
                     email.body = await _emailServices.RenderToStringAsync("DoctorMessage", email);
 
                     if(email.body != null)
                     {
+                        //enviar el correo electrónico
                         _emailServices.SendEmail(email);
+                    }
+                }
+
+                //Busca al paciente relacionado con la cita médica
+                var patient = _db.Users
+                    .Where(d => d.Id_User == Appointment.fk_Patient)
+                    .FirstOrDefault();
+
+                if (patient != null && doctor != null)
+                {
+                    //Busca el consultorio relacionado con el paciente
+                    var consultory = _db.Consultories
+                        .Where(c => c.Id_Consultory == doctor.fk_Consultory)
+                        .FirstOrDefault();
+
+                    if(consultory != null)
+                    {
+                        //crear objeto de correo electrónico para el paciente
+                        Email email = new()
+                        {
+                            subject = "Cita Agendada",
+                            user = patient,
+                            consultory = consultory,
+                            appointment = newAppintment,
+                        };
+
+                        //obtener el cuerpo del correo electrónico renderizado
+                        email.body = await _emailServices.RenderToStringAsync("PatientMessage", email);
+
+                        if (email.body != null)
+                        {
+                            //enviar el correo electrónico al paciente
+                            _emailServices.SendEmail(email);
+                        }
                     }
                 }
 
@@ -207,7 +246,7 @@ namespace WebServices.Services
         }
 
         //Método para Actualizar una cita médica
-        public Response Update(Appointment Appointment)
+        public async Task<Response> Update(Appointment Appointment)
         {
             Response response = new Response
             {
@@ -218,6 +257,7 @@ namespace WebServices.Services
             if (Appointment != null) 
             {
                 var existingAppintment = _db.Medical_Appointments
+                    .Include(p => p.fk_StatusNavigation)
                     .Where(a => Appointment.id_Appointment == a.Id_Appointment)
                     .FirstOrDefault();
 
@@ -227,6 +267,31 @@ namespace WebServices.Services
                     if (Appointment?.notes != null) existingAppintment.Notes = Appointment.notes;
                 
                     _db.SaveChanges();
+
+                    //Busca al paciente relacionado con la cita médica
+                    var patient = _db.Users
+                        .Where(d => d.Id_User == existingAppintment.fk_Patient)
+                        .FirstOrDefault();
+
+                    if (patient != null)
+                    {
+                        //crear objeto de correo electrónico para el paciente
+                        Email email = new()
+                        {
+                            subject = "Cita Agendada",
+                            user = patient,
+                            appointment = existingAppintment,
+                        };
+
+                        //obtener el cuerpo del correo electrónico renderizado
+                        email.body = await _emailServices.RenderToStringAsync("StatusAppointemnt", email);
+
+                        if (email.body != null)
+                        {
+                            //enviar el correo electrónico al paciente
+                            _emailServices.SendEmail(email);
+                        }
+                    }
 
                     response.Success = true;
                     response.Message = "¡Se ha actualizado la cita!";
