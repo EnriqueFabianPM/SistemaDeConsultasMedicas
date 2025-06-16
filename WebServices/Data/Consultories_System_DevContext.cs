@@ -35,7 +35,7 @@ public partial class Consultories_System_DevContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=192.168.193.193,1433;Initial Catalog=Consultories_System_Dev;Persist Security Info=True;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=true;User ID=UTSC_USER;Password=S1stem@5.UTSC2025");
+        => optionsBuilder.UseSqlServer("Data Source=WIN-BNES3C0B631;Initial Catalog=Consultories_System_Dev;Persist Security Info=True;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=true;User ID=UTSC_USER;Password=S1stem@5.UTSC2025");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
