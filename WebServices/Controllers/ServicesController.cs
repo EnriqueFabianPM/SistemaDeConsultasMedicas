@@ -72,7 +72,7 @@ namespace WebServices.Controllers
             if (municipalities != null)
             {
                 //lista vacía que alamcenará los municipios nuevos que encuentre en la API
-                List<MunicipalitiesDb> newMunicipalities = new List<MunicipalitiesDb>();
+                List<MunicipalitiesDb> newMunicipalities = new();
 
                 foreach (var municipality in municipalities)
                 {
@@ -118,7 +118,7 @@ namespace WebServices.Controllers
             var jsonData = await response.Content.ReadAsStringAsync();
 
             // Si el JSON retornado es un array de municipios, se puede deserializar directamente:
-            APIspecialties apiResponse = System.Text.Json.JsonSerializer.Deserialize<APIspecialties>(jsonData, new JsonSerializerOptions
+            APIspecialties apiResponse = JsonSerializer.Deserialize<APIspecialties>(jsonData, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -129,7 +129,7 @@ namespace WebServices.Controllers
             if (specialties != null)
             {
                 //Lista vacía para almacenar las nuevas filas
-                List<Types> types = new List<Types>();
+                List<Types> types = new();
 
                 foreach (var speciality in specialties)
                 {
@@ -177,7 +177,7 @@ namespace WebServices.Controllers
             {
                 if (existingMunicipalities != null)
                 {
-                    List<Consultories> newConsultories = new List<Consultories>();
+                    List<Consultories> newConsultories = new();
 
                     foreach (var municipality in existingMunicipalities)
                     {

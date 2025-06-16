@@ -8,13 +8,18 @@ namespace WebServices.Services
     public class UserServices
     {
 
-        public UserServices() { }
-
-        private readonly Consultories_System_DevContext db = new Consultories_System_DevContext();
+        private readonly IViewRenderService _emailServices;
+        private readonly Consultories_System_DevContext _db;
+        public UserServices(IViewRenderService emailServices,
+            Consultories_System_DevContext db)
+        {
+            _emailServices = emailServices;
+            _db = db;
+        }
 
         public List<UsersList> Users()
         {
-            List<UsersList> list = db.Users
+            List<UsersList> list =  _db.Users
                 .Include(s =>s.fk_SexNavigation)
                 .Include(r => r.fk_RoleNavigation)
                 .Select(u => new UsersList { 
@@ -33,7 +38,7 @@ namespace WebServices.Services
 
         public User User(int id)
         {
-                var user = db.Users
+                var user = _db.Users
                 .Include(s => s.fk_SexNavigation)
                 .Include(r => r.fk_RoleNavigation)
                 .Where(u => u.Id_User == id && u.Login && u.Active)
@@ -53,7 +58,7 @@ namespace WebServices.Services
             return user;
         }
 
-        public Response Update(User user)
+        public async Task<Response> Update(User user)
         {
             var response = new Response();
             response.Success = false;
@@ -61,21 +66,39 @@ namespace WebServices.Services
 
             if(user != null)
             {
-                var row = db.Users
+                var row = _db.Users
+                    .Include(s => s.fk_RoleNavigation)
                     .Where(u => u.Id_User == user.id_User) 
                     .FirstOrDefault();  
 
                 if(row != null)
                 {
-                    row.Name = user.name;
-                    row.Email = user.email;
-                    row.Phone = user.phone;
+                    row.Name = user.name != null ? user.name : row.Name;
+                    row.Email = user.email != null ? user.email : row.Email;
+                    row.Phone = user.phone != null ? user.phone : row.Phone;
                     row.Active = user.active;
 
                     response.Success = true;
                     response.Message = "Se ha actualizado el usuario";
 
-                    db.SaveChanges();
+                    if (user.fk_Role != row.fk_Role)
+                    {
+                        Email email = new Email
+                        {
+                            user = row,
+                            subject = "Cambio de rol en Consultorios System Dev",
+                        };
+
+                        email.body = await _emailServices.RenderToStringAsync("UserRoleStatus", email);
+
+                        if (email.body != null)
+                        {
+                            _emailServices.SendEmail(email);
+                            response.Message = "Se ha cambiado el rol del usuario";
+                        }
+                    }
+
+                    _db.SaveChanges();
                 }
 
             }
@@ -92,7 +115,7 @@ namespace WebServices.Services
             if (user != null)
             {
                 //Busca al usuario en la base de datos
-                var row = db.Users
+                var row = _db.Users
                     .Where(u => u.Id_User == user.Id_User)
                     .FirstOrDefault();
 
@@ -100,21 +123,21 @@ namespace WebServices.Services
                 if (row != null)
                 {
                     //Obtiene la lista de citas médicas del usuario a eliminar
-                    List<Medical_Appointments> Appointments = db.Medical_Appointments
+                    List<Medical_Appointments> Appointments = _db.Medical_Appointments
                         .Where(a => a.fk_Patient == row.Id_User)
                         .ToList();
 
                     if (Appointments.Any())
                     {
                         //elimina la lista de citas médicas relacionadas con el usario
-                        db.Medical_Appointments.RemoveRange(Appointments);
+                        _db.Medical_Appointments.RemoveRange(Appointments);
                     }
 
                     //Elimina al usuario de la base de datos
-                    db.Users.Remove(row);
+                    _db.Users.Remove(row);
 
                     //Guarda los cambios
-                    db.SaveChanges();
+                    _db.SaveChanges();
 
                     //Se actualiza la respuesta del servidor
                     response.Success = true;

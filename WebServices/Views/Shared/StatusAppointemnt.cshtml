@@ -8,31 +8,31 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Noticias para la Visita!</title>
-</head>
-<body>
-    <h2>Hola @data.user.Name,</h2>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>¡Noticias para la Visita!</title>
+    </head>
+    <body>
+        <h2>Hola @data.user.Name,</h2>
 
-    <p>Queremos informarte que el <strong>estado de tu cita médica ha cambiado</strong>.</p>
+        <p>Queremos informarte que el <strong>estado de tu cita médica ha cambiado</strong>.</p>
 
-    <p>A continuación te compartimos los detalles actualizados de tu cita:</p>
+        <p>A continuación te compartimos los detalles actualizados de tu cita:</p>
 
-    <p><strong>Estado actual:</strong> @data.appointment.fk_StatusNavigation.Name</p>
+        <p><strong>Estado actual:</strong> @data.appointment.fk_StatusNavigation.Name</p>
 
-    <p>
-        <strong>Fecha:</strong> @data.appointment.Appointment_Date.ToString("dd/MM/yyyy") <br>
-        <strong>Hora:</strong> @DateTime.Now.ToString("HH:mm")
-    </p>
+        <p>
+            <strong>Fecha:</strong> @data.appointment.Appointment_Date.ToString("dd/MM/yyyy") <br>
+            <strong>Hora:</strong> @DateTime.Now.ToString("HH:mm")
+        </p>
 
-    <p>Te recomendamos revisar esta información y, si tienes dudas o necesitas reprogramar tu cita, por favor contáctanos lo antes posible.</p>
+        <p>Te recomendamos revisar esta información y, si tienes dudas o necesitas reprogramar tu cita, por favor contáctanos lo antes posible.</p>
 
-    <p>Gracias por confiar en <strong>Sistema de Consultas Médicas 8A</strong>.</p>
+        <p>Gracias por confiar en <strong>Sistema de Consultas Médicas 8A</strong>.</p>
 
-    <p>Atentamente,<br>El equipo de atención</p>
+        <p>Atentamente,<br>El equipo de atención</p>
 
 
-</body>
+    </body>
 </html>

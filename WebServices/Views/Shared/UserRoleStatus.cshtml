@@ -1,0 +1,24 @@
+﻿@{
+    @model WebServices.Models.Email;
+
+    #pragma warning disable CS8600, CS8602
+    Layout = null;
+    Email data = Model;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+    <body style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>Estimado(a) @data.user.Name,</h2>
+
+        <p>Le informamos que su rol dentro del sistema ha sido actualizado.</p>
+
+        <p><strong>Nuevo rol asignado:</strong> @data.user.fk_RoleNavigation.Name</p>
+
+        @*<p><strong>Razón del cambio: </strong> @data.message</p>*@
+        <p>Atentamente,
+            <br>
+            <strong>SistemadeConsultasMedicas_8A</strong>
+        </p>
+    </body>
+</html>
