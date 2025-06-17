@@ -77,7 +77,12 @@
                         <td> {{appointment.patient}}</td>
                         <td> {{appointment.created}}</td>
                         <td> {{appointment.assigned}}</td>
-                        <td> {{appointment.status}}</td>
+                        <td> 
+                            <select class=" form-control">
+                                <option :value="status.id" v-for="status in statuses"> {{status.name}}</option>
+                            </select>
+                        </td>
+                        @* <td> {{appointment.status}}</td> *@
                         <td>
                             <a class="text-danger" v-on:click="deleteAppointment(appointment.id)" style="text-decoration: none; cursor:pointer;">
                                 <i class="fa-solid fa-trash-can"></i> Eliminar

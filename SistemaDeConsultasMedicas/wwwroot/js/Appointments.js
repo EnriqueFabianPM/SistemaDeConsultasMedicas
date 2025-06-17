@@ -3,7 +3,7 @@
 const app = createApp({
     data() {
         return {
-            map:null,
+            map: null,
             municipalities: [],
             consultories: [],
             doctors: [],
@@ -16,6 +16,7 @@ const app = createApp({
             showSuccessMessage: false,
             showErrorMessage: false,
             errorMessage: '',
+            statuses: [],
 
             Authorization: {
                 Success: false,
@@ -46,7 +47,7 @@ const app = createApp({
                 zoom: 12,
             });
         },
-        
+
         updateMapMarkers() {
             const consultory = this.consultories.find(o => o.id === this.selectedConsultory);
             const map = this.map;
@@ -93,17 +94,34 @@ const app = createApp({
             //Id para obtener los municipios
             this.config.IdApi = 1;
 
-            axios.post(window.callApiAsync, this.config)  
+            axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Municipios', response.data);
 
                     this.municipalities = response.data;
-                   
+
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
         },
+
+        getStatuses() {
+            //Id para obtener los estatus de la lista xdd
+            this.config.IdApi = 14;
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Statuses', response.data);
+
+                    this.statuses = response.data;
+
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
 
         //Obtener los consultorios
         getConsultories() {
@@ -276,6 +294,7 @@ const app = createApp({
 
         //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
         this.getMunicipalities();
+        this.getStatuses();
     }
 });
 app.mount('#app');
