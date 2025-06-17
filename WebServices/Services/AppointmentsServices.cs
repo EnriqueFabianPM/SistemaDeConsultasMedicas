@@ -85,6 +85,19 @@ namespace WebServices.Services
             return list;
         }
 
+        public object Statuses()
+        {
+            var list = _db.Status
+                .Select(s => new 
+                {
+                    Id = s.Id_Status,
+                    s.Name,
+                })
+                .ToList();
+
+            return list;
+        }
+
         //Devuelve una lista de consultorios filtrados por municipio
         public List<ConsultoriesList> Consultories(int? IdMunicipalty)
         {

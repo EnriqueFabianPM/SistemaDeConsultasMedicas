@@ -259,6 +259,15 @@ namespace WebServices.Controllers
             return Json(list.Count() == 0 ? null : list);
         }
 
+        //Devuelve la lista de status de la base de datos
+        [HttpGet]
+        public ActionResult GetStatuses()
+        {
+            //Llama al método del servicio AppointmentServices que consulta la lista total de status disponibles
+            var list = _appointmentServices.Statuses();
+            return Json(list);
+        }
+
         //Devuelve la lista de consultorios filtrada por Municipio
         [HttpGet]
         public ActionResult GetConsultories(int IdMunicipality)
@@ -332,10 +341,10 @@ namespace WebServices.Controllers
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public ActionResult UpdateUser([FromBody] User user)
+        public async Task<ActionResult> UpdateUser([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _userServices.Update(user);
+            Response response = await _userServices.Update(user);
             return Json(!response.Success ? null : response);
         }
 
