@@ -332,10 +332,10 @@ namespace WebServices.Controllers
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public ActionResult UpdateUser([FromBody] User user)
+        public async Task<ActionResult> UpdateUser([FromBody] User user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
-            Response response = _userServices.Update(user);
+            Response response = await _userServices.Update(user);
             return Json(!response.Success ? null : response);
         }
 
