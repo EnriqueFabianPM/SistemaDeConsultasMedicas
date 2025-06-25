@@ -17,7 +17,7 @@
             <div class="d-flex">
                 <div class="form-group">
                     <label for="municipality">Seleccione un municipio:</label>
-                    <select class="shadow custom-fields" id="municipality" v-model="selectedMunicipality" v-on:change="onMunicipalityChange">
+                    <select class="shadow form-control" id="municipality" v-model="selectedMunicipality" v-on:change="onMunicipalityChange">
                         <option value="" disabled selected>Seleccione un municipio</option>
                         <option v-for="municipality in municipalities" :value="municipality.id">{{ municipality.name}}</option>
                     </select>
@@ -25,7 +25,7 @@
 
                 <div class="form-group" v-if="selectedMunicipality">
                     <label for="consultory">Seleccione un consultorio:</label>
-                    <select class="shadow custom-fields" id="consultory" v-model="selectedConsultory" v-on:change="onConsultoryChange">
+                    <select class="shadow form-control" id="consultory" v-model="selectedConsultory" v-on:change="onConsultoryChange">
                         <option value="" disabled selected>Seleccione un consultorio</option>
                         <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.name }}</option>
                     </select>
@@ -33,7 +33,7 @@
 
                 <div class="form-group" v-if="selectedConsultory">
                     <label for="doctor">Seleccione un doctor:</label>
-                    <select class="shadow custom-fields" id="doctor" v-model="selectedDoctor">
+                    <select class="shadow form-control" id="doctor" v-model="selectedDoctor">
                         <option value="" disabled selected>Seleccione un doctor</option>
                         <option v-for="doctor in doctors" :value="doctor.id">{{ doctor.name }}</option>
                     </select>
@@ -50,7 +50,7 @@
             <div>
                 <button class="btn btn-primary"
                         style="width: 100%;"
-                        v-on:click="submitAppointment"
+                        @@click="submitAppointment"
                         :disabled="isLoading || !selectedDoctor">
                     {{ isLoading ? 'Enviando...' : 'Enviar' }}
                 </button>
@@ -84,7 +84,7 @@
                         </td>
                         @* <td> {{appointment.status}}</td> *@
                         <td>
-                            <a class="text-danger" v-on:click="deleteAppointment(appointment.id)" style="text-decoration: none; cursor:pointer;">
+                            <a class="text-danger" @@click="deleteAppointment(appointment)" style="text-decoration: none; cursor:pointer;">
                                 <i class="fa-solid fa-trash-can"></i> Eliminar
                             </a>
                         </td>

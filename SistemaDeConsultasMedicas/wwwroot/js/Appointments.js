@@ -207,9 +207,7 @@ const app = createApp({
                                 }
                             }
                         });
-
                     });
-
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
@@ -244,7 +242,7 @@ const app = createApp({
                         this.isLoading = false;
 
                         if (this.user.fk_Role === 1) window.location.reload();
-                        else this.Index(user.id_User);
+                        else window.location.reload();
 
                     });
                 })
@@ -253,14 +251,18 @@ const app = createApp({
                 });
         },
 
-        deleteAppointment(idAppointment) {
+        deleteAppointment(appointment) {
             this.config = {
-                IdApi: 13,
+                IdApi: 1014, //Cambiar por 15 cuando se solucione el problema de los Ids
                 BodyParams: {
-                    id_Appointment: idAppointment,
+                    id_Appointment: appointment.id,
+                    fk_Doctor: appointment.fk_Doctor,
+                    fk_Patient: appointment.fk_Patient,
                 },
                 Param: null, //Se transforma el valor en string
             };
+
+            console.log("Appointment a borrar", this.config.BodyParams);
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
@@ -272,7 +274,7 @@ const app = createApp({
                         showConfirmButton: false,
                         allowClickOutside: false,
                     }).then(() => {
-                        this.Appointments(user.id_User);
+                        window.location.reload();
                     });
                 })
                 .catch(error => console.error("Error en la petición:", error));
