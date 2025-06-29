@@ -8,7 +8,7 @@
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
 
-                            @if (isLogin)
+                            @if (IsLogin)
                             {
                                 <!-- Formulario de Login -->
                                 <div class="mb-md-5 mt-md-4 pb-5">
@@ -17,20 +17,20 @@
 
                                     <div class="form-outline form-white mb-4">
                                         <input type="email" id="loginEmail" class="form-control form-control-lg"
-                                               @bind-Value="Credentials.Email" />
+                                               @bind="Credentials.Email" />
                                         <label class="form-label" for="loginEmail">Email</label>
                                     </div>
 
                                     <div class="form-outline form-white mb-4">
                                         <input type="password" id="loginPassword" class="form-control form-control-lg"
-                                               @bind-Value="Credentials.Password" />
+                                               @bind="Credentials.Password" />
                                         <label class="form-label" for="loginPassword">Contraseña</label>
                                     </div>
 
                                     <button class="btn btn-outline-light btn-lg px-5"
                                             type="button"
-                                            @onclick="login"
-                                            disabled="@(string.IsNullOrWhiteSpace(credentials.Email) || string.IsNullOrWhiteSpace(credentials.Password))">
+                                            @onclick="LoginAsync"
+                                            disabled="@(string.IsNullOrWhiteSpace(Credentials.Email) || string.IsNullOrWhiteSpace(Credentials.Password))">
                                         Iniciar sesión
                                     </button>
                                 </div>
@@ -48,19 +48,19 @@
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerName">Nombre</label>
                                                 <input type="text" id="registerName" class="form-control form-control-lg"
-                                                       @bind-Value="NewUser.Name" />
+                                                       @bind="NewUser.Name" />
                                             </div>
 
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerEmail">Correo electrónico</label>
                                                 <input type="email" id="registerEmail" class="form-control form-control-lg"
-                                                       @bind-Value="NewUser.Email" />
+                                                       @bind="NewUser.Email" />
                                             </div>
 
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerPhone">Número</label>
                                                 <input type="tel" id="registerPhone" class="form-control form-control-lg"
-                                                       @bind-Value="NewUser.Phone" />
+                                                       @bind="NewUser.Phone" />
                                             </div>
                                         </div>
 
@@ -69,7 +69,7 @@
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerSex">Sexo</label>
                                                 <select id="registerSex" class="form-control form-control-lg"
-                                                        @bind-Value="NewUser.Fk_Sex">
+                                                        @bind="NewUser.Fk_Sex">
                                                     <option disabled value="">Seleccione una opción</option>
                                                     <option value="1">Hombre</option>
                                                     <option value="2">Mujer</option>
@@ -79,13 +79,13 @@
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerPassword">Contraseña</label>
                                                 <input type="password" id="registerPassword" class="form-control form-control-lg"
-                                                       @bind-Value="NewUser.Password" />
+                                                       @bind="NewUser.Password" />
                                             </div>
 
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerConfirmPassword">Confirmar Contraseña</label>
                                                 <input type="password" id="registerConfirmPassword" class="form-control form-control-lg"
-                                                       @bind-Value="NewUser.ConfirmPassword" />
+                                                       @bind="ConfirmPassword" />
                                             </div>
                                         </div>
                                     </div>
@@ -94,11 +94,11 @@
 
                             <!-- Enlace para cambiar de formulario -->
                             <div>
-                                @if (isLogin)
+                                @if (IsLogin)
                                 {
                                     <span>
                                         ¿No tienes cuenta?
-                                        <a href="#" class="text-white-50 fw-bold" @onclick="(()=> isLogin = false)">Regístrate</a>
+                                        <a href="#" class="text-white-50 fw-bold" @onclick="(()=> IsLogin = false)">Regístrate</a>
                                     </span>
                                 }
                                 else
@@ -106,15 +106,15 @@
                                     <div class="form-outline form-white mb-4 mt-4">
                                         <button class="btn btn-outline-light btn-lg px-5"
                                                 type="button"
-                                                @onclick="register"
-                                                disabled="@(string.IsNullOrWhiteSpace(newUser.Email) || 
-                                                            string.IsNullOrWhiteSpace(newUser.Password) ||
-                                                            newUser.Password != newUser.ConfirmPassword)">
+                                                @onclick="RegisterAsync"
+                                                disabled="@(string.IsNullOrWhiteSpace(NewUser.Email) || 
+                                                            string.IsNullOrWhiteSpace(NewUser.Password) ||
+                                                            NewUser.Password != ConfirmPassword)">
                                             Registrarse
                                         </button>
                                         <p class="m-0">
                                             ¿Ya tienes una cuenta?
-                                            <a href="#" class="text-white-50 fw-bold" @onclick="(()=> isLogin = true)">Inicia sesión</a>
+                                            <a href="#" class="text-white-50 fw-bold" @onclick="(()=> IsLogin = true)">Inicia sesión</a>
                                         </p>
                                     </div>
                                 }
