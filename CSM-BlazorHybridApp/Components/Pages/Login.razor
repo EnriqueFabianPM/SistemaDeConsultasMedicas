@@ -1,5 +1,129 @@
 ﻿@page "/"
 
-<h1>Test</h1>
+<div class="justify-content-centers align-content-center">
+    <section class="gradient-custom">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
 
-Welcome to your new app.
+                            @if (isLogin)
+                            {
+                                <!-- Formulario de Login -->
+                                <div class="mb-md-5 mt-md-4 pb-5">
+                                    <h2 class="fw-bold mb-2 text-uppercase">Iniciar Sesión</h2>
+                                    <p class="text-white-50 mb-5">Por favor, escribe tus credenciales.</p>
+
+                                    <div class="form-outline form-white mb-4">
+                                        <input type="email" id="loginEmail" class="form-control form-control-lg"
+                                               @bind-Value="Credentials.Email" />
+                                        <label class="form-label" for="loginEmail">Email</label>
+                                    </div>
+
+                                    <div class="form-outline form-white mb-4">
+                                        <input type="password" id="loginPassword" class="form-control form-control-lg"
+                                               @bind-Value="Credentials.Password" />
+                                        <label class="form-label" for="loginPassword">Contraseña</label>
+                                    </div>
+
+                                    <button class="btn btn-outline-light btn-lg px-5"
+                                            type="button"
+                                            @onclick="login"
+                                            disabled="@(string.IsNullOrWhiteSpace(credentials.Email) || string.IsNullOrWhiteSpace(credentials.Password))">
+                                        Iniciar sesión
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Registro -->
+                                <div class="mt-md-4" style="max-width: 900px; margin: 0 auto;">
+                                    <h2 class="fw-bold mb-2 text-uppercase text-center">Registro</h2>
+                                    <p class="text-white-50 mb-5 text-center">Crea tu cuenta rellenando los datos.</p>
+
+                                    <div class="row justify-content-center">
+                                        <!-- Columna izquierda -->
+                                        <div class="col-6 pe-4" style="border-right: 1px solid #fff;">
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerName">Nombre</label>
+                                                <input type="text" id="registerName" class="form-control form-control-lg"
+                                                       @bind-Value="NewUser.Name" />
+                                            </div>
+
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerEmail">Correo electrónico</label>
+                                                <input type="email" id="registerEmail" class="form-control form-control-lg"
+                                                       @bind-Value="NewUser.Email" />
+                                            </div>
+
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerPhone">Número</label>
+                                                <input type="tel" id="registerPhone" class="form-control form-control-lg"
+                                                       @bind-Value="NewUser.Phone" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Columna derecha -->
+                                        <div class="col-6 ps-4" style="border-left: 1px solid #fff;">
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerSex">Sexo</label>
+                                                <select id="registerSex" class="form-control form-control-lg"
+                                                        @bind-Value="NewUser.Fk_Sex">
+                                                    <option disabled value="">Seleccione una opción</option>
+                                                    <option value="1">Hombre</option>
+                                                    <option value="2">Mujer</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerPassword">Contraseña</label>
+                                                <input type="password" id="registerPassword" class="form-control form-control-lg"
+                                                       @bind-Value="NewUser.Password" />
+                                            </div>
+
+                                            <div class="form-outline form-white mb-4">
+                                                <label class="form-label" for="registerConfirmPassword">Confirmar Contraseña</label>
+                                                <input type="password" id="registerConfirmPassword" class="form-control form-control-lg"
+                                                       @bind-Value="NewUser.ConfirmPassword" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Enlace para cambiar de formulario -->
+                            <div>
+                                @if (isLogin)
+                                {
+                                    <span>
+                                        ¿No tienes cuenta?
+                                        <a href="#" class="text-white-50 fw-bold" @onclick="(()=> isLogin = false)">Regístrate</a>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <div class="form-outline form-white mb-4 mt-4">
+                                        <button class="btn btn-outline-light btn-lg px-5"
+                                                type="button"
+                                                @onclick="register"
+                                                disabled="@(string.IsNullOrWhiteSpace(newUser.Email) || 
+                                                            string.IsNullOrWhiteSpace(newUser.Password) ||
+                                                            newUser.Password != newUser.ConfirmPassword)">
+                                            Registrarse
+                                        </button>
+                                        <p class="m-0">
+                                            ¿Ya tienes una cuenta?
+                                            <a href="#" class="text-white-50 fw-bold" @onclick="(()=> isLogin = true)">Inicia sesión</a>
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

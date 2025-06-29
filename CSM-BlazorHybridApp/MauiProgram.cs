@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using CSM_BlazorHybridApp.ViewModels;
 
 namespace CSM_BlazorHybridApp
 {
@@ -15,9 +16,15 @@ namespace CSM_BlazorHybridApp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSingleton<Credentials>();
+            builder.Services.AddSingleton<Authorization>();
+            builder.Services.AddSingleton<NewUser>();
+            builder.Services.AddSingleton<ApiConfig>();
+            builder.Services.AddSingleton<UserResponse>();
+            builder.Services.AddSingleton<ApiResponse>();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 
