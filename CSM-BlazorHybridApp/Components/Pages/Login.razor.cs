@@ -6,36 +6,27 @@ namespace CSM_BlazorHybridApp.Components.Pages
 {
     public partial class Login : ComponentBase
     {
-        // 🔄 Estado del formulario
         private bool IsLogin { get; set; } = true;
 
-        // 🔐 Credenciales de Login
         private Credentials Credentials { get; set; } = new();
 
-        // ✅ Autorización
         private Authorization Authorization { get; set; } = new();
 
-        // 🆕 Registro de nuevo usuario
         private NewUser NewUser { get; set; } = new();
 
-        // Confirmación de contraseña (uso interno del formulario)
         private string ConfirmPassword { get; set; } = string.Empty;
 
-        // ⚙️ Configuración de la API
         private ApiConfig Config { get; set; } = new();
 
-        // 💻 Dependencias (inyectar en el constructor)
         private readonly HttpClient _http;
         private readonly NavigationManager _nav;
 
-        // 🛠️ Constructor
         public Login(HttpClient http, NavigationManager nav)
         {
             _http = http;
             _nav = nav;
         }
 
-        // 🚪 Método de Login
         public async Task LoginAsync()
         {
             try
@@ -47,7 +38,6 @@ namespace CSM_BlazorHybridApp.Components.Pages
                     Param = null
                 };
 
-                // 🔥 Simular loading (Puedes reemplazar esto por un componente Blazor)
                 Console.WriteLine("Iniciando sesión...");
 
                 var response = await _http.PostAsJsonAsync("callApiAsync", Config);
@@ -83,7 +73,6 @@ namespace CSM_BlazorHybridApp.Components.Pages
             }
         }
 
-        // 📝 Método de Registro
         public async Task RegisterAsync()
         {
             if (NewUser.Password != ConfirmPassword)
@@ -112,21 +101,14 @@ namespace CSM_BlazorHybridApp.Components.Pages
                     {
                         Console.WriteLine("Registro exitoso");
 
-                        // Limpiar formulario
                         NewUser = new NewUser();
                         ConfirmPassword = string.Empty;
 
                         IsLogin = true;
                     }
-                    else
-                    {
-                        Console.WriteLine(result?.Message ?? "Error en el registro");
-                    }
+                    else Console.WriteLine(result?.Message ?? "Error en el registro");
                 }
-                else
-                {
-                    Console.WriteLine("Error en la petición de registro");
-                }
+                else Console.WriteLine("Error en la petición de registro");
             }
             catch (Exception ex)
             {
@@ -134,7 +116,6 @@ namespace CSM_BlazorHybridApp.Components.Pages
             }
         }
 
-        // 🔗 Redirección
         public void GoToIndex(int idUser)
         {
             var root = _nav.BaseUri;

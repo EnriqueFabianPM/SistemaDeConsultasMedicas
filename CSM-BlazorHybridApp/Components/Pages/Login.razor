@@ -5,15 +5,14 @@
         <div class="container">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                        <div class="card-body p-5 text-center">
-
+                    <div style="border-radius: 1rem;">
+                        <div class="p-5 text-center">
                             @if (IsLogin)
                             {
                                 <!-- Formulario de Login -->
                                 <div class="mb-md-5 mt-md-4 pb-5">
                                     <h2 class="fw-bold mb-2 text-uppercase">Iniciar Sesión</h2>
-                                    <p class="text-white-50 mb-5">Por favor, escribe tus credenciales.</p>
+                                    <p class="mb-5">Por favor, escribe tus credenciales.</p>
 
                                     <div class="form-outline form-white mb-4">
                                         <input type="email" id="loginEmail" class="form-control form-control-lg"
@@ -40,11 +39,10 @@
                                 <!-- Registro -->
                                 <div class="mt-md-4" style="max-width: 900px; margin: 0 auto;">
                                     <h2 class="fw-bold mb-2 text-uppercase text-center">Registro</h2>
-                                    <p class="text-white-50 mb-5 text-center">Crea tu cuenta rellenando los datos.</p>
+                                    <p class="mb-5 text-center">Crea tu cuenta rellenando los datos.</p>
 
                                     <div class="row justify-content-center">
-                                        <!-- Columna izquierda -->
-                                        <div class="col-6 pe-4" style="border-right: 1px solid #fff;">
+                                        <div>
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerName">Nombre</label>
                                                 <input type="text" id="registerName" class="form-control form-control-lg"
@@ -62,15 +60,12 @@
                                                 <input type="tel" id="registerPhone" class="form-control form-control-lg"
                                                        @bind="NewUser.Phone" />
                                             </div>
-                                        </div>
 
-                                        <!-- Columna derecha -->
-                                        <div class="col-6 ps-4" style="border-left: 1px solid #fff;">
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerSex">Sexo</label>
                                                 <select id="registerSex" class="form-control form-control-lg"
                                                         @bind="NewUser.Fk_Sex">
-                                                    <option disabled value="">Seleccione una opción</option>
+                                                    <option class="text-center" disabled value="">Seleccione una opción</option>
                                                     <option value="1">Hombre</option>
                                                     <option value="2">Mujer</option>
                                                 </select>
@@ -98,7 +93,7 @@
                                 {
                                     <span>
                                         ¿No tienes cuenta?
-                                        <a href="#" class="text-white-50 fw-bold" @onclick="(()=> IsLogin = false)">Regístrate</a>
+                                        <a href="#" class="fw-bold" @onclick="(()=> IsLogin = false)">Regístrate</a>
                                     </span>
                                 }
                                 else
@@ -114,12 +109,11 @@
                                         </button>
                                         <p class="m-0">
                                             ¿Ya tienes una cuenta?
-                                            <a href="#" class="text-white-50 fw-bold" @onclick="(()=> IsLogin = true)">Inicia sesión</a>
+                                            <a href="#" class="fw-bold" @onclick="(()=> IsLogin = true)">Inicia sesión</a>
                                         </p>
                                     </div>
                                 }
                             </div>
-
                         </div>
                     </div>
                 </div>
