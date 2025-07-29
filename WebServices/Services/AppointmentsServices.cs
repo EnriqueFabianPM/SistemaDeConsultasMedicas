@@ -67,6 +67,19 @@ namespace WebServices.Services
             return list;
         }
 
+        public object Types()
+        {
+            var list = _db.Types
+                .Select(t => new 
+                {
+                    Id = t.Id_Type,
+                    t.Name,
+                })
+                .OrderBy(t => t.Name)
+                .ToList();
+
+            return list;
+        }
 
         //devuelve la lista total de municipios de la base de datos
         public List<MunicipalitiesList> Municipalities()
@@ -334,7 +347,6 @@ namespace WebServices.Services
             DayOfWeek day = date.DayOfWeek;
             return day == DayOfWeek.Saturday || day == DayOfWeek.Sunday;
         }
-
     }
 
     //ViewModels

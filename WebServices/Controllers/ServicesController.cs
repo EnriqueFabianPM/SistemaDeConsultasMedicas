@@ -259,6 +259,14 @@ namespace WebServices.Controllers
             return Json(list.Count() == 0 ? null : list);
         }
 
+        //Devuelve la lista de especialidades médicas
+        [HttpGet]
+        public ActionResult GetTypes()
+        {
+            var list = _appointmentServices.Types();
+            return Json(list);
+        }
+
         //Devuelve la lista de status de la base de datos
         [HttpGet]
         public ActionResult GetStatuses()
