@@ -17,6 +17,8 @@ const app = createApp({
             showErrorMessage: false,
             errorMessage: '',
             statuses: [],
+            currentStatuses: [],
+
 
             Authorization: {
                 Success: false,
@@ -176,6 +178,8 @@ const app = createApp({
 
                     this.appointments = response.data;
                     console.log('citas', response.data);
+                    this.appointments.forEach(appointment => this.currentStatuses[appointment.id] = appointment.fk_Status);
+                    console.log('status del servidor', this.currentStatuses);
 
                     this.$nextTick(() => {
                         $(this.$refs.appointmentsTable).DataTable({
@@ -251,9 +255,45 @@ const app = createApp({
                 });
         },
 
+        updateAppointment(appointment) {
+            if (appointment) {
+
+                appointment.fk_Status = this.currentStatuses[appointment.id];
+                this.config = {
+                    IdApi: 13, //ola
+                    BodyParams: {
+                        id_Appointment: appointment.id,
+                        fk_Doctor: appointment.fk_Doctor,
+                        fk_Patient: appointment.fk_Patient,
+                        fk_Status: appointment.fk_Status,
+                    },
+                    Param: null, //Se transforma el valor en string
+                };
+
+                console.log("Appointment a actualizar nadamas pa debbuggear", this.config.BodyParams);
+
+                axios.post(window.callApiAsync, this.config)
+                    .then(response => {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                            allowClickOutside: false,
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(error => console.error("Error en la petición:", error));
+
+
+            }
+        },
+
         deleteAppointment(appointment) {
             this.config = {
-                IdApi: 1014, //Cambiar por 15 cuando se solucione el problema de los Ids
+                IdApi: 15, //Cambiar por 15 cuando se solucione el problema de los Ids
                 BodyParams: {
                     id_Appointment: appointment.id,
                     fk_Doctor: appointment.fk_Doctor,
