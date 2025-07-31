@@ -1,6 +1,5 @@
-﻿@{
-    @model WebServices.Models.Email;
-
+﻿@model WebServices.Models.Email;
+@{
     #pragma warning disable CS8600, CS8602
     Layout = "~/Views/Shared/_EmailLayout.cshtml";
     Email data = Model;
@@ -25,7 +24,6 @@
             <strong>Fecha:</strong> @DateTime.Now.ToString("dd/MM/yyyy") <br>
             <strong>Hora:</strong> @DateTime.Now.ToString("HH:mm")
         </p>
-
 
         <p>Si tienes alguna duda o necesitas reprogramar tu cita, no dudes en contactarnos.</p>
 

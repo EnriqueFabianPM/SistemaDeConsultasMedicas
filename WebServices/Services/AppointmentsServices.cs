@@ -26,7 +26,6 @@ namespace WebServices.Services
                 .FirstOrDefault();
 
             List<AppointmentList> list = new List<AppointmentList>();
-
             if(user?.fk_Role == 1)
             {
                 list = _db.Medical_Appointments
@@ -148,25 +147,17 @@ namespace WebServices.Services
         //Método para crear una una cita médica
         public async Task<Response> Create(Appointment Appointment)
         {
-            Response response = new Response
-            {
-                Success = false,
-                Message = "",
-            };
+            Response response = new();
 
             if (Appointment != null)
             {
-
-                DateTime currentDate = DateTime.Now.Date;
-                DateTime appointmentDate = GetToDateFromDateAndWorkDays(currentDate, 1);
-
-                Medical_Appointments newAppintment = new Medical_Appointments
+                Medical_Appointments newAppintment = new()
                 {
                     fk_Doctor = Appointment.fk_Doctor,
                     fk_Patient = Appointment.fk_Patient,
                     fk_Status = 1,
-                    Created_Date = currentDate,
-                    Appointment_Date = appointmentDate,
+                    Created_Date = DateTime.Now.Date,
+                    Appointment_Date = GetToDateFromDateAndWorkDays(DateTime.Now.Date, 1),
                     Notes = Appointment.notes,
                 };
 
@@ -244,11 +235,7 @@ namespace WebServices.Services
         //Método para crear una una cita médica
         public Response Delete(Appointment Appointment)
         {
-            Response response = new Response
-            {
-                Success = false,
-                Message = "",
-            };
+            Response response = new ();
 
             if (Appointment != null)
             {
@@ -272,11 +259,7 @@ namespace WebServices.Services
         //Método para Actualizar una cita médica
         public async Task<Response> Update(Appointment Appointment)
         {
-            Response response = new Response
-            {
-                Success = false,
-                Message = "",
-            };
+            Response response = new ();
 
             if (Appointment != null) 
             {
@@ -291,6 +274,11 @@ namespace WebServices.Services
                     if (Appointment?.notes != null) existingAppintment.Notes = Appointment.notes;
                 
                     _db.SaveChanges();
+
+                    //Cargar la navegación manualmente para asegurar que no sea null
+                    _db.Entry(existingAppintment)
+                        .Reference(a => a.fk_StatusNavigation)
+                        .Load();
 
                     //Busca al paciente relacionado con la cita médica
                     var patient = _db.Users

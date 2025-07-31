@@ -1,6 +1,5 @@
-﻿@{
-    @model WebServices.Models.Email;
-
+﻿@model WebServices.Models.Email;
+@{
     #pragma warning disable CS8600, CS8602
     Layout = "~/Views/Shared/_EmailLayout.cshtml";
     Email data = Model;
@@ -14,16 +13,12 @@
         <title>¡Noticias para la Visita!</title>
     </head>
     <body>
-        <h2>Hola @data.user.Name,</h2>
+        <h2>Hola @(data?.user?.Name ?? "Paciente"),</h2>
 
-        <p>Queremos informarte que el <strong>estado de tu cita médica ha cambiado</strong>.</p>
-
-        <p>A continuación te compartimos los detalles actualizados de tu cita:</p>
-
-        <p><strong>Estado actual:</strong> @data.appointment.fk_StatusNavigation.Name</p>
+        <p><strong>Estado actual:</strong> @(data?.appointment?.fk_StatusNavigation?.Name ?? "Desconocido")</p>
 
         <p>
-            <strong>Fecha:</strong> @data.appointment.Appointment_Date.ToString("dd/MM/yyyy") <br>
+            <strong>Fecha:</strong> @(data?.appointment?.Appointment_Date.ToString("dd/MM/yyyy") ?? "Sin fecha") <br>
             <strong>Hora:</strong> @DateTime.Now.ToString("HH:mm")
         </p>
 
@@ -32,7 +27,5 @@
         <p>Gracias por confiar en <strong>Sistema de Consultas Médicas 8A</strong>.</p>
 
         <p>Atentamente,<br>El equipo de atención</p>
-
-
     </body>
 </html>
