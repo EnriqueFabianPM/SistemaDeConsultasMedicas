@@ -8,7 +8,7 @@
     <link href="~/css/Appointments.css" rel="stylesheet" />
 </head>
 
-<div id="app">
+<div>
     <h1 v-if="user?.fk_Role === 1"><strong>Administrador de Citas</strong></h1>
     <h1 v-else><strong>{{ user?.fk_Role !== 3 ? 'Agendar cita' : 'Lista de citas'}}</strong></h1>
 

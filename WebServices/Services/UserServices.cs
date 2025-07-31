@@ -1,6 +1,7 @@
 ﻿using WebServices.Data;
 using WebServices.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGeneration.Utils;
 #pragma warning disable CS8618, CS8603
 
 namespace WebServices.Services
@@ -17,19 +18,25 @@ namespace WebServices.Services
             _db = db;
         }
 
-        public List<UsersList> Users()
+        public object Users()
         {
-            List<UsersList> list =  _db.Users
+            var list =  _db.Users
                 .Include(s =>s.fk_SexNavigation)
                 .Include(r => r.fk_RoleNavigation)
-                .Select(u => new UsersList { 
-                    Id_User = u.Id_User,
-                    Name = u.Name, 
-                    Email = u.Email,
+                .Include(c => c.fk_ConsultoryNavigation)
+                .Select(u => new
+                { 
+                    u.Id_User,
+                    u.Name, 
+                    u.Email,
+                    u.fk_Role,
+                    u.fk_Consultory,
+                    u.fk_ConsultoryNavigation.fk_Municipality,
+                    u.fk_Type,
                     Phone = u.Phone == null ? "-" : u.Phone.ToString() ?? "",
                     Sex = u.fk_SexNavigation.Name,
                     Role = u.fk_RoleNavigation.Name,
-                    Active = u.Active ? "Activo" : "Inactivo"
+                    Active = u.Active ? "Activo" : "Inactivo",
                 }) 
                 .ToList();
 
@@ -58,32 +65,47 @@ namespace WebServices.Services
             return user;
         }
 
-        public async Task<Response> Update(User user)
+        public object Roles()
         {
-            var response = new Response();
-            response.Success = false;
-            response.Message = "";
+            var roles = _db.Roles
+                .Select(r => new
+                {
+                    Id = r.Id_Role,
+                    r.Name
+                })
+                .ToList();
+            return roles;
+        }
+
+        public async Task<Response> Update(Users user)
+        {
+            Response response = new();
 
             if(user != null)
             {
                 var row = _db.Users
                     .Include(s => s.fk_RoleNavigation)
-                    .Where(u => u.Id_User == user.id_User) 
+                    .Where(u => u.Id_User == user.Id_User) 
                     .FirstOrDefault();  
 
                 if(row != null)
                 {
-                    row.Name = user.name != null ? user.name : row.Name;
-                    row.Email = user.email != null ? user.email : row.Email;
-                    row.Phone = user.phone != null ? user.phone : row.Phone;
-                    row.Active = user.active;
+                    row.Name = user.Name != null ? user.Name : row.Name;
+                    row.Email = user.Email != null ? user.Email : row.Email;
+                    row.Phone = user.Phone != null ? user.Phone : row.Phone;
+                    row.fk_Role = user.fk_Role != 0 ? user.fk_Role : row.fk_Role;
+                    row.fk_Consultory = user.fk_Consultory != null && user.fk_Role == 3  ? user.fk_Consultory : null;
+                    row.fk_Type = user.fk_Type != null && user.fk_Role == 3  ? user.fk_Type : null;
+                    row.Active = user.Active;
+
+                    _db.SaveChanges();
 
                     response.Success = true;
                     response.Message = "Se ha actualizado el usuario";
 
                     if (user.fk_Role != row.fk_Role)
                     {
-                        Email email = new Email
+                        Email email = new()
                         {
                             user = row,
                             subject = "Cambio de rol en Consultorios System Dev",
@@ -98,7 +120,6 @@ namespace WebServices.Services
                         }
                     }
 
-                    _db.SaveChanges();
                 }
             }
             return response;
@@ -107,10 +128,7 @@ namespace WebServices.Services
         //Método que elimina a un usuario y objetos derivados del mismo
         public Response Delete(Users user)
         {
-            Response response = new Response();
-            response.Success = false;
-            response.Message = "";
-
+            Response response = new();
             if (user != null)
             {
                 //Busca al usuario en la base de datos
@@ -132,10 +150,7 @@ namespace WebServices.Services
                         _db.Medical_Appointments.RemoveRange(Appointments);
                     }
 
-                    //Elimina al usuario de la base de datos
                     _db.Users.Remove(row);
-
-                    //Guarda los cambios
                     _db.SaveChanges();
 
                     //Se actualiza la respuesta del servidor

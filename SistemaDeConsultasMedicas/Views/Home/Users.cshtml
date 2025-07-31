@@ -30,20 +30,82 @@
                     <td>{{item.role}}</td>
                     <td :class="item.active === 'Activo' ? 'text-success' : 'text-danger'">{{item.active}}</td>
                     <td>
-                        <a :class="item.active === 'Activo' ? 'text-danger' : text-success" 
-                        v-on:click="blockUser(item)" 
-                        style="text-decoration: none; cursor:pointer;">
+                        <a @@click="chargeFields(item)" class="text-warning mx-1 text-decoration-none" data-bs-toggle="modal" data-bs-target="#Modal">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+                        <a :class="item.active === 'Activo' ? 'text-danger text-decoration-none' : 'text-success text-decoration-none'"
+                           @@click="blockUser(item)">
                             <i :class="item.active === 'Activo' ? 'fas fa-lock' : 'fas fa-unlock-alt'"></i>
-                            {{item.active === 'Activo' ? 'Bloquear' : 'Desbloquear'}}</a>
+                            {{item.active === 'Activo' ? 'Bloquear' : 'Desbloquear'}}
+                        </a>
                     </td>
                 </tr>
             </tbody>
             </table>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="ModalLabel">Editar</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input v-model="form.Name" type="text" class="form-control shadow" id="name" placeholder="Nombre del usuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input v-model="form.Email" type="email" class="form-control shadow" id="email" placeholder="Email del usuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Teléfono</label>
+                            <input v-model="form.Phone" type="tel" class="form-control shadow" id="phone" placeholder="Teléfono del usuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rol</label>
+                            <select v-model="form.fk_Role" @@change="console.log('rol: ',form.fk_Role)" class="form-select shadow" id="role" required>
+                                <option value="" selected disabled>Seleccione un rol</option>
+                                <option v-for="role in roles" :value="role.id">{{role.name}}</option>
+                            </select>
+                        </div>
+                        <div v-if="form.fk_Role === 3" class="mb-3">
+                            <label for="Type" class="form-label">Especialidad</label>
+                            <select v-model="form.fk_Type" @@change="console.log('especialidad: ',form.fk_Type)" class="form-select shadow" id="Type" required>
+                                <option value="" selected disabled>Seleccione una especialidad</option>
+                                <option v-for="type in types" :value="type.id">{{type.name}}</option>
+                            </select>
+                        </div>
+                        <div v-if="form.fk_Role === 3" class="mb-3">
+                            <label for="municipality" class="form-label">Municipio</label>
+                            <select v-model="form.municipality" @@change="onConsultoryChange()" class="form-select shadow" id="municipality" required>
+                                <option value="" selected disabled>Seleccione un municipio</option>
+                                <option v-for="municipality in municipalities" :value="municipality.id">{{municipality.name}}</option>
+                            </select>
+                        </div>
+                        <div v-if="form.municipality !== '' && form.fk_Role === 3" class="mb-3">
+                            <label for="consultory" class="form-label">Consultorio</label>
+                            <select v-model="form.fk_Consultory" @@change="console.log('consultorio: ',form.fk_Consultory)" class="form-select shadow" id="consultory" required>
+                                <option value="" selected disabled>Seleccione un consultorio</option>
+                                <option v-for="consultory in consultories" :value="consultory.id">{{consultory.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button @@click="updateUser()" type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts{
-
     @*Aquí vas a consumir las APIs que vayas a utilizar*@
     <script>window.user = @Html.Raw(Json.Serialize(ViewBag.User));</script>
 

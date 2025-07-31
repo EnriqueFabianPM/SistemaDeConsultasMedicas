@@ -334,8 +334,16 @@ namespace WebServices.Controllers
         public ActionResult GetUsers() 
         {
             //Llama al método del servicio UserServices que devuelve la lista total de usuarios
-            List<UsersList> list = _userServices.Users();
-            return Json(list.Count() == 0 ? null : list);
+            var list = _userServices.Users();
+            return Json(list);
+        }
+
+        [HttpGet]
+        public ActionResult GetRoles() 
+        {
+            //Llama al método del servicio UserServices que devuelve la lista total de usuarios
+            var list = _userServices.Roles();
+            return Json(list);
         }
 
         //Devuelve un usuario registrados en la base de datos
@@ -349,7 +357,7 @@ namespace WebServices.Controllers
 
         //Devuelve una respuesta con el status de su petición HttpPost
         [HttpPost]
-        public async Task<ActionResult> UpdateUser([FromBody] User user)
+        public async Task<ActionResult> UpdateUser([FromBody] Users user)
         {
             //Llama al método del servicio UserServices que actualiza los datos de un usuario existente
             Response response = await _userServices.Update(user);

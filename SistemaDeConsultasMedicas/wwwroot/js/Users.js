@@ -13,7 +13,17 @@ const app = createApp({
                 Password: "",
             },
 
-            users: [],
+            form: {
+                Id_User: user.id_User,
+                Name: "",
+                Email: "",
+                Phone: "",
+                fk_Role: 0,
+                Active: false,
+                municipality: '',
+                fk_Consultory: '',
+                fk_Type: '',
+            },
 
             //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
             config: {
@@ -23,9 +33,40 @@ const app = createApp({
             },
 
             user: {},
+            users: [],
+            roles: [],
+            types: [],
+            consultories: [],
+            municipalities: [],
         };
     },
     methods: {
+        getRoles() {
+            this.config.IdApi = 17;
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Lista de roles', response.data);
+                    this.roles = response.data;
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
+        getTypes() {
+            this.config.IdApi = 16;
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Lista de types', response.data);
+                    this.types = response.data;
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
         getUsers() {
             this.config.IdApi = 6;
 
@@ -76,6 +117,40 @@ const app = createApp({
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
+        },
+
+        getMunicipalities() {
+            //Id para obtener los municipios
+            this.config.IdApi = 1;
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Municipios', response.data);
+                    this.municipalities = response.data;
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+        },
+
+        //Obtener los consultorios
+        getConsultories(id) {
+            this.config = {
+                IdApi: 2, //Consultorios
+                BodyParams: null, //Al ser una api tipo Get se manda null
+                Param: `${id}`, //Se transforma el valor en string
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    console.log('Consultorios', response.data);
+                    this.consultories = response.data;
+                    this.form.fk_Consultory = response.data.find(c => c.id === this.form.fk_Consultory)?.id || '';
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                });
+
         },
 
         blockUser(user){
@@ -131,6 +206,84 @@ const app = createApp({
                     console.error("Error en la petición:", error);
                 });
         },
+
+        chargeFields(user) {
+            console.log('Usuario a editar: ', user);
+            console.log('form: ', this.form);
+            this.form.fk_Consultory = 0;
+            this.form.municipality = '';
+            this.form.fk_Type = '';
+
+            this.form.Id_User = user.id_User;
+            this.form.Name = user.name;
+            this.form.Email = user.email;
+            this.form.Phone = user.phone === "-" ? "" : user.phone;
+            this.form.fk_Role = user.fk_Role;
+            this.form.Active = user.active === "Activo" ? true : false;
+            this.form.fk_Consultory = user.fk_Consultory !== null ? user.fk_Consultory : 0;
+            this.form.municipality = user.fk_Consultory !== null ? this.municipalities.find(m => m.id === user.fk_Municipality)?.id : '';
+            this.form.fk_Type = user.fk_Type !== null ? this.types.find(t => t.id === user.fk_Type)?.id : '';
+
+            if (this.form.fk_Consultory != 0) this.getConsultories(user.fk_Municipality);
+        },
+
+        onConsultoryChange() {
+            this.getConsultories(this.form.municipality);    
+        },
+
+        updateUser() {
+            Swal.fire({
+                title: "Actualizando usuario...",
+                text: "Por favor, espera",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            this.config = {
+                IdApi: 7,
+                BodyParams: {
+                    Id_User: this.form.Id_User,
+                    Name: this.form.Name,
+                    Email: this.form.Email,
+                    Phone: this.form.Phone === "-" ? null : this.form.Phone,
+                    Active: this.form.Active,
+                    fk_Role: this.form.fk_Role,
+                    fk_Consultory: this.form.fk_Consultory,
+                    fk_Type: this.form.fk_Type,
+                },
+                Param: null,
+            };
+
+            axios.post(window.callApiAsync, this.config)
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "¡Listo!",
+                            text: `${response.data.message}`,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se ha podido actualizar el usuario",
+                            icon: "error",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                }); 
+        },
     },
     mounted() {
         console.log(window.user, 'Usuario'); // Ahora es un objeto JSON usable
@@ -144,6 +297,9 @@ const app = createApp({
         }
 
         this.getUsers();
+        this.getRoles();
+        this.getTypes();
+        this.getMunicipalities();
     },
     beforeDestroy() {
         // Destruye la instancia de DataTables cuando el componente se destruya para evitar fugas de memoria
