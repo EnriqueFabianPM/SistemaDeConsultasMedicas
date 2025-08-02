@@ -227,11 +227,25 @@ const app = createApp({
             if (this.form.fk_Consultory != 0) this.getConsultories(user.fk_Municipality);
         },
 
-        onConsultoryChange() {
+        onMunicipalityChange() {
             this.getConsultories(this.form.municipality);    
         },
 
         updateUser() {
+
+            if (this.form.fk_Role === 3 &&
+                this.form.fk_Consultory === '' ||
+                this.form.fk_Type === ''
+            ) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Favor de añadír la informacion faltante.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+                return;
+            }
+
             Swal.fire({
                 title: "Actualizando usuario...",
                 text: "Por favor, espera",

@@ -82,7 +82,7 @@
                         </div>
                         <div v-if="form.fk_Role === 3" class="mb-3">
                             <label for="municipality" class="form-label">Municipio</label>
-                            <select v-model="form.municipality" @@change="onConsultoryChange()" class="form-select shadow" id="municipality" required>
+                            <select v-model="form.municipality" @@change="onMunicipalityChange()" class="form-select shadow" id="municipality" required>
                                 <option value="" selected disabled>Seleccione un municipio</option>
                                 <option v-for="municipality in municipalities" :value="municipality.id">{{municipality.name}}</option>
                             </select>
