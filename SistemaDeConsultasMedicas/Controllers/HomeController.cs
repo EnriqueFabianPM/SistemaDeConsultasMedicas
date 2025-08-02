@@ -31,15 +31,18 @@ namespace SistemaDeConsultasMedicas.Controllers
             };
 
             JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
-            object user = jsonResult?.Value; // Extraer el objeto real
+            object response = jsonResult?.Value; // Extraer el objeto real
 
-
-            if (user != null)
+            if (response != null)
             {
-                ViewBag.User = user;
-                return View();
-            }
-            else return StatusCode(403);
+                Users user = JsonSerializer.Deserialize<Users>(JsonSerializer.Serialize(jsonResult.Value));
+
+                if (user.fk_Role == 1)
+                {
+                    ViewBag.User = response;
+                    return View();
+                } else return StatusCode(403);
+            } else return StatusCode(403);
         }
 
         [HttpGet]
@@ -60,8 +63,7 @@ namespace SistemaDeConsultasMedicas.Controllers
             {
                 ViewBag.User = user;
                 return View();
-            }
-            else return StatusCode(403);
+            } else return StatusCode(403);
         }
 
         [HttpGet]
@@ -77,12 +79,12 @@ namespace SistemaDeConsultasMedicas.Controllers
             JsonResult jsonResult = await ConsumeApi(config) as JsonResult;
             object user = jsonResult?.Value; // Extraer el objeto real
 
+
             if (user != null)
             {
                 ViewBag.User = user;
                 return View();
-            }
-            else return StatusCode(403);
+            } else return StatusCode(403);
         }
 
         //Método para conseguir las urls de las Apis que se vayan a consumir

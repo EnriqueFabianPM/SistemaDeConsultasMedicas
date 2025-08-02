@@ -75,21 +75,21 @@
                         </div>
                         <div v-if="form.fk_Role === 3" class="mb-3">
                             <label for="Type" class="form-label">Especialidad</label>
-                            <select v-model="form.fk_Type" @@change="console.log('especialidad: ',form.fk_Type)" class="form-select shadow" id="Type" required>
+                            <select v-model="form.fk_Type" @@change="console.log('especialidad: ',form.fk_Type)" class="form-select shadow" id="Type">
                                 <option value="" selected disabled>Seleccione una especialidad</option>
                                 <option v-for="type in types" :value="type.id">{{type.name}}</option>
                             </select>
                         </div>
                         <div v-if="form.fk_Role === 3" class="mb-3">
                             <label for="municipality" class="form-label">Municipio</label>
-                            <select v-model="form.municipality" @@change="onMunicipalityChange()" class="form-select shadow" id="municipality" required>
+                            <select v-model="form.municipality" @@change="onMunicipalityChange()" class="form-select shadow" id="municipality">
                                 <option value="" selected disabled>Seleccione un municipio</option>
                                 <option v-for="municipality in municipalities" :value="municipality.id">{{municipality.name}}</option>
                             </select>
                         </div>
                         <div v-if="form.municipality !== '' && form.fk_Role === 3" class="mb-3">
                             <label for="consultory" class="form-label">Consultorio</label>
-                            <select v-model="form.fk_Consultory" @@change="console.log('consultorio: ',form.fk_Consultory)" class="form-select shadow" id="consultory" required>
+                            <select v-model="form.fk_Consultory" @@change="console.log('consultorio: ',form.fk_Consultory)" class="form-select shadow" id="consultory">
                                 <option value="" selected disabled>Seleccione un consultorio</option>
                                 <option v-for="consultory in consultories" :value="consultory.id">{{consultory.name}}</option>
                             </select>

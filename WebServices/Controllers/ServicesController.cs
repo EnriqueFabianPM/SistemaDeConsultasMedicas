@@ -61,7 +61,7 @@ namespace WebServices.Controllers
             var jsonData = await response.Content.ReadAsStringAsync();
 
             // Si el JSON retornado es un array de municipios, se puede deserializar directamente:
-            APIMunicipality apiResponse = System.Text.Json.JsonSerializer.Deserialize<APIMunicipality>(jsonData, new JsonSerializerOptions
+            APIMunicipality apiResponse = JsonSerializer.Deserialize<APIMunicipality>(jsonData, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });

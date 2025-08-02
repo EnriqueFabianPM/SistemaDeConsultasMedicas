@@ -220,7 +220,7 @@ const app = createApp({
             this.form.Phone = user.phone === "-" ? "" : user.phone;
             this.form.fk_Role = user.fk_Role;
             this.form.Active = user.active === "Activo" ? true : false;
-            this.form.fk_Consultory = user.fk_Consultory !== null ? user.fk_Consultory : 0;
+            this.form.fk_Consultory = user.fk_Consultory !== null ? user.fk_Consultory : '';
             this.form.municipality = user.fk_Consultory !== null ? this.municipalities.find(m => m.id === user.fk_Municipality)?.id : '';
             this.form.fk_Type = user.fk_Type !== null ? this.types.find(t => t.id === user.fk_Type)?.id : '';
 
@@ -232,10 +232,8 @@ const app = createApp({
         },
 
         updateUser() {
-
-            if (this.form.fk_Role === 3 &&
-                this.form.fk_Consultory === '' ||
-                this.form.fk_Type === ''
+            if (this.form.fk_Role === 3 && (this.form.fk_Consultory === '' ||
+                this.form.fk_Type === '')
             ) {
                 Swal.fire({
                     title: "Error",
@@ -264,9 +262,9 @@ const app = createApp({
                     Email: this.form.Email,
                     Phone: this.form.Phone === "-" ? null : this.form.Phone,
                     Active: this.form.Active,
-                    fk_Role: this.form.fk_Role,
-                    fk_Consultory: this.form.fk_Consultory,
-                    fk_Type: this.form.fk_Type,
+                    fk_Role: this.form.fk_Role === '' ? null : this.form.fk_Role,
+                    fk_Consultory: this.form.fk_Consultory === '' ? null : this.form.fk_Consultory,
+                    fk_Type: this.form.fk_Type === '' ? null : this.form.fk_Type,
                 },
                 Param: null,
             };

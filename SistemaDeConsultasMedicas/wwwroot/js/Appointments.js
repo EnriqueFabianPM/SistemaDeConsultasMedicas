@@ -178,7 +178,7 @@ const app = createApp({
 
                     this.appointments = response.data;
                     console.log('citas', response.data);
-                    this.appointments.forEach(appointment => this.currentStatuses[appointment.id] = appointment.fk_Status);
+                    if(this.appointments)this.appointments.forEach(appointment => this.currentStatuses[appointment.id] = appointment.fk_Status);
                     console.log('status del servidor', this.currentStatuses);
 
                     this.$nextTick(() => {
