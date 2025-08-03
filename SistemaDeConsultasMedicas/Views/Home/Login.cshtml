@@ -3,18 +3,13 @@
     ViewData["Title"] = "Login";
 }
 
-<head>
-    @*Aquí vas a poner los estilos css que quieras implementar en la vista*@
-</head>
-
 <div class="justify-content-centers align-content-center">
     <section class="gradient-custom">
         <div class="container">
             <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                <div :class="!isLogin ? 'col-12 col-md-10 col-lg-8 col-xl-7' : 'col-12 col-md-8 col-lg-6 col-xl-5'">
+                    <div class="card glass-card">
                         <div class="card-body p-5 text-center">
-
                             <!-- Formulario de Login -->
                             <div v-if="isLogin" class="mb-md-5 mt-md-4 pb-5">
                                 <h2 class="fw-bold mb-2 text-uppercase">Iniciar Sesión</h2>
@@ -30,7 +25,7 @@
                                     <label class="form-label" for="loginPassword">Contraseña</label>
                                 </div>
 
-                                <button class="btn btn-outline-light btn-lg px-5"
+                                <button class="btn btn-outline-dark btn-lg px-5"
                                         type="submit"
                                         :disabled="!credentials.Email || !credentials.Password"
                                         @@click="login()">
@@ -45,7 +40,7 @@
 
                                 <div class="row justify-content-center">
                                     <!-- Columna izquierda con borde derecho -->
-                                    <div class="col-6 pe-4" style="border-right: 1px solid #fff;">
+                                    <div class="col-6 pe-4" style="border-right: 1px solid #000;">
                                         <!-- Nombre -->
                                         <div class="form-outline form-white mb-4">
                                             <label class="form-label" for="registerName">Nombre</label>
@@ -66,7 +61,7 @@
                                     </div>
 
                                     <!-- Columna derecha con borde izquierdo -->
-                                    <div class="col-6 ps-4" style="border-left: 1px solid #fff;">
+                                    <div class="col-6 ps-4" style="border-left: 1px solid #000;">
                                         <!-- Sexo (Select) -->
                                         <div class="form-outline form-white mb-4">
                                             <label class="form-label" for="registerSex">Sexo</label>
@@ -96,11 +91,11 @@
                             <div>
                                 <span v-if="isLogin">
                                     ¿No tienes cuenta?
-                                    <a href="#" class="text-white-50 fw-bold" @@click.prevent="isLogin = false">Regístrate</a>
+                                    <a href="#" class="text-black-50 fw-bold" @@click.prevent="isLogin = false">Regístrate</a>
                                 </span>
                                 <!-- Botón de registro -->
                                 <div v-else class="form-outline form-white mb-4 mt-4">
-                                    <button class="btn btn-outline-light btn-lg px-5"
+                                    <button class="btn btn-outline-dark-50 btn-lg px-5"
                                             type="submit"
                                             :disabled="!newUser.email || !newUser.password || newUser.password !== newUser.confirmPassword"
                                             @@click="register()">
@@ -108,7 +103,7 @@
                                     </button>
                                     <p class="m-0">
                                         ¿Ya tienes una cuenta?
-                                        <a href="#" class="text-white-50 fw-bold" @@click.prevent="isLogin = true">Inicia sesión</a>
+                                        <a href="#" class="text-black-50 fw-bold" @@click.prevent="isLogin = true">Inicia sesión</a>
                                     </p>
                                 </div>
                             </div>

@@ -1,9 +1,38 @@
-﻿custom-button {
-    height: 100%;
-    border-radius: 20px;
-    background-color: white;
+﻿.translucent-btn {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
 }
 
-    custom-button:hover {
-        background-color: transparent;
+    .translucent-btn:hover {
+        background-color: rgba(255, 255, 255, 0.5) !important;
     }
+
+.index-card {
+    width: 230px;
+    height: 230px;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .index-card:hover {
+        transform: translateY(-5px);
+        background-color: #f8f9fa;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .index-card i {
+        color: #0d6efd;
+    }
+
+
