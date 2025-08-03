@@ -19,26 +19,31 @@
     <body>
         <div>
             <header id="layout" v-cloak>
-                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between p-2">
-                    <div class="d-flex">
-                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Login">Consultas Medicas</a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
+            <nav class="navbar navbar-expand-lg shadow-sm custom-navbar">
+                <div class="container-fluid justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <a class="navbar-brand fw-bold fs-4 text-primary" asp-area="" asp-controller="Home" asp-action="Login">
+                            <i class="fas fa-stethoscope me-2"></i>Consultas Médicas
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" v-if="Authorization.Success">
-                            <div>
-                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Index(user?.id_User)">Index</a>
-                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Users(user?.id_User)" v-if="user?.fk_Role === 1">Users</a>
-                                <a class="m-1 text-secondary" style="text-decoration: none; cursor:pointer;" @@click="Appointments(user?.id_User)">Appointments</a>
-                            </div>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="navbarContent" v-if="Authorization.Success">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" @@click="Index(user?.id_User)">Inicio</a></li>
+                            <li class="nav-item" v-if="user?.fk_Role === 1"><a class="nav-link" @@click="Users(user?.id_User)">Usuarios</a></li>
+                            <li class="nav-item"><a class="nav-link" @@click="Appointments(user?.id_User)">Citas</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center gap-2" v-if="Authorization.Success">
+                            <span class="text-dark">Bienvenido, <strong>{{user?.email}}</strong></span>
+                            <button class="btn btn-outline-primary btn-sm" v-on:click="logout()">Cerrar sesión</button>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center" v-if="Authorization.Success">
-                        <p class="m-md-1">Bienvenido <strong>{{user?.email}}</strong></p>
-                        <button class="btn btn-outline-secondary" v-on:click="logout()" style="width: 100%;">{{"Cerrar Sesión"}}</button>
-                    </div>
-                </nav>
+                </div>
+            </nav>
+
             </header>
             <div id="app" v-cloak class="container">
                 <main role="main" class="pb-3">

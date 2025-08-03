@@ -9,57 +9,68 @@
 </head>
 
 <div>
-    <h1 v-if="user?.fk_Role === 1"><strong>Administrador de Citas</strong></h1>
-    <h1 v-else><strong>{{ user?.fk_Role !== 3 ? 'Agendar cita' : 'Lista de citas'}}</strong></h1>
+    <h1 v-if="user?.fk_Role === 1" class="text-primary text-center fw-bold mb-4">Administrador de Citas</h1>
+    <h1 v-else class="text-primary text-center fw-bold mb-4">
+        {{ user?.fk_Role !== 3 ? 'Agendar cita' : 'Lista de citas'}}
+    </h1>
 
-    <div v-if="user?.fk_Role !== 3 || user?.fk_Role === 1" class="card shadow mb-2">
+    <div v-if="user?.fk_Role !== 3 || user?.fk_Role === 1" class="table-container card shadow mb-4">
         <div class="card-body">
-            <div class="d-flex">
-                <div class="form-group">
-                    <label for="municipality">Seleccione un municipio:</label>
-                    <select class="shadow form-control" id="municipality" v-model="selectedMunicipality" v-on:change="onMunicipalityChange">
+            <div class="d-flex flex-wrap gap-4">
+                <!-- Municipio -->
+                <div class="form-group flex-fill">
+                    <label for="municipality">Municipio</label>
+                    <select class="form-control shadow-sm" v-model="selectedMunicipality" v-on:change="onMunicipalityChange">
                         <option value="" disabled selected>Seleccione un municipio</option>
                         <option v-for="municipality in municipalities" :value="municipality.id">{{ municipality.name}}</option>
                     </select>
                 </div>
 
-                <div class="form-group" v-if="selectedMunicipality">
-                    <label for="consultory">Seleccione un consultorio:</label>
-                    <select class="shadow form-control" id="consultory" v-model="selectedConsultory" v-on:change="onConsultoryChange">
+                <!-- Consultorio -->
+                <div class="form-group flex-fill" v-if="selectedMunicipality">
+                    <label for="consultory">Consultorio</label>
+                    <select class="form-control shadow-sm" v-model="selectedConsultory" v-on:change="onConsultoryChange">
                         <option value="" disabled selected>Seleccione un consultorio</option>
                         <option v-for="consultory in consultories" :value="consultory.id">{{ consultory.name }}</option>
                     </select>
                 </div>
 
-                <div class="form-group" v-if="selectedConsultory">
-                    <label for="doctor">Seleccione un doctor:</label>
-                    <select class="shadow form-control" id="doctor" v-model="selectedDoctor">
+                <!-- Doctor -->
+                <div class="form-group flex-fill" v-if="selectedConsultory">
+                    <label for="doctor">Doctor</label>
+                    <select class="form-control shadow-sm" v-model="selectedDoctor">
                         <option value="" disabled selected>Seleccione un doctor</option>
                         <option v-for="doctor in doctors" :value="doctor.id">{{ doctor.name }}</option>
                     </select>
                 </div>
             </div>
 
-            <div id="map" class="rounded-4 shadow mb-1" style="height: 300px; width: 100%; margin-top: 10px;" v-show="selectedMunicipality"></div>
+            <!-- Mapa -->
+            <div id="map" class="rounded-4 shadow-sm my-4" style="height: 300px;" v-show="selectedMunicipality"></div>
 
+            <!-- Notas -->
             <div class="form-group">
-                <label class="mt-4" for="notes">Motivos de consulta:</label>
-                <textarea class="shadow custom-fields" style="max-height:300px; min-height:100px;" id="notes" v-model="notes" placeholder="Escribe aquí..."></textarea>
+                <label class="mt-3" for="notes">Motivos de consulta:</label>
+                <textarea class="custom-fields shadow-sm" id="notes" v-model="notes" placeholder="Escribe aquí..."></textarea>
             </div>
 
-            <div>
-                <button class="btn btn-primary"
-                        style="width: 100%;"
+            <!-- Botón enviar -->
+            <div class="mt-3">
+                <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                         @@click="submitAppointment"
                         :disabled="isLoading || !selectedDoctor || !notes">
+                    <i class="fas fa-paper-plane"></i>
                     {{ isLoading ? 'Enviando...' : 'Enviar' }}
                 </button>
             </div>
 
+            <!-- Mensajes -->
             <p v-if="showSuccessMessage" class="success-message">Cita creada con éxito</p>
             <p v-if="showErrorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
     </div>
+
+    <!-- Tabla -->
     <div v-if="user?.fk_Role !== 2">
         <div class="table-container card shadow">
             <table ref="appointmentsTable">
@@ -72,18 +83,18 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody ref="appointmentTable">
+                <tbody>
                     <tr v-for="appointment in appointments">
-                        <td> {{appointment.patient}}</td>
-                        <td> {{appointment.created}}</td>
-                        <td> {{appointment.assigned}}</td>
-                        <td> 
-                            <select @@change=" updateAppointment(appointment)" v-model="currentStatuses[appointment.id]" class=" form-control">
-                                <option :value="status.id" v-for="status in statuses"> {{status.name}}</option>
+                        <td>{{ appointment.patient }}</td>
+                        <td>{{ appointment.created }}</td>
+                        <td>{{ appointment.assigned }}</td>
+                        <td>
+                            <select @@change="updateAppointment(appointment)" v-model="currentStatuses[appointment.id]" class="form-control">
+                                <option :value="status.id" v-for="status in statuses">{{ status.name }}</option>
                             </select>
                         </td>
                         <td>
-                            <a class="text-danger" @@click="deleteAppointment(appointment)" style="text-decoration: none; cursor:pointer;">
+                            <a class="text-danger" @@click="deleteAppointment(appointment)" style="cursor: pointer;">
                                 <i class="fa-solid fa-trash-can"></i> Eliminar
                             </a>
                         </td>

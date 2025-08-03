@@ -5,25 +5,39 @@
 
 <div style="height:70vh;">
     <h1 class="display-4">Bienvenido</h1>
-    <p>{{user?.name}}</p>
+    <p class="w">{{user?.name}}</p>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center h-50 w-100 justify-content-between">
         <!-- Users Button -->
-        <button :class="user?.fk_Role === 1 ? 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-3 mx-5' : 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-5 mx-5'" style="height:100%; border-radius:20px;" v-on:click="Users(user?.id_User)" v-if="user?.fk_Role === 1">
-            <i class="fas fa-users w-100"></i>
-            <span class="text-3xl font-bold">Users</span>
+        <button :class="user?.fk_Role === 1
+    ? 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-3 mx-5'
+    : 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-5 mx-5'"
+                style="height:100%; border-radius:20px;"
+                v-on:click="Users(user?.id_User)"
+                v-if="user?.fk_Role === 1">
+            <i class="fas fa-users w-100 text-3xl"></i>
+            <span class="text-3xl font-bold">Usuarios</span>
         </button>
 
+
         <!-- Appointments Button -->
-        <button :class="user?.fk_Role === 1 ? 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-3 mx-5' : 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-5 mx-5'" style="height:100%; border-radius:20px;" v-on:click="Appointments(user?.id_User)">
+        <button :class="user?.fk_Role === 1
+    ? 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-3 mx-5'
+    : 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-5 mx-5'"
+                style="height:100%; border-radius:20px;"
+                v-on:click="Appointments(user?.id_User)">
             <i class="fas fa-calendar-check w-100"></i>
-            <span class="text-3xl font-bold">Appointments</span>
+            <span class="text-3xl font-bold">Citas</span>
         </button>
 
         <!-- Log Out Button -->
-        <button :class="user?.fk_Role === 1 ? 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-3 mx-5' : 'flex flex-col items-center justify-center btn btn-outline-info text-black p-12 rounded-3xl shadow-xl w-72 h-72 hover:bg-gray-200 transition col-5 mx-5'" style="height:100%; border-radius:20px;" v-on:click="logout()">
-                <i class="fas fa-sign-out-alt w-100"></i>
-            <span class="text-3xl font-bold">Log Out</span>
+        <button :class="user?.fk_Role === 1
+    ? 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-3 mx-5'
+    : 'translucent-btn flex flex-col items-center justify-center text-black p-12 rounded-3xl shadow-xl w-72 h-72 transition col-5 mx-5'"
+                style="height:100%; border-radius:20px;"
+                v-on:click="logout()">
+            <i class="fas fa-sign-out-alt w-100"></i>
+            <span class="text-3xl font-bold">Cerrar sesión</span>
         </button>
     </div>
 </div>
