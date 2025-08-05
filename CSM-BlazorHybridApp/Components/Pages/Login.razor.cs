@@ -1,29 +1,20 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Net.Http.Json;
 using CSM_BlazorHybridApp.ViewModels;
 
 namespace CSM_BlazorHybridApp.Components.Pages
 {
     public partial class Login : ComponentBase
     {
-        private bool IsLogin { get; set; } = true;
-
-        private Credentials Credentials { get; set; } = new();
-
-        private Authorization Authorization { get; set; } = new();
-
-        private NewUser NewUser { get; set; } = new();
-
-        private string ConfirmPassword { get; set; } = string.Empty;
-
-        private ApiConfig Config { get; set; } = new();
-
-        private readonly HttpClient _http;
         private readonly NavigationManager _nav;
+        private readonly Services.Services _services = new();
 
-        public Login(HttpClient http, NavigationManager nav)
+        private bool IsLogin { get; set; } = true;
+        private Credentials Credentials { get; set; } = new();
+        private Authorization Authorization { get; set; } = new();
+        private NewUser NewUser { get; set; } = new();
+        private string ConfirmPassword { get; set; } = string.Empty;
+        public Login(NavigationManager nav)
         {
-            _http = http;
             _nav = nav;
         }
 
@@ -31,40 +22,36 @@ namespace CSM_BlazorHybridApp.Components.Pages
         {
             try
             {
-                Config = new ApiConfig
+                var config = new ApiConfig
                 {
                     IdApi = 9,
-                    BodyParams = Credentials,
-                    Param = null
+                    BodyParams = Credentials
                 };
 
-                Console.WriteLine("Iniciando sesión...");
-
-                var response = await _http.PostAsJsonAsync("callApiAsync", Config);
-                if (response.IsSuccessStatusCode)
+                var result = await _services.ConsumeApi<UserResponse>(config);
+                if (result != null && result.id_User != 0)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<UserResponse>();
+                    Console.WriteLine("Inicio de sesión exitoso");
 
-                    if (result != null && result.Id_User != 0)
+                    Authorization = new Authorization
                     {
-                        Console.WriteLine("Inicio de sesión exitoso");
-                        Authorization = new Authorization
-                        {
-                            Success = true,
-                            User = result
-                        };
-                        GoToIndex(result.Id_User);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Credenciales incorrectas");
-                        Authorization = new Authorization { Success = false, User = null };
-                        Credentials = new Credentials();
-                    }
+                        Success = true,
+                        User = result
+                    };
+
+                    GoToAppointments(result.id_User);
                 }
                 else
                 {
-                    Console.WriteLine("Error en la petición de login");
+                    Console.WriteLine("Credenciales incorrectas");
+
+                    Authorization = new Authorization
+                    {
+                        Success = false,
+                        User = null
+                    };
+
+                    Credentials = new Credentials();
                 }
             }
             catch (Exception ex)
@@ -83,32 +70,25 @@ namespace CSM_BlazorHybridApp.Components.Pages
 
             try
             {
-                Config = new ApiConfig
+                var config = new ApiConfig
                 {
                     IdApi = 11,
-                    BodyParams = NewUser,
-                    Param = null
+                    BodyParams = NewUser
                 };
 
-                Console.WriteLine("Registrando usuario...");
-
-                var response = await _http.PostAsJsonAsync("callApiAsync", Config);
-                if (response.IsSuccessStatusCode)
+                var result = await _services.ConsumeApi<ApiResponse>(config);
+                if (result != null && result.Success)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ApiResponse>();
+                    Console.WriteLine("Registro exitoso");
 
-                    if (result != null && result.Success)
-                    {
-                        Console.WriteLine("Registro exitoso");
-
-                        NewUser = new NewUser();
-                        ConfirmPassword = string.Empty;
-
-                        IsLogin = true;
-                    }
-                    else Console.WriteLine(result?.Message ?? "Error en el registro");
+                    NewUser = new NewUser();
+                    ConfirmPassword = string.Empty;
+                    IsLogin = true;
                 }
-                else Console.WriteLine("Error en la petición de registro");
+                else
+                {
+                    Console.WriteLine(result?.Message ?? "Error en el registro");
+                }
             }
             catch (Exception ex)
             {
@@ -116,10 +96,9 @@ namespace CSM_BlazorHybridApp.Components.Pages
             }
         }
 
-        public void GoToIndex(int idUser)
+        public void GoToAppointments(int idUser)
         {
-            var root = _nav.BaseUri;
-            _nav.NavigateTo($"{root}?id={idUser}", forceLoad: true);
+            _nav.NavigateTo($"/Appointments?id={idUser}");
         }
     }
 }

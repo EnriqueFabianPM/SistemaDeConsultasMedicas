@@ -1,7 +1,4 @@
 ﻿@page "/"
-
-
-
 <div class="justify-content-centers align-content-center">
     <section class="gradient-custom">
         <div class="container">
@@ -66,7 +63,7 @@
                                             <div class="form-outline form-white mb-4">
                                                 <label class="form-label" for="registerSex">Sexo</label>
                                                 <select id="registerSex" class="form-control form-control-lg"
-                                                        @bind="NewUser.Fk_Sex">
+                                                        @bind="NewUser.fk_Sex">
                                                     <option class="text-center" disabled value="">Seleccione una opción</option>
                                                     <option value="1">Hombre</option>
                                                     <option value="2">Mujer</option>
@@ -88,7 +85,6 @@
                                     </div>
                                 </div>
                             }
-
                             <!-- Enlace para cambiar de formulario -->
                             <div>
                                 @if (IsLogin)
@@ -105,6 +101,10 @@
                                                 type="button"
                                                 @onclick="RegisterAsync"
                                                 disabled="@(string.IsNullOrWhiteSpace(NewUser.Email) || 
+                                                            string.IsNullOrWhiteSpace(NewUser.Password) ||
+                                                            string.IsNullOrWhiteSpace(NewUser.Name) ||
+                                                            NewUser.fk_Sex == 0 ||
+                                                            string.IsNullOrWhiteSpace(NewUser.Password) ||
                                                             string.IsNullOrWhiteSpace(NewUser.Password) ||
                                                             NewUser.Password != ConfirmPassword)">
                                             Registrarse

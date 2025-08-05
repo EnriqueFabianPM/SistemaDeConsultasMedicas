@@ -14,7 +14,7 @@ namespace WebServices.Services
         public User Login(Credentials credentials)
         {
             //Modelo de usuario vacío
-            User user = new User();
+            User user = new();
 
             //valida que el usuario sea diferente a null
             if (credentials != null)

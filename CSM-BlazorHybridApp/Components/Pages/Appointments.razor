@@ -1,8 +1,15 @@
- @page "/appointments"
+@page "/Appointments"
+@inject NavigationManager Navigation
 
-<h3>Appointments</h3>
+<p>@Id</p>
+
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? Id { get; set; }
 
+    protected override void OnInitialized()
+    {
+        Console.WriteLine($"Id recibido: {Id}");
+    }
 }
-
->>>>>>> 82c210a333f0251a24bfe20e84ead1e22bb0cac7
