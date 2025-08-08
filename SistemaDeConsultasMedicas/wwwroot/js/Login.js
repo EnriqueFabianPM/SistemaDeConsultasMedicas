@@ -39,13 +39,18 @@
     methods: {
         //Obtener Autorización
         login() {
-            if (!this.validateCredentials(this.credentials)) {
+            const validation = this.validateCredentials(this.credentials)
+            if (!validation.isValid) {
+
+                this.credentials.Email = '';
+                this.credentials.Password = '';
+
                 Swal.fire({
                     title: "Advertencia",
                     text: "Los campos contienen indicios de inyección",
                     icon: "error",
-                    timer: 1500,
-                    showConfirmButton: false
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3085d6'
                 });
                 return;
             }
@@ -134,8 +139,8 @@
                     title: "Error",
                     text: "La contraseña no cumple con los requisitos de seguridad",
                     icon: "error",
-                    timer: 1500,
-                    showConfirmButton: false
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3085d6'
                 });
                 return;
             }
@@ -145,8 +150,8 @@
                     title: "Advertencia",
                     text: validation.error,
                     icon: "error",
-                    timer: 1500,
-                    showConfirmButton: false
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3085d6'
                 });
                 return;
             }
