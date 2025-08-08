@@ -39,6 +39,17 @@
     methods: {
         //Obtener Autorización
         login() {
+            if (!this.validateCredentials(this.credentials)) {
+                Swal.fire({
+                    title: "Advertencia",
+                    text: "Los campos contienen indicios de inyección",
+                    icon: "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
             this.config = {
                 IdApi: 9,
                 BodyParams: this.credentials,
@@ -102,11 +113,37 @@
         },
 
         register() {
-            if (this.newUser.password === this.confirmPassword) {
+            const validation = this.validateCredentials({
+                Email: this.newUser.email,
+                Password: this.newUser.password,
+            });
 
+            if (this.newUser.password === this.confirmPassword) {
                 Swal.fire({
                     title: "Error",
                     text: "Las contraseñas son diferentes",
+                    icon: "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            if (!this.validatePassword()) {
+                Swal.fire({
+                    title: "Error",
+                    text: "La contraseña no cumple con los requisitos de seguridad",
+                    icon: "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            if (!validation.isValid) {
+                Swal.fire({
+                    title: "Advertencia",
+                    text: validation.error,
                     icon: "error",
                     timer: 1500,
                     showConfirmButton: false
@@ -183,9 +220,86 @@
         goToIndex(idUser) {
             const root = window.index || null;
             if (root) window.location.href = `${root}?id=${idUser}`;
-        }
+        },
+
+        validatePassword() {
+            let success = true;
+            const minLength = 8;
+            const hasUpper = /[A-Z]/.test(this.newUser.password);
+            const hasLower = /[a-z]/.test(this.newUser.password);
+            const hasNumber = /\d/.test(this.newUser.password);
+            const hasSymbol = /[^A-Za-z0-9]/.test(this.newUser.password);
+
+            let errors = [];
+
+            if (this.newUser.password.length < minLength) errors.push(`Debe tener al menos ${minLength} caracteres`);
+            if (!hasUpper) errors.push("Debe incluir al menos una letra mayúscula");
+            if (!hasLower) errors.push("Debe incluir al menos una letra minúscula");
+            if (!hasNumber) errors.push("Debe incluir al menos un número");
+            if (!hasSymbol) errors.push("Debe incluir al menos un símbolo (@, #, $, %, &)");
+
+            this.passwordErrors = errors;
+
+            // Si hay errores, mostrar alerta
+            if (errors.length > 0) {
+                success = false;
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Contraseña insegura',
+                    html: errors.map(err => `<p>${err}</p>`).join(''),
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3085d6'
+                });
+            }
+            return success;
+        },
+
+        validateCredentials(credentials) {
+            // Verificar que sea un objeto
+            if (typeof credentials !== 'object' || credentials === null) {
+                return {
+                    isValid: false,
+                    error: 'El parámetro debe ser un objeto con Email y Password.'
+                };
+            }
+
+            // Lista de patrones sospechosos de inyección
+            const injectionPatterns = [
+                /(\b)(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE|TRUNCATE)(\b)/i, // SQL keywords
+                /(;|--|\bOR\b|\bAND\b).*=.*/i, // SQL injection lógica
+                /<script.*?>.*?<\/script>/i, // Script tags
+                /javascript:/i, // URI scheme JS
+                /\b(alert|prompt|confirm|eval|Function)\s*\(/i // JS dangerous functions
+            ];
+
+            for (let key in credentials) {
+                const value = credentials[key];
+
+                // Validar que sea string
+                if (typeof value !== 'string') {
+                    return {
+                        isValid: false,
+                        error: `El campo ${key} debe ser una cadena de texto.`
+                    };
+                }
+
+                // Validar patrones de inyección
+                for (let pattern of injectionPatterns) {
+                    if (pattern.test(value)) {
+                        return {
+                            isValid: false,
+                            error: `El campo ${key} contiene patrones peligrosos de inyección.`
+                        };
+                    }
+                }
+            }
+
+            return {
+                isValid: true,
+                error: null
+            };
+        },
     },
-    mounted() {
-    } 
 });
 app.mount('#app');

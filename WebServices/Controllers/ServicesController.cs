@@ -248,6 +248,13 @@ namespace WebServices.Controllers
             Response response = _loginServices.CreateUser(user);
             return Json(!response.Success ? null : response);
         }
+        
+        //Llama al método del servicio LoginServices que cierra todas las sesiones activas
+        [HttpPost]
+        public void CloseSessions()
+        {
+            _loginServices.CloseSessions();
+        }
 
         //Servicios de AppointmensServices---------------------------------------------------------------------------------------------------------
         //Devuelve la lista de citas filtrada por usuario(Doctor)

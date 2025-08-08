@@ -1,6 +1,7 @@
 ﻿using WebServices.Data;
 using WebServices.Models;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Tls;
 #pragma warning disable CS8618
 
 namespace WebServices.Services
@@ -55,6 +56,7 @@ namespace WebServices.Services
 
                         //propiedad para validar que el usuario tenga sesión iniciada
                         row.Login = true;
+                        row.LastLog = DateTime.Now;
 
                         //guardamos los cambios en la base de datos
                         db.SaveChanges();
@@ -138,6 +140,36 @@ namespace WebServices.Services
                 }
             }
             return response;
+        }
+
+        public void CloseSessions()
+        {
+            List<Users> users = db.Users.Where(u => u.Login).ToList();
+
+            if(users.Count > 0)
+            {
+                foreach (var user in users)
+                {
+                    if (user.LastLog != null) if (CalculateDays(user.LastLog.Value) >= 10) user.Login = false;
+                    else user.Login = false;
+                }
+                db.SaveChanges();
+            }
+        }
+
+        static int CalculateDays(DateTime date)
+        {
+            // Fecha actual sin hora
+            DateTime fechaActual = DateTime.Now.Date;
+
+            // Fecha recibida sin hora
+            DateTime fechaParametro = date.Date;
+
+            // Calcular diferencia
+            TimeSpan diferencia = fechaActual - fechaParametro;
+
+            // Retornar días transcurridos (puede ser negativo si la fecha es futura)
+            return diferencia.Days;
         }
     }
 }
