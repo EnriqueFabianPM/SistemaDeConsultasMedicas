@@ -1,6 +1,6 @@
 ﻿namespace CSM_BlazorHybridApp.ViewModels
 {
-    public class NewUser
+    public class User
     {
         public int Id_User { get; set; } = 0;
         public string Name { get; set; } = string.Empty;

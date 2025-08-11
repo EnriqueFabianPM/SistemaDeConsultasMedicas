@@ -5,10 +5,10 @@ using CSM_BlazorHybridApp.Models;
 
 namespace CSM_BlazorHybridApp.Services
 {
-    public class Services
+    public class Service
     {
         private readonly Consultories_System_DevContext db = new();
-        public Services() { }
+        public Service() { }
 
         //Método para conseguir las urls de las Apis que se vayan a consumir
         public Api? FetchAPI(ApiConfig config)

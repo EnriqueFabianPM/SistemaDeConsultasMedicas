@@ -2,14 +2,3 @@
 @inject NavigationManager Navigation
 
 <p>@Id</p>
-
-@code {
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int? Id { get; set; }
-
-    protected override void OnInitialized()
-    {
-        Console.WriteLine($"Id recibido: {Id}");
-    }
-}

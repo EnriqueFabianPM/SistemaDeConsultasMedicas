@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using CSM_BlazorHybridApp.ViewModels;
+using CSM_BlazorHybridApp.Services;
 
 namespace CSM_BlazorHybridApp.Components.Pages
 {
     public partial class Login : ComponentBase
     {
         private readonly NavigationManager _nav;
-        private readonly Services.Services _services = new();
+        private readonly Service _services = new();
 
         private bool IsLogin { get; set; } = true;
         private Credentials Credentials { get; set; } = new();
         private Authorization Authorization { get; set; } = new();
-        private NewUser NewUser { get; set; } = new();
+        private User NewUser { get; set; } = new();
         private string ConfirmPassword { get; set; } = string.Empty;
         public Login(NavigationManager nav)
         {
@@ -81,7 +82,7 @@ namespace CSM_BlazorHybridApp.Components.Pages
                 {
                     Console.WriteLine("Registro exitoso");
 
-                    NewUser = new NewUser();
+                    NewUser = new();
                     ConfirmPassword = string.Empty;
                     IsLogin = true;
                 }
