@@ -29,6 +29,8 @@ public partial class Users
 
     public bool Login { get; set; }
 
+    public DateTime? LastLog { get; set; }
+
     public virtual ICollection<Medical_Appointments> Medical_Appointmentsfk_DoctorNavigation { get; set; } = new List<Medical_Appointments>();
 
     public virtual ICollection<Medical_Appointments> Medical_Appointmentsfk_PatientNavigation { get; set; } = new List<Medical_Appointments>();

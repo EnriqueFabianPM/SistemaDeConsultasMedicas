@@ -41,7 +41,7 @@ public partial class Consultories_System_DevContext : DbContext
     {
         modelBuilder.Entity<Consultories>(entity =>
         {
-            entity.HasKey(e => e.Id_Consultory).HasName("PK__Consulto__F3FE3AA1F06DB25E");
+            entity.HasKey(e => e.Id_Consultory).HasName("PK__Consulto__F3FE3AA13835E291");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Email)
@@ -62,7 +62,7 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Medical_Appointments>(entity =>
         {
-            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF90272C33560");
+            entity.HasKey(e => e.Id_Appointment).HasName("PK__Medical___6ECCF902F8B24CC5");
 
             entity.Property(e => e.Appointment_Date).HasColumnType("date");
             entity.Property(e => e.Created_Date).HasColumnType("date");
@@ -94,7 +94,7 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Roles>(entity =>
         {
-            entity.HasKey(e => e.Id_Role).HasName("PK__Roles__34ADFA60F6D42105");
+            entity.HasKey(e => e.Id_Role).HasName("PK__Roles__34ADFA6005C92D07");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Name)
@@ -104,7 +104,7 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Sexes>(entity =>
         {
-            entity.HasKey(e => e.Id_Sex).HasName("PK__Sexes__552797C2CF2CBD0C");
+            entity.HasKey(e => e.Id_Sex).HasName("PK__Sexes__552797C2C7C33532");
 
             entity.Property(e => e.Name)
                 .IsRequired()
@@ -122,7 +122,7 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Types>(entity =>
         {
-            entity.HasKey(e => e.Id_Type).HasName("PK__Types__1A20A3D52B0AE14A");
+            entity.HasKey(e => e.Id_Type).HasName("PK__Types__1A20A3D5EDD7967E");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Name)
@@ -132,12 +132,13 @@ public partial class Consultories_System_DevContext : DbContext
 
         modelBuilder.Entity<Users>(entity =>
         {
-            entity.HasKey(e => e.Id_User).HasName("PK__Users__D03DEDCB49E61E8F");
+            entity.HasKey(e => e.Id_User).HasName("PK__Users__D03DEDCBB4234AB3");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.Email)
                 .IsRequired()
                 .IsUnicode(false);
+            entity.Property(e => e.LastLog).HasColumnType("date");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .IsUnicode(false);

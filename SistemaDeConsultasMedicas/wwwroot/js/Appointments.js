@@ -19,30 +19,28 @@ const app = createApp({
             statuses: [],
             currentStatuses: [],
 
-
             Authorization: {
                 Success: false,
                 User: null,
             },
 
-            //Modelo para credenciales del usuario
+            // Modelo para credenciales del usuario
             credentials: {
                 Email: "",
                 Password: "",
             },
 
-            //Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
+            // Objeto donde se pondrá la configuración para buscar la API y parámetros que recibe
             config: {
-                IdApi: null, //Id de la API (Base de datos)
-                BodyParams: null, //Objeto (Generalmente para métodos tipo "Post")
-                Param: null, //Objeto exclusivo para ÁPIs tipo "Get"
+                IdApi: null, // Id de la API (Base de datos)
+                BodyParams: null, // Objeto (Generalmente para métodos tipo "Post")
+                Param: null, // Objeto exclusivo para ÁPIs tipo "Get"
             },
 
             user: {},
         };
     },
     methods: {
-
         generateMap() {
             this.map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: 19.4326, lng: -99.1332 },
@@ -57,6 +55,7 @@ const app = createApp({
             if (consultory) {
                 const position = {
                     lat: parseFloat(consultory.latitude),
+                    // Nota: aquí usabas 'length' — si tu API devuelve 'longitude' o 'lng' probablemente debas cambiar este campo.
                     lng: parseFloat(consultory.length)
                 };
 
@@ -91,17 +90,15 @@ const app = createApp({
             this.updateMapMarkers();
         },
 
-        //Obtener los municipios
+        // Obtener los municipios
         getMunicipalities() {
-            //Id para obtener los municipios
+            // Id para obtener los municipios
             this.config.IdApi = 1;
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Municipios', response.data);
-
                     this.municipalities = response.data;
-
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
@@ -109,76 +106,73 @@ const app = createApp({
         },
 
         getStatuses() {
-            //Id para obtener los estatus de la lista xdd
+            // Id para obtener los estatus
             this.config.IdApi = 14;
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
                     console.log('Statuses', response.data);
-
                     this.statuses = response.data;
-
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
         },
 
-
-        //Obtener los consultorios
+        // Obtener los consultorios
         getConsultories() {
             this.config = {
-                IdApi: 2, //Consultorios
-                BodyParams: null, //Al ser una api tipo Get se manda null
-                Param: `${this.selectedMunicipality}`, //Se transforma el valor en string
+                IdApi: 2, // Consultorios
+                BodyParams: null, // Al ser una api tipo Get se manda null
+                Param: `${this.selectedMunicipality}`, // Se transforma el valor en string
             };
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-
                     this.consultories = response.data;
                     console.log('Consultorios', response.data);
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
-
         },
 
-        //Obtener los consultorios
+        // Obtener los doctores
         getDoctors() {
             this.config = {
                 IdApi: 3,
                 BodyParams: null,
-                Param: `${this.selectedConsultory}`, //Se transforma el valor en string
+                Param: `${this.selectedConsultory}`, // Se transforma el valor en string
             };
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-
                     this.doctors = response.data;
                     console.log('Doctores', response.data);
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
-
         },
 
-        //Obtener los consultorios
+        // Obtener las citas
         getAppointments() {
             this.config = {
                 IdApi: 4,
                 BodyParams: null,
-                Param: `${this.user.id_User}`, //Se transforma el valor en string
+                Param: `${this.user.id_User}`, // Se transforma el valor en string
             };
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-
                     this.appointments = response.data;
                     console.log('citas', response.data);
-                    if(this.appointments)this.appointments.forEach(appointment => this.currentStatuses[appointment.id] = appointment.fk_Status);
+
+                    if (this.appointments) {
+                        this.appointments.forEach(appointment => {
+                            this.currentStatuses[appointment.id] = appointment.fk_Status;
+                        });
+                    }
                     console.log('status del servidor', this.currentStatuses);
 
                     this.$nextTick(() => {
@@ -216,10 +210,57 @@ const app = createApp({
                 .catch(error => {
                     console.error("Error en la petición:", error);
                 });
+        },
 
+        validateCredentials() {
+            // Verificar que notes sea una cadena y no esté vacía
+            if (typeof this.notes !== 'string' || this.notes === '') {
+                return {
+                    isValid: false,
+                    error: `El campo notas debe ser una cadena de texto.`
+                };
+            }
+
+            // Lista de patrones sospechosos de inyección
+            const injectionPatterns = [
+                /(\b)(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE|TRUNCATE)(\b)/i, // SQL keywords
+                /(;|--|\bOR\b|\bAND\b).*=.*/i, // SQL injection lógica
+                /<script.*?>.*?<\/script>/i, // Script tags
+                /javascript:/i, // URI scheme JS
+                /\b(alert|prompt|confirm|eval|Function)\s*\(/i // JS dangerous functions
+            ];
+
+            // Validar patrones de inyección en this.notes
+            for (let pattern of injectionPatterns) {
+                if (pattern.test(this.notes)) {
+                    return {
+                        isValid: false,
+                        error: 'El campo de notas adicionales contiene patrones peligrosos de inyección.'
+                    };
+                }
+            }
+
+            return {
+                isValid: true,
+                error: null
+            };
         },
 
         submitAppointment() {
+            const validation = this.validateCredentials();
+            if (!validation.isValid) {
+                Swal.fire({
+                    title: "Advertencia",
+                    text: validation.error,
+                    icon: "error",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                this.isLoading = false;
+                this.notes = '';
+                return;
+            
+            }
             this.isLoading = true;
 
             this.config = {
@@ -229,12 +270,11 @@ const app = createApp({
                     fk_Patient: this.user.id_User,
                     notes: this.notes,
                 },
-                Param: null, //Se transforma el valor en string
+                Param: null,
             };
 
             axios.post(window.callApiAsync, this.config)
                 .then(response => {
-
                     Swal.fire({
                         title: "¡Listo!",
                         text: `${response.data.message}`,
@@ -244,33 +284,30 @@ const app = createApp({
                         allowClickOutside: false,
                     }).then(() => {
                         this.isLoading = false;
-
-                        if (this.user.fk_Role === 1) window.location.reload();
-                        else window.location.reload();
-
+                        window.location.reload();
                     });
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);
+                    this.isLoading = false;
                 });
         },
 
         updateAppointment(appointment) {
             if (appointment) {
-
                 appointment.fk_Status = this.currentStatuses[appointment.id];
                 this.config = {
-                    IdApi: 13, //ola
+                    IdApi: 13,
                     BodyParams: {
                         id_Appointment: appointment.id,
                         fk_Doctor: appointment.fk_Doctor,
                         fk_Patient: appointment.fk_Patient,
                         fk_Status: appointment.fk_Status,
                     },
-                    Param: null, //Se transforma el valor en string
+                    Param: null,
                 };
 
-                console.log("Appointment a actualizar nadamas pa debbuggear", this.config.BodyParams);
+                console.log("Appointment a actualizar para debug", this.config.BodyParams);
 
                 axios.post(window.callApiAsync, this.config)
                     .then(response => {
@@ -286,20 +323,18 @@ const app = createApp({
                         });
                     })
                     .catch(error => console.error("Error en la petición:", error));
-
-
             }
         },
 
         deleteAppointment(appointment) {
             this.config = {
-                IdApi: 15, //Cambiar por 15 cuando se solucione el problema de los Ids
+                IdApi: 15,
                 BodyParams: {
                     id_Appointment: appointment.id,
                     fk_Doctor: appointment.fk_Doctor,
                     fk_Patient: appointment.fk_Patient,
                 },
-                Param: null, //Se transforma el valor en string
+                Param: null,
             };
 
             console.log("Appointment a borrar", this.config.BodyParams);
@@ -318,8 +353,9 @@ const app = createApp({
                     });
                 })
                 .catch(error => console.error("Error en la petición:", error));
-        },
-    },
+        }
+    }, // end methods
+
     mounted() {
         console.log(window.user); // Ahora es un objeto JSON usable
         if (window.user?.id_User) {
@@ -334,9 +370,10 @@ const app = createApp({
             });
         }
 
-        //Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
+        // Aquí llamarás a los métodos que quieres que se monten con la página cuando está iniciando
         this.getMunicipalities();
         this.getStatuses();
     }
 });
+
 app.mount('#app');
