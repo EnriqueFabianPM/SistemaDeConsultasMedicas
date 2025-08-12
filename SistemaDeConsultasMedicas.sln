@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServices", "WebServices\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSM-BlazorHybridApp", "CSM-BlazorHybridApp\CSM-BlazorHybridApp.csproj", "{AE0323ED-A7EF-4095-AC37-95C98D277900}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Querys", "Querys", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\Repositorio Proyectos\consultas Médicas.sql = ..\..\..\Desktop\Repositorio Proyectos\consultas Médicas.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
