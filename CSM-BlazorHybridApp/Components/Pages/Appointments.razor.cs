@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CSM_BlazorHybridApp.Services;
 using CSM_BlazorHybridApp.ViewModels;
-using CSM_BlazorHybridApp.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace CSM_BlazorHybridApp.Components.Pages 
 {
@@ -11,6 +12,8 @@ namespace CSM_BlazorHybridApp.Components.Pages
         public int? Id { get; set; } = 0;
 
         private readonly Service _Service = new();
+        private readonly IJSRuntime _jsRuntime;
+        private readonly NavigationManager _nav;
 
         // Propiedades del estado
         private object map = new(); // Aquí usarás JSInterop para Google Maps
@@ -32,6 +35,11 @@ namespace CSM_BlazorHybridApp.Components.Pages
         private ApiConfig config = new();
         private User user = new();
 
+        public Appointments(NavigationManager nav, IJSRuntime jsRuntime)
+        {
+            _nav = nav;
+            _jsRuntime = jsRuntime;
+        }
 
         protected async override Task OnInitializedAsync()
         {
@@ -51,6 +59,20 @@ namespace CSM_BlazorHybridApp.Components.Pages
 
             await GetMunicipalities();
             await GetStatuses();
+        }
+
+        private async Task GenerateMapAsync()
+        {
+            await _jsRuntime.InvokeVoidAsync("generateMap");
+        }
+
+        private async Task UpdateMapMarkersAsync()
+        {
+            var consultory = consultories.FirstOrDefault(o => o.Id == selectedConsultory) ?? null;
+            if (consultory != null)
+            {
+                await _jsRuntime.InvokeVoidAsync("updateMapMarkers", consultory.Latitude, consultory.Length, consultory.Name);
+            }
         }
 
         private async Task GetMunicipalities()
