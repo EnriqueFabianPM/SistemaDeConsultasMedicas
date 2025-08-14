@@ -9,5 +9,7 @@
         public string Phone { get; set; } = string.Empty;
         public int fk_Sex { get; set; } = 0;
         public int fk_Role { get; set; } = 2;
+        public int? fk_Consultory { get; set; } = 0;
+
     }
 }

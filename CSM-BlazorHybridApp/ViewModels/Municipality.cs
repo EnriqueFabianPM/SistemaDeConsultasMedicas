@@ -2,7 +2,7 @@
 
 public partial class Municipality
 {
-    public int Id_Municipality { get; set; } = 0;
-    public string Name { get; set; } = string.Empty;
-    public int Zip_Code { get; set; } = 0;
+    public int id { get; set; } = 0;
+    public string name { get; set; } = string.Empty;
+    public string zip_Code { get; set; } = string.Empty;
 }
