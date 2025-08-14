@@ -19,21 +19,18 @@ namespace CSM_BlazorHybridApp.Components.Pages
         private object map = new(); // Aquí usarás JSInterop para Google Maps
         private List<Municipality>? municipalities = new();
         private List<Consultory>? consultories = new();
-        private List<User>? doctors = new();
-        private List<Appointment>? appointments = new();
+        private List<Doctor>? doctors = new();
+        private List<AppointmentList>? appointments = new();
         private int? selectedMunicipality;
         private int? selectedConsultory;
         private int? selectedDoctor;
         private string notes = string.Empty;
         private bool isLoading = false;
-        private bool showSuccessMessage = false;
-        private bool showErrorMessage = false;
-        private string errorMessage = string.Empty;
         private List<Status>? statuses = new();
         private Dictionary<int, int> currentStatuses = new();
         private Authorization Authorization = new();
         private ApiConfig config = new();
-        private User user = new();
+        private UserResponse? user = new();
 
         public Appointments(NavigationManager nav, IJSRuntime jsRuntime)
         {
@@ -45,9 +42,9 @@ namespace CSM_BlazorHybridApp.Components.Pages
         {
             // Simular asignación de user desde JS o contexto
             // En Blazor Server o WASM podrías obtenerlo del contexto o llamada a JS
-            user = await GetUserAsync();
+            await GetUserAsync();
 
-            if (user != null && user.Id_User > 0)
+            if (user != null && user.id_User > 0)
             {
                 Authorization.Success = true;
                 // Si quieres puedes asignar Authorization.User aquí
@@ -68,10 +65,10 @@ namespace CSM_BlazorHybridApp.Components.Pages
 
         private async Task UpdateMapMarkersAsync()
         {
-            var consultory = consultories.FirstOrDefault(o => o.Id == selectedConsultory) ?? null;
+            var consultory = consultories?.FirstOrDefault(o => o.id == selectedConsultory) ?? null;
             if (consultory != null)
             {
-                await _jsRuntime.InvokeVoidAsync("updateMapMarkers", consultory.Latitude, consultory.Length, consultory.Name);
+                await _jsRuntime.InvokeVoidAsync("updateMapMarkers", consultory.latitude, consultory.length, consultory.name);
             }
         }
 
@@ -116,7 +113,7 @@ namespace CSM_BlazorHybridApp.Components.Pages
                 BodyParams = null,
                 Param = selectedConsultory?.ToString()
             };
-            doctors = await _Service.ConsumeApi<List<User>>(config);
+            doctors = await _Service.ConsumeApi<List<Doctor>>(config);
         }
 
         private async Task GetAppointments()
@@ -125,16 +122,16 @@ namespace CSM_BlazorHybridApp.Components.Pages
             {
                 IdApi = 4,
                 BodyParams = null,
-                Param = user.Id_User.ToString()
+                Param = user?.id_User.ToString()
             };
-            appointments = await _Service.ConsumeApi<List<Appointment>>(config);
+            appointments = await _Service.ConsumeApi<List<AppointmentList>>(config);
 
             currentStatuses.Clear();
             if (appointments != null)
             {
                 foreach (var appointment in appointments)
                 {
-                    currentStatuses[appointment.Id] = appointment.fk_Status;
+                    currentStatuses[appointment.id] = appointment.fk_Status;
                 }
             }
 
@@ -150,8 +147,8 @@ namespace CSM_BlazorHybridApp.Components.Pages
                 BodyParams = new
                 {
                     fk_Doctor = selectedDoctor,
-                    fk_Patient = user.Id_User,
-                    notes = notes,
+                    fk_Patient = user?.id_User,
+                    notes,
                 },
                 Param = null
             };
@@ -162,30 +159,24 @@ namespace CSM_BlazorHybridApp.Components.Pages
 
             if (response != null && response.Success)
             {
-                // Puedes usar un componente de alertas o llamar a JS para SweetAlert
-                showSuccessMessage = true;
-                // Por ejemplo, recargar la página o refrescar datos
+                await JS.InvokeVoidAsync("showSweetAlert", "Operación exitosa", "La cita se a generado correctamente", "success", "Cerrar");
+
                 await GetAppointments();
-            }
-            else
-            {
-                showErrorMessage = true;
-                errorMessage = response?.Message ?? "Error al enviar cita";
             }
         }
 
-        private async Task UpdateAppointment(Appointment appointment)
+        private async Task UpdateAppointment(AppointmentList appointment)
         {
             if (appointment != null)
             {
-                appointment.fk_Status = currentStatuses[appointment.Id];
+                appointment.fk_Status = currentStatuses[appointment.id];
 
                 config = new()
                 {
                     IdApi = 13,
                     BodyParams = new
                     {
-                        id_Appointment = appointment.Id,
+                        id_Appointment = appointment.id,
                         appointment.fk_Doctor,
                         appointment.fk_Patient,
                         appointment.fk_Status
@@ -196,26 +187,19 @@ namespace CSM_BlazorHybridApp.Components.Pages
                 var response = await _Service.ConsumeApi<ApiResponse>(config);
                 if (response != null && response.Success)
                 {
-                    showSuccessMessage = true;
-                    // Recarga o refresca como gustes
                     await GetAppointments();
-                }
-                else
-                {
-                    showErrorMessage = true;
-                    errorMessage = response?.Message ?? "Error al actualizar cita";
                 }
             }
         }
 
-        private async Task DeleteAppointment(Appointment appointment)
+        private async Task DeleteAppointment(AppointmentList appointment)
         {
             config = new()
             {
                 IdApi = 15,
                 BodyParams = new
                 {
-                    id_Appointment = appointment.Id,
+                    id_Appointment = appointment.id,
                     appointment.fk_Doctor,
                     appointment.fk_Patient
                 },
@@ -225,21 +209,20 @@ namespace CSM_BlazorHybridApp.Components.Pages
             var response = await _Service.ConsumeApi<ApiResponse>(config);
             if (response != null && response.Success)
             {
-                showSuccessMessage = true;
                 await GetAppointments();
-            }
-            else
-            {
-                showErrorMessage = true;
-                errorMessage = response?.Message ?? "Error al borrar cita";
             }
         }
 
         // Método simulado para obtener usuario, reemplaza según tu contexto
-        private Task<User> GetUserAsync()
+        private async Task GetUserAsync()
         {
-            // Podrías obtener desde JSInterop o servicio autenticación
-            return Task.FromResult(new User { Id_User = 1, fk_Role = 1 });
+            config = new()
+            {
+                IdApi = 12,
+                BodyParams = null,
+                Param = Id.ToString()
+            };
+            user = await _Service.ConsumeApi<UserResponse>(config);
         }
     }
 }

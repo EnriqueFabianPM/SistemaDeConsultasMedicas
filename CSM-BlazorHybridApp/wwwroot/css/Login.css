@@ -1,0 +1,43 @@
+﻿
+/* Tarjeta translúcida tipo glass */
+.glass-card {
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Botón claro sobre fondo claro */
+.btn-outline-light {
+    color: #fff;
+    border-color: #fff;
+    transition: 0.3s ease;
+}
+
+    .btn-outline-light:hover {
+        background-color: #fff;
+        color: #000;
+    }
+
+/* Etiquetas e inputs */
+.form-label {
+    color: #ffffffcc;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+}
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.25);
+        color: white;
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.3);
+    }

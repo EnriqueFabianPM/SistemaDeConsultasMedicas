@@ -1,4 +1,131 @@
-@page "/Appointments"
-@inject NavigationManager Navigation
+@page "/appointments"
+@using System.Globalization
+@inject IJSRuntime JS
 
-<p>@Id</p>
+<h1 class="text-primary text-center fw-bold mb-4">
+    @if (user?.fk_Role == 1)
+    {
+        @:Administrador de Citas
+    }
+    else
+    {
+        @(user?.fk_Role != 3 ? "Agendar cita" : "Lista de citas")
+    }
+</h1>
+
+@if (user?.fk_Role != 3 || user?.fk_Role == 1)
+{
+    <div class="table-container card shadow mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-4">
+                <!-- Municipio -->
+                <div class="form-group flex-fill">
+                    <label for="municipality">Municipio</label>
+                    <select class="form-control shadow-sm"
+                            @bind="selectedMunicipality"
+                            @bind:after="GetConsultories">
+                        <option value="">Seleccione un municipio</option>
+                        @foreach (var m in municipalities)
+                        {
+                            <option value="@m.id">@m.name</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Consultorio -->
+                @if (selectedMunicipality.HasValue)
+                {
+                    <div class="form-group flex-fill">
+                        <label for="consultory">Consultorio</label>
+                        <select class="form-control shadow-sm" @bind="selectedConsultory" @bind:after="GetDoctors">
+                            <option value="">Seleccione un consultorio</option>
+                            @foreach (var c in consultories)
+                            {
+                                <option value="@c.id">@c.name</option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                <!-- Doctor -->
+                @if (selectedConsultory.HasValue)
+                {
+                    <div class="form-group flex-fill">
+                        <label for="doctor">Doctor</label>
+                        <select class="form-control shadow-sm" @bind="selectedDoctor">
+                            <option value="">Seleccione un doctor</option>
+                            @foreach (var d in doctors)
+                            {
+                                <option value="@d.id">@d.name</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+
+@*             <!-- Mapa -->
+            @if (selectedMunicipality.HasValue)
+            {
+                <div id="map" class="rounded-4 shadow-sm my-4" style="height: 300px;"></div>
+            }
+ *@
+            <!-- Notas -->
+            <div class="form-group">
+                <label class="mt-3" for="notes">Motivos de consulta:</label>
+                <textarea class="form-control" @bind="notes" placeholder="Escribe aquí..."></textarea>
+            </div>
+
+            <!-- Botón enviar -->
+            <div class="mt-3">
+                <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                        @onclick="SubmitAppointment"
+                        disabled="@(!selectedDoctor.HasValue ||
+                                    string.IsNullOrWhiteSpace(notes) ||
+                                    isLoading)">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Tabla -->
+@if (user?.fk_Role != 2)
+{
+    <div class="table-container card shadow">
+        <table id="appointmentsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Creada</th>
+                    <th>Asignada</th>
+                    <th>Status</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in appointments)
+                {
+                    <tr>
+                        <td>@appointment.patient</td>
+                        <td>@appointment.created</td>
+                        <td>@appointment.assigned</td>
+                        <td>
+                            <select class="form-control" @bind="appointment.fk_Status" @bind:after="async() => await UpdateAppointment(appointment)">
+                                @foreach (var s in statuses)
+                                {
+                                    <option value="@s.id">@s.name</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-link text-danger" @onclick="@(() => DeleteAppointment(appointment))">
+                                <i class="fa-solid fa-trash-can"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

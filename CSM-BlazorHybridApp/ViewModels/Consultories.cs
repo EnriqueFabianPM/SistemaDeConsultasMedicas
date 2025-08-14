@@ -2,11 +2,9 @@
 
 public partial class Consultory
 {
-    public int Id { get; set; } = 0;
-    public string Name { get; set; } = string.Empty;
-    public string Latitude { get; set; } = string.Empty;
-    public string Length { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public int? fk_Municipality { get; set; } = 0;
-    public bool Active { get; set; } = false;
+    public int id { get; set; } = 0;
+    public string name { get; set; } = string.Empty;
+    public string latitude { get; set; } = string.Empty;
+    public string length { get; set; } = string.Empty;
+    public string email { get; set; } = string.Empty;
 }
